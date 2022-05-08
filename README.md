@@ -18,9 +18,9 @@ cd bin
 4. 웹 콘솔 접속
 - h2.sh 파일 실행 시 열린 웹 콘솔이 작동하지 않는다면 호스트를 localhost로 변경
 - 데이터베이스 파일 생성 방법
-    - `jdbc:h2:~jpashop`(최소 한 번, 세션키 유지한 상태로 실행)
-    - `~/jpashop.mv.db`파일 생성 확인
-    - 이후 부터는 `jdbc:h2:tcp://localhost/~jpashop` 접속
+    - `jdbc:h2:~baedalmate`(최소 한 번, 세션키 유지한 상태로 실행)
+    - `~/baedalmate.mv.db`파일 생성 확인
+    - 이후 부터는 `jdbc:h2:tcp://localhost/~baedalmate` 접속
 
 ### intellij 설정
 **lombok 적용**
