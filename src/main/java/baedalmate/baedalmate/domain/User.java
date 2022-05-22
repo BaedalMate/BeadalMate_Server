@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.domain;
 
+import baedalmate.baedalmate.oauth.SocialType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,6 +29,9 @@ public class User {
     private String provider;
     private String providerId;
     private String profileImage;
+
+    private SocialType socialType;
+    private String socialId;
 
     @CreationTimestamp
     private Timestamp createDate;

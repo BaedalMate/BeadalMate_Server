@@ -1,0 +1,43 @@
+package baedalmate.baedalmate.oauth.service;
+
+import baedalmate.baedalmate.oauth.SocialType;
+import baedalmate.baedalmate.oauth.authentication.AccessTokenSocialTypeToken;
+import baedalmate.baedalmate.oauth.authentication.OAuth2UserDetails;
+import baedalmate.baedalmate.oauth.service.strategy.KakaoLoadStrategy;
+import baedalmate.baedalmate.oauth.service.strategy.SocialLoadStrategy;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+@RequiredArgsConstructor
+public class LoadUserService {
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    private SocialLoadStrategy socialLoadStrategy;//추상 클래스, 로그인을 진행하는 사이트레 따라 달라짐
+
+
+    public OAuth2UserDetails getOAuth2UserDetails(AccessTokenSocialTypeToken authentication)  {
+
+        SocialType socialType = authentication.getSocialType();
+
+        setSocialLoadStrategy(socialType);//SocialLoadStrategy 설정
+
+        String socialPk = socialLoadStrategy.getSocialPk(authentication.getAccessToken());//PK 가져오기
+
+        return OAuth2UserDetails.builder() //PK와 SocialType을 통해 회원 생성
+                .socialId(socialPk)
+                .socialType(socialType)
+                .build();
+    }
+
+    private void setSocialLoadStrategy(SocialType socialType) {
+        this.socialLoadStrategy = switch (socialType){
+            case KAKAO -> new KakaoLoadStrategy();
+            default -> throw new IllegalArgumentException("지원하지 않는 로그인 형식입니다");
+        };
+    }
+
+
+}
