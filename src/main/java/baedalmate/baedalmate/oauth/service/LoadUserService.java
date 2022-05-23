@@ -3,6 +3,7 @@ package baedalmate.baedalmate.oauth.service;
 import baedalmate.baedalmate.oauth.SocialType;
 import baedalmate.baedalmate.oauth.authentication.AccessTokenSocialTypeToken;
 import baedalmate.baedalmate.oauth.authentication.OAuth2UserDetails;
+import baedalmate.baedalmate.oauth.dto.OAuth2UserInfo;
 import baedalmate.baedalmate.oauth.service.strategy.KakaoLoadStrategy;
 import baedalmate.baedalmate.oauth.service.strategy.SocialLoadStrategy;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,14 @@ public class LoadUserService {
 
         setSocialLoadStrategy(socialType);//SocialLoadStrategy 설정
 
-        String socialPk = socialLoadStrategy.getSocialPk(authentication.getAccessToken());//PK 가져오기
+        OAuth2UserInfo userInfo = socialLoadStrategy.getUserInfo(authentication.getAccessToken());//PK 가져오기
 
         return OAuth2UserDetails.builder() //PK와 SocialType을 통해 회원 생성
-                .socialId(socialPk)
+                .socialId(userInfo.getSocialId())
                 .socialType(socialType)
+                .username(userInfo.getName())
+                .email(userInfo.getEmail())
+                .image(userInfo.getImage())
                 .build();
     }
 

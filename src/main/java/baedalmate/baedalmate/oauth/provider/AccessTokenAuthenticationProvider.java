@@ -44,6 +44,9 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
                 .orElseGet(() -> userRepository.save(User.builder()
                         .socialType(oAuth2User.getSocialType())
                         .socialId(oAuth2User.getSocialId())
+                        .email(oAuth2User.getEmail())
+                        .profileImage(oAuth2User.getImage())
+                        .nickname(oAuth2User.getUsername())
                         .role("ROLE_USER").build()));//없다면 멤버를 새로 만드는데, USER가 아니라 GUEST로 설정했다. 이는 아래해서 설명한다
     }
 

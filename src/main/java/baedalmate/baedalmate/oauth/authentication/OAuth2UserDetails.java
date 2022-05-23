@@ -4,6 +4,7 @@ import baedalmate.baedalmate.oauth.SocialType;
 import io.jsonwebtoken.lang.Assert;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,10 @@ public class OAuth2UserDetails implements UserDetails {
     private SocialType socialType;
     private String socialId;
     private String username;
+    @Getter
+    private String email;
+    @Getter
+    private String image;
     private Set<GrantedAuthority> authorities;
 
     public SocialType getSocialType() {
@@ -45,8 +50,6 @@ public class OAuth2UserDetails implements UserDetails {
     public String getUsername() {
         return username;
     }
-
-
 
     public void setRoles(String... roles) {
         List<GrantedAuthority> authorities = new ArrayList<>(roles.length);
