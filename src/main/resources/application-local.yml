@@ -17,7 +17,8 @@ logging.level:
 
 app:
   auth:
-    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    // tokenSecret은 dev서버에서 수정할 것
+    tokenSecret: 926D96C90030DD58429D2751AC1BDBBB
     tokenExpirationMsec: 180000000000
     refreshTokenExpiry: 604800000
   oauth2:
