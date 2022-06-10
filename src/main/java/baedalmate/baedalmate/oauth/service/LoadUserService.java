@@ -38,8 +38,11 @@ public class LoadUserService {
 
     private void setSocialLoadStrategy(SocialType socialType) {
          switch (socialType){
-             case KAKAO: this.socialLoadStrategy = new KakaoLoadStrategy();
-             default: throw new IllegalArgumentException("지원하지 않는 로그인 형식입니다");
+             case KAKAO:
+                 this.socialLoadStrategy = new KakaoLoadStrategy();
+                 break;
+             default:
+                 throw new IllegalArgumentException("지원하지 않는 로그인 형식입니다");
         }
     }
 }
