@@ -46,7 +46,7 @@ cd bin
 아래 명령어로 빌드된 파일 실행
 ```
 cd build/libs
-java -jar jpashop-0.0.1-SNAPSHOT.jar
+java -jar baedalmate-0.0.1-SNAPSHOT.jar
 ```
 
 [localhot:8080](localhot:8080) 접속
