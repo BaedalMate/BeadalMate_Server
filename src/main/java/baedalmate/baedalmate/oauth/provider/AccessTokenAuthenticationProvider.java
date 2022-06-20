@@ -11,13 +11,17 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.NoResultException;
 
 @RequiredArgsConstructor
 @Component
+@Transactional(readOnly = true)
 public class AccessTokenAuthenticationProvider implements AuthenticationProvider {//AuthenticationProvider을 구현받아 authenticate와 supports를 구현해야 한다.
 
     private final LoadUserService loadUserService;  //restTemplate를 통해서 AccessToken을 가지고 회원의 정보를 가져오는 역할을 한다.
-    private final UserRepository userRepository;//받아온 정보를 통해 DB에서 회원을 조회하는 역할을 한다.
+    private final UserRepository userRepository;    //받아온 정보를 통해 DB에서 회원을 조회하는 역할을 한다.
 
     @SneakyThrows
     @Override
@@ -38,23 +42,25 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 
 
 
+    @Transactional
     private User saveOrGet(OAuth2UserDetails oAuth2User) {
-        return userRepository.findBySocialTypeAndSocialId(oAuth2User.getSocialType(),
-                        oAuth2User.getSocialId())  //socailID(식별값)과 어떤 소셜 로그인 유형인지를 통해 DB에서 조회
-                .orElseGet(() -> userRepository.save(User.builder()
-                        .socialType(oAuth2User.getSocialType())
-                        .socialId(oAuth2User.getSocialId())
-                        .email(oAuth2User.getEmail())
-                        .profileImage(oAuth2User.getImage())
-                        .nickname(oAuth2User.getUsername())
-                        .role("ROLE_USER").build()));//없다면 멤버를 새로 만드는데, USER가 아니라 GUEST로 설정했다. 이는 아래해서 설명한다
+        try {
+            return userRepository.findBySocialTypeAndSocialId(oAuth2User.getSocialType(), oAuth2User.getSocialId());  //socailID(식별값)과 어떤 소셜 로그인 유형인지를 통해 DB에서 조회
+        } catch(NoResultException e) {
+            User user = User.builder()
+                    .socialType(oAuth2User.getSocialType())
+                    .socialId(oAuth2User.getSocialId())
+                    .email(oAuth2User.getEmail())
+                    .profileImage(oAuth2User.getImage())
+                    .nickname(oAuth2User.getUsername())
+                    .role("ROLE_USER").build();
+            userRepository.save(user);
+            return user;
+        }
     }
-
-
 
     @Override
     public boolean supports(Class<?> authentication) {
         return AccessTokenSocialTypeToken.class.isAssignableFrom(authentication); //AccessTokenSocialTypeToken타입의  authentication 객체이면 해당 Provider가 처리한다.
     }
-
 }
