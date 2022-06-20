@@ -7,6 +7,7 @@ import baedalmate.baedalmate.oauth.authentication.OAuth2UserDetails;
 import baedalmate.baedalmate.oauth.exception.ResourceNotFoundException;
 import baedalmate.baedalmate.repository.UserRepository;
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +18,19 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TokenProvider {
+
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-    private AppProperties appProperties;
-    public TokenProvider(AppProperties appProperties) {
-        this.appProperties = appProperties;
-    }
+    private final AppProperties appProperties;
+
     @Autowired
     public UserRepository userRepository;
     public String createToken(Authentication authentication) {
         OAuth2UserDetails principalDetails = (OAuth2UserDetails) authentication.getPrincipal();
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
-        User user = userRepository.findBySocialTypeAndSocialId(principalDetails.getSocialType(), principalDetails.getSocialId())
-                .orElseThrow(() -> new ResourceNotFoundException("User", "socialId", principalDetails.getSocialId()));
+        User user = userRepository.findBySocialTypeAndSocialId(principalDetails.getSocialType(), principalDetails.getSocialId());
         return Jwts.builder()
                 .setSubject(Long.toString(user.getId()))
                 .setIssuedAt(new Date())
@@ -38,6 +38,17 @@ public class TokenProvider {
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
                 .compact();
     }
+
+    public String createRefreshToken() {
+        Date now = new Date();
+        Date refreshTokenExpiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpirationMsec());
+        return Jwts.builder()
+                .setIssuedAt(now)
+                .setExpiration(refreshTokenExpiryDate)
+                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+                .compact();
+    }
+
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(appProperties.getAuth().getTokenSecret())
