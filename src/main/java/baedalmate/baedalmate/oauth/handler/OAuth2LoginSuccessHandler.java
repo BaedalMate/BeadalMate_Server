@@ -41,14 +41,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String token = tokenProvider.createToken(authentication);
-        String json = objectMapper.writeValueAsString(new TokenResponse(token));
+        String accessToken = tokenProvider.createToken(authentication);
+        String refreshToken = tokenProvider.createRefreshToken();
+        String json = objectMapper.writeValueAsString(new TokenResponse(accessToken, refreshToken));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         // application/json(ajax) 요청일 경우 아래의 처리!
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
         MediaType jsonMimeType = MediaType.APPLICATION_JSON;
 
-        TokenResponse tokenResponse = new TokenResponse(token);
+        TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);
         if (jsonConverter.canWrite(tokenResponse.getClass(), jsonMimeType)) {
             jsonConverter.write(tokenResponse, jsonMimeType, new ServletServerHttpResponse(response));
         }

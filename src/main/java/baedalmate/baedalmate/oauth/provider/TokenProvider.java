@@ -22,10 +22,8 @@ import java.util.Optional;
 public class TokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-    private AppProperties appProperties;
-    public TokenProvider(AppProperties appProperties) {
-        this.appProperties = appProperties;
-    }
+    private final AppProperties appProperties;
+
     @Autowired
     public UserRepository userRepository;
     public String createToken(Authentication authentication) {
@@ -40,6 +38,17 @@ public class TokenProvider {
                 .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
                 .compact();
     }
+
+    public String createRefreshToken() {
+        Date now = new Date();
+        Date refreshTokenExpiryDate = new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpirationMsec());
+        return Jwts.builder()
+                .setIssuedAt(now)
+                .setExpiration(refreshTokenExpiryDate)
+                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+                .compact();
+    }
+
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(appProperties.getAuth().getTokenSecret())
