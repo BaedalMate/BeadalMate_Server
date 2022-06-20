@@ -26,7 +26,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket api() { //swagger를 연결하기 위한 Bean 작성
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
@@ -36,9 +36,9 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
     private ApiInfo apiInfo() { //선택
         return new ApiInfoBuilder()
-                .title("Omoolen Release") //자신에게 맞는 타이틀을 작성해준다.
+                .title("Baedalmate Release") //자신에게 맞는 타이틀을 작성해준다.
                 .description("backend api document") //알맞는 description을 작성해준다.
-                .version("0.0") //알맞는 버전을 작성해준다.
+                .version("0.1") //알맞는 버전을 작성해준다.
                 .build();
     }
 }
