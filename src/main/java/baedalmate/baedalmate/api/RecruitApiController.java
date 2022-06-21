@@ -12,22 +12,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Api(tags = {"모집글 api"})
 @RestController
-@RequestMapping("/api/v1")
 public class RecruitApiController {
 
     @ApiOperation(value = "모집글 리스트 조회")
-    @GetMapping(value = "/recruit/list")
     public Result getRecruitList(
             @ApiParam(value = "카테고리별 조회(일단 사용x)")
             @RequestParam(required = false) Long categoryId,
-            @ApiParam(value = "예시: {ip}:8080/production/list?page=0&size=5&sort=view,DESC")
-                    Pageable pageable
+            Pageable pageable
     ) {
         List<RecruitDto> collect = new ArrayList<>();
         return new Result(collect);
