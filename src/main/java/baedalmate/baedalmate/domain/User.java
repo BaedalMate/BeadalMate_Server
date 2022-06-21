@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.domain;
 
+import baedalmate.baedalmate.domain.embed.Address;
 import baedalmate.baedalmate.oauth.SocialType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,7 +21,6 @@ public class User {
     @Column(name = "user_id")
     private Long id;
     private String name;
-    @Setter
     private String password;
     private String email;
     private String nickname;
@@ -30,11 +30,33 @@ public class User {
     private String providerId;
     private String profileImage;
 
+    @Embedded
+    private Address address;
+
     private SocialType socialType;
     private String socialId;
+
+    private Dormitory dormitory;
 
     @CreationTimestamp
     private Timestamp createDate;
     @UpdateTimestamp
     private Timestamp updateDate;
+
+    public String getAddress() {
+        if(address == null) {
+            return "";
+        }
+        if(address.getStreet() == null || address.getDetail() == null || address.getZipcode() == null){
+            return "";
+        }
+        return address.getStreet() + " " + address.getDetail();
+    }
+
+    public String getDormitory() {
+        if(dormitory == null) {
+            return "";
+        }
+        return dormitory.getName();
+    }
 }
