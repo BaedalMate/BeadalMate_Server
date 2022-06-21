@@ -2,6 +2,7 @@ package baedalmate.baedalmate.api;
 
 import baedalmate.baedalmate.oauth.provider.TokenProvider;
 import baedalmate.baedalmate.repository.UserRepository;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+@Api(tags = {"인증 api"})
 @Controller
 @RequiredArgsConstructor
 public class AuthApiController {
