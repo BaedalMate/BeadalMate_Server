@@ -1,25 +1,35 @@
 package baedalmate.baedalmate.api;
 
+import baedalmate.baedalmate.domain.*;
+import baedalmate.baedalmate.oauth.annotation.CurrentUser;
+import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
+import baedalmate.baedalmate.service.RecruitService;
+import baedalmate.baedalmate.service.UserService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Api(tags = {"모집글 api"})
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class RecruitApiController {
+
+    private final UserService userService;
+    private final RecruitService recruitService;
 
     @ApiOperation(value = "모집글 리스트 조회")
     @GetMapping(value = "/recruit/list")
@@ -31,6 +41,46 @@ public class RecruitApiController {
     ) {
         List<RecruitDto> collect = new ArrayList<>();
         return new Result(collect);
+    }
+
+    @PostMapping(value = "/recruit/new")
+    public CreateRecruitResponse createRecruit(
+            @CurrentUser PrincipalDetails principalDetails,
+            @RequestBody CreateRecruitRequest createRecruitRequest
+            ) {
+        User user = userService.findOne(principalDetails.getId());
+        Recruit recruit = Recruit.createRecruit(
+                user,
+                createRecruitRequest.getMinPeople(),
+                createRecruitRequest.getMinPrice(),
+                createRecruitRequest.getDeadlineDate(),
+                createRecruitRequest.getCriteria(),
+                createRecruitRequest.getDormitory(),
+                createRecruitRequest.getRestaurant(),
+                createRecruitRequest.getPlatform(),
+                createRecruitRequest.getCoupon()
+        );
+        Long id = recruitService.createRecruit(recruit);
+        return new CreateRecruitResponse(id);
+    }
+
+    @Data
+    static class CreateRecruitRequest {
+        private String restaurant;
+        private Dormitory dormitory;
+        private Criteria criteria;
+        private int minPrice;
+        private int minPeople;
+        private int coupon;
+        private Platform platform;
+        private LocalDateTime deadlineDate;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class CreateRecruitResponse {
+        private Long id;
     }
 
     @Data
@@ -57,10 +107,10 @@ public class RecruitApiController {
         private int deliveryFee;
 
         @Schema(name = "글 작성 시간")
-        private Date createDate;
+        private LocalDateTime createDate;
 
         @Schema(name = "마감 시간")
-        private Date deadlineDate;
+        private LocalDateTime deadlineDate;
 
         @Schema(name = "예상 배달 시간", example = "20~30분")
         private String estimateDeliveryTime;
