@@ -25,6 +25,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 
     @SneakyThrows
     @Override
+    @Transactional
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {//ProviderManager가 호출한다. 인증을 처리한다
 
         OAuth2UserDetails oAuth2User = loadUserService.getOAuth2UserDetails((AccessTokenSocialTypeToken) authentication);
@@ -55,7 +56,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
                     .nickname(oAuth2User.getUsername())
                     .role("ROLE_USER").build();
             userRepository.save(user);
-            return user;
+            return userRepository.findOne(user.getId());
         }
     }
 
