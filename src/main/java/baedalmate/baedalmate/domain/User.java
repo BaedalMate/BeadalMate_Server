@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Builder
 @Data
@@ -39,11 +40,15 @@ public class User {
 
     private Dormitory dormitory;
 
+    @OneToMany(mappedBy = "user")
+    private List<Recruit> recruits;
+
     @CreationTimestamp
     private Timestamp createDate;
     @UpdateTimestamp
     private Timestamp updateDate;
 
+    //== Getter ==//
     public String getAddress() {
         if(address == null) {
             return "";
@@ -59,5 +64,10 @@ public class User {
             return "";
         }
         return dormitory.getName();
+    }
+
+    //== 연관관계 편의메서드 ==//
+    public void addRecruit(Recruit recruit) {
+        recruits.add(recruit);
     }
 }
