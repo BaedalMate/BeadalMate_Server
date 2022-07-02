@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -16,7 +17,6 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue
@@ -28,8 +28,10 @@ public class User {
     private String nickname;
     @Setter
     private String role;
-    private String provider;
-    private String providerId;
+
+    @Column(columnDefinition = "float default 0", nullable = false)
+    private float score;
+
     private String profileImage;
 
     @Embedded
@@ -41,7 +43,10 @@ public class User {
     private Dormitory dormitory;
 
     @OneToMany(mappedBy = "user")
-    private List<Recruit> recruits;
+    private List<Recruit> recruits = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
 
     @CreationTimestamp
     private Timestamp createDate;

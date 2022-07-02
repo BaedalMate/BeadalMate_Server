@@ -1,13 +1,11 @@
 package baedalmate.baedalmate.domain;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,27 +26,38 @@ public class Recruit {
 
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int currentPeople;
+
     private int minPeople;
 
     private int minPrice;
 
     private int coupon;
 
+    private int deliveryFee;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "recruit")
+    private List<Order> orders;
+
     @CreationTimestamp
-    private Timestamp createDate;
+    private LocalDateTime createDate;
 
     private LocalDateTime deadlineDate;
+
+    private String title;
+
+    private String description;
+
+
 
     //== constructor ==//
     private Recruit() {
     }
-    private Recruit(int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria,
-                    Dormitory dormitory,
-                    String restaurant, Platform platform, int coupon) {
+    private Recruit(int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
+                    String restaurant, Platform platform, int coupon, int deliveryFee, String title, String description) {
         this.minPeople = minPeople;
         this.minPrice = minPrice;
         this.deadlineDate = deadlineDate;
@@ -57,14 +66,17 @@ public class Recruit {
         this.restaurant = restaurant;
         this.platform = platform;
         this.coupon = coupon;
+        this.deliveryFee = deliveryFee;
+        this.title = title;
+        this.description = description;
     }
 
     //== 생성 메서드 ==//
     public static Recruit createRecruit(
             User user,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-            String restaurant, Platform platform, int coupon) {
-        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, restaurant, platform, coupon);
+            String restaurant, Platform platform, int coupon, int deliveryFee, String title, String description) {
+        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, restaurant, platform, coupon, deliveryFee, title, description);
         recruit.setUser(user);
         return recruit;
     }
@@ -72,6 +84,10 @@ public class Recruit {
     //== 연관관계 편의 메서드 ==//
     public void setUser(User user) {
         this.user = user;
-        user.addRecruit(this);
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setRecruit(this);
     }
 }
