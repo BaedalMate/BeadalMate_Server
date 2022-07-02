@@ -3,11 +3,11 @@ package baedalmate.baedalmate.domain;
 import org.springframework.http.HttpMethod;
 
 public enum Dormitory {
-    BURAM("불암"),
-    KB("KB"),
-    SUNGLIM("성림"),
-    SULIM("수림"),
-    NURI("누리");
+    BURAM("불암학사"),
+    KB("KB학사"),
+    SUNGLIM("성림학사"),
+    SULIM("수림학사"),
+    NURI("누리학사");
 
     final private String name;
     public String getName() {
