@@ -37,18 +37,7 @@ public class RecruitApiController {
     private final RecruitService recruitService;
     private final OrderService orderService;
 
-//    @ApiOperation(value = "모집글 리스트 조회")
-//    @GetMapping(value = "/recruit/list")
-//    public Result getRecruitList(
-//            @ApiParam(value = "카테고리별 조회(일단 사용x)")
-//            @RequestParam(required = false) Long categoryId,
-//            @ApiParam(value = "예시: {ip}:8080/production/list?page=0&size=5&sort=view,DESC")
-//                    Pageable pageable
-//    ) {
-//        List<RecruitDto> collect = new ArrayList<>();
-//        return new Result(collect);
-//    }
-
+    @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
     public CreateRecruitResponse createRecruit(
             @CurrentUser PrincipalDetails principalDetails,
@@ -81,10 +70,13 @@ public class RecruitApiController {
         return new CreateRecruitResponse(id);
     }
 
+    @ApiOperation(value = "모집글 리스트 조회")
     @GetMapping(value = "/recruit/list")
     public Result getRecruitList(
+            @ApiParam(value = "카테고리별 조회(구현x)")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
+            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=createDate,DESC")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createDate", direction = Sort.Direction.DESC)
             })
@@ -110,32 +102,49 @@ public class RecruitApiController {
     }
 
     @Data
+    @Schema
     static class CreateRecruitRequest {
+        @Schema(name = "배달지점명")
         private String restaurant;
+        @Schema(name = "배달거점 (BURAM|KB|SUGLIM|NURI)")
         private Dormitory dormitory;
+        @Schema(name = "마감 기준 (NUMBER|PRICE|TIME")
         private Criteria criteria;
+        @Schema(name = "최소주문금액")
         private int minPrice;
+        @Schema(name = "최소 인원")
         private int minPeople;
+        @Schema(name = "배달팁")
         private int deliveryFee;
+        @Schema(name = "쿠폰 사용 금액")
         private int coupon;
+        @Schema(name = "배달앱 (BAEMIN|YOGIYO|COUPANG)")
         private Platform platform;
+        @Schema(name = "마감 시간 (예시: 2020-12-24T16:28:27)")
         private LocalDateTime deadlineDate;
+        @Schema(name = "글 제목")
         private String title;
+        @Schema(name = "글 설명")
         private String description;
+        @Schema(name = "메뉴")
         private List<MenuDto> menu;
     }
 
     @Data
     @Schema
     static class MenuDto {
+        @Schema(name = "메뉴명", example = "하와이안피자")
         private String name;
+        @Schema(name = "가격", example = "15000")
         private int price;
     }
 
     @Data
+    @Schema
     @NoArgsConstructor
     @AllArgsConstructor
     static class CreateRecruitResponse {
+        @Schema(name = "Recruit id")
         private Long id;
     }
 
@@ -170,7 +179,7 @@ public class RecruitApiController {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
 
-        @Schema(name = "유저 내임", example = "유상")
+        @Schema(name = "유저 이름", example = "유상")
         private String username;
 
         @Schema(name = "유저 평점", example = "4.1")
