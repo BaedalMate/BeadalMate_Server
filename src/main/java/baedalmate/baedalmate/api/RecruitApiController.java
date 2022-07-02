@@ -3,6 +3,7 @@ package baedalmate.baedalmate.api;
 import baedalmate.baedalmate.domain.*;
 import baedalmate.baedalmate.oauth.annotation.CurrentUser;
 import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
+import baedalmate.baedalmate.service.OrderService;
 import baedalmate.baedalmate.service.RecruitService;
 import baedalmate.baedalmate.service.UserService;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -30,6 +31,7 @@ public class RecruitApiController {
 
     private final UserService userService;
     private final RecruitService recruitService;
+    private final OrderService orderService;
 
     @ApiOperation(value = "모집글 리스트 조회")
     @GetMapping(value = "/recruit/list")
@@ -47,8 +49,9 @@ public class RecruitApiController {
     public CreateRecruitResponse createRecruit(
             @CurrentUser PrincipalDetails principalDetails,
             @RequestBody CreateRecruitRequest createRecruitRequest
-            ) {
+    ) {
         User user = userService.findOne(principalDetails.getId());
+        // recruit 생성
         Recruit recruit = Recruit.createRecruit(
                 user,
                 createRecruitRequest.getMinPeople(),
@@ -58,9 +61,19 @@ public class RecruitApiController {
                 createRecruitRequest.getDormitory(),
                 createRecruitRequest.getRestaurant(),
                 createRecruitRequest.getPlatform(),
-                createRecruitRequest.getCoupon()
+                createRecruitRequest.getCoupon(),
+                createRecruitRequest.getDeliveryFee(),
+                createRecruitRequest.getTitle(),
+                createRecruitRequest.getDescription()
         );
         Long id = recruitService.createRecruit(recruit);
+        // menu 생성
+        List<Menu> menus = createRecruitRequest.getMenu().stream()
+                .map(m -> Menu.createMenu(m.getName(), m.getPrice()))
+                .collect(Collectors.toList());
+        // order 생성
+        Order order = Order.createOrder(user, recruit, menus);
+        Long orderId = orderService.createOrder(order);
         return new CreateRecruitResponse(id);
     }
 
@@ -71,9 +84,20 @@ public class RecruitApiController {
         private Criteria criteria;
         private int minPrice;
         private int minPeople;
+        private int deliveryFee;
         private int coupon;
         private Platform platform;
         private LocalDateTime deadlineDate;
+        private String title;
+        private String description;
+        private List<MenuDto> menu;
+    }
+
+    @Data
+    @Schema
+    static class MenuDto {
+        private String name;
+        private int price;
     }
 
     @Data
