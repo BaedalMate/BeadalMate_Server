@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.config;
 
+import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import com.fasterxml.classmate.TypeResolver;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -37,6 +38,9 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .alternateTypeRules(
                         AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(Page.class))
                 )
+                .alternateTypeRules(
+                        AlternateTypeRules.newRule(typeResolver.resolve(PrincipalDetails.class), typeResolver.resolve(UserToken.class))
+                )
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
@@ -50,6 +54,12 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .description("backend api document") //알맞는 description을 작성해준다.
                 .version("0.1") //알맞는 버전을 작성해준다.
                 .build();
+    }
+
+    @Data
+    static class UserToken {
+        @ApiModelProperty(value = "QueryString 아니고 헤더임!!! 유의!!! Authorization: Bearer {token}")
+        private String token;
     }
 
     @Data

@@ -1,7 +1,6 @@
 package baedalmate.baedalmate.api;
 
 import baedalmate.baedalmate.domain.*;
-import baedalmate.baedalmate.dto.Result;
 import baedalmate.baedalmate.oauth.annotation.CurrentUser;
 import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import baedalmate.baedalmate.service.OrderService;
@@ -72,7 +71,7 @@ public class RecruitApiController {
 
     @ApiOperation(value = "모집글 리스트 조회")
     @GetMapping(value = "/recruit/list")
-    public Result getRecruitList(
+    public RecruitList getRecruitList(
             @ApiParam(value = "카테고리별 조회(구현x)")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
@@ -95,47 +94,55 @@ public class RecruitApiController {
                         r.getDeadlineDate(),
                         r.getUser().getNickname(),
                         r.getUser().getScore(),
-                        r.getDormitory().getName()
+                        r.getDormitory().getName(),
+                        r.getTitle()
                 ))
                 .collect(Collectors.toList());
-        return new Result(collect);
+        return new RecruitList(collect);
     }
 
     @Data
     @Schema
+    @AllArgsConstructor
+    static class RecruitList {
+        private List<RecruitDto> recruitList;
+    }
+
+    @Data
+    @Schema(description = "모집글 생성")
     static class CreateRecruitRequest {
-        @Schema(name = "배달지점명")
+        @Schema(description = "배달지점명")
         private String restaurant;
-        @Schema(name = "배달거점 (BURAM|KB|SUGLIM|NURI)")
+        @Schema(description = "배달거점 (BURAM|KB|SUGLIM|NURI)")
         private Dormitory dormitory;
-        @Schema(name = "마감 기준 (NUMBER|PRICE|TIME")
+        @Schema(description = "마감 기준 (NUMBER|PRICE|TIME")
         private Criteria criteria;
-        @Schema(name = "최소주문금액")
+        @Schema(description = "최소주문금액")
         private int minPrice;
-        @Schema(name = "최소 인원")
+        @Schema(description = "최소 인원")
         private int minPeople;
-        @Schema(name = "배달팁")
+        @Schema(description = "배달팁")
         private int deliveryFee;
-        @Schema(name = "쿠폰 사용 금액")
+        @Schema(description = "쿠폰 사용 금액")
         private int coupon;
-        @Schema(name = "배달앱 (BAEMIN|YOGIYO|COUPANG)")
+        @Schema(description = "배달앱 (BAEMIN|YOGIYO|COUPANG)")
         private Platform platform;
-        @Schema(name = "마감 시간 (예시: 2020-12-24T16:28:27)")
+        @Schema(description = "마감 시간 (예시: 2020-12-24T16:28:27)")
         private LocalDateTime deadlineDate;
-        @Schema(name = "글 제목")
+        @Schema(description = "글 제목")
         private String title;
-        @Schema(name = "글 설명")
+        @Schema(description = "글 설명")
         private String description;
-        @Schema(name = "메뉴")
+        @Schema(description = "메뉴")
         private List<MenuDto> menu;
     }
 
     @Data
     @Schema
     static class MenuDto {
-        @Schema(name = "메뉴명", example = "하와이안피자")
+        @Schema(description = "메뉴명", example = "하와이안피자")
         private String name;
-        @Schema(name = "가격", example = "15000")
+        @Schema(description = "가격", example = "15000")
         private int price;
     }
 
@@ -144,7 +151,7 @@ public class RecruitApiController {
     @NoArgsConstructor
     @AllArgsConstructor
     static class CreateRecruitResponse {
-        @Schema(name = "Recruit id")
+        @Schema(description = "Recruit id")
         private Long id;
     }
 
@@ -153,38 +160,42 @@ public class RecruitApiController {
     @NoArgsConstructor
     @AllArgsConstructor
     static class RecruitDto {
-        @Schema(name = "해당 모집글 id", example = "1")
+        @Schema(description = "해당 모집글 id", example = "1")
         private Long id;
 
-        @Schema(name = "식당 이름", example = "도미노피자")
+        @Schema(description = "식당 이름", example = "도미노피자")
         private String restaurantName;
 
-        @Schema(name = "최소 주문 금액", example = "15000")
+        @Schema(description = "최소 주문 금액", example = "15000")
         private int minPrice;
 
-        @Schema(name = "최소 인원", example = "4")
+        @Schema(description = "최소 인원", example = "4")
         private int minPeople;
 
-        @Schema(name = "현재 인언", example = "1")
+        @Schema(description = "현재 인언", example = "1")
         private int currentPeople;
 
-        @Schema(name = "배달비", example = "3000")
+        @Schema(description = "배달비", example = "3000")
         private int deliveryFee;
 
-        @Schema(name = "글 작성 시간")
+        @Schema(description = "글 작성 시간")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createDate;
 
-        @Schema(name = "마감 시간")
+        @Schema(description = "마감 시간")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
 
-        @Schema(name = "유저 이름", example = "유상")
+        @Schema(description = "유저 이름", example = "유상")
         private String username;
 
-        @Schema(name = "유저 평점", example = "4.1")
+        @Schema(description = "유저 평점", example = "4.1")
         private float userScore;
 
+        @Schema(description = "배달 거점", example = "수림학사")
         private String dormitory;
+
+        @Schema(description = "모집글 제목", example = "글 제목")
+        private String title;
     }
 }
