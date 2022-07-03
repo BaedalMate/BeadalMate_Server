@@ -26,8 +26,4 @@ public class RecruitService {
     public Page<Recruit> findAll(Pageable pageable) {
         return recruitJpaRepository.findAll(pageable);
     }
-
-    public Recruit findOne(Long id) {
-        return recruitRepository.findOne(id);
-    }
 }
