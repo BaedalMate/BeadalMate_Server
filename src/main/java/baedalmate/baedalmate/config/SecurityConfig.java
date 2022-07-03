@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.config;
 
+import baedalmate.baedalmate.oauth.filter.ExceptionHandlerFilter;
 import baedalmate.baedalmate.oauth.filter.OAuth2AccessTokenAuthenticationFilter;
 import baedalmate.baedalmate.oauth.filter.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
-
-    @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter();
-    }
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -53,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
 //                .successHandler(oAuth2AuthenticationSuccessHandler)
 //                .failureHandler(oAuth2AuthenticationFailureHandler);
-        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(exceptionHandlerFilter, TokenAuthenticationFilter.class);
     }
 }

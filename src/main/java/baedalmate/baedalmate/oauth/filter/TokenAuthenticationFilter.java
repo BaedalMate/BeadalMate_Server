@@ -3,6 +3,7 @@ package baedalmate.baedalmate.oauth.filter;
 
 import baedalmate.baedalmate.oauth.provider.TokenProvider;
 import baedalmate.baedalmate.oauth.service.PrincipalDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -31,7 +34,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
+//        try {
             String jwt = getJwtFromRequest(request);
             System.out.println(jwt);
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
@@ -41,9 +44,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception ex) {
-            logger.error("Could not set user authentication in security context", ex);
-        }
+//        } catch (Exception ex) {
+//            logger.error("Could not set user authentication in security context", ex);
+//        }
         filterChain.doFilter(request, response);
 
     }
