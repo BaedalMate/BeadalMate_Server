@@ -106,7 +106,7 @@ public class RecruitApiController {
     @GetMapping(value = "/recruit/{recruitId}")
     public RecruitDetail getRecruit(
             @CurrentUser PrincipalDetails principalDetails,
-            @PathVariable Long recruitId
+            @Parameter(description = "모집글 id") @PathVariable Long recruitId
     ) {
         // 유저 정보 조회
         User user = userService.findOne(principalDetails.getId());
