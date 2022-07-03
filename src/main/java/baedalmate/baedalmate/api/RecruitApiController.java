@@ -95,10 +95,98 @@ public class RecruitApiController {
                         r.getUser().getNickname(),
                         r.getUser().getScore(),
                         r.getDormitory().getName(),
-                        r.getTitle()
+                        r.getTitle(),
+                        "https://img.hankyung.com/photo/202108/99.26501439.1.jpg"
                 ))
                 .collect(Collectors.toList());
         return new RecruitList(collect);
+    }
+
+    @ApiOperation(value = "모집글 리스트 상세 조회")
+    @GetMapping(value = "/recruit/{recruitId}")
+    public RecruitDetail getRecruit(
+            @CurrentUser PrincipalDetails principalDetails,
+            @Parameter(description = "모집글 id") @PathVariable Long recruitId
+    ) {
+        // 유저 정보 조회
+        User user = userService.findOne(principalDetails.getId());
+
+        // 유저와 Recruit의 orders를 비교하여 해당 유저의 참여 여부를 판단하는 로직 필요
+
+        // 모집글 조회
+        Recruit recruit = recruitService.findOne(recruitId);
+
+        // RecruitDetail 생성
+        return new RecruitDetail(
+                recruit.getId(),
+                recruit.getPlatform(),
+                recruit.getUser().getNickname(),
+                recruit.getUser().getScore(),
+                recruit.getUser().getProfileImage(),
+                recruit.getTitle(),
+                recruit.getDescription(),
+                recruit.getDormitory(),
+                recruit.getMinPrice(),
+                recruit.getMinPeople(),
+                recruit.getDeliveryFee(),
+                "https://img.hankyung.com/photo/202108/99.26501439.1.jpg",
+                recruit.getCreateDate(),
+                recruit.getDeadlineDate(),
+                false
+        );
+    }
+
+
+    @Data
+    @Schema
+    @AllArgsConstructor
+    static class RecruitDetail {
+        @Schema(description = "모집글 id")
+        private Long id;
+
+        @Schema(description = "플랫폼 (BAEMIN | YOGIYO | COUPANG)")
+        private Platform platform;
+
+        @Schema(description = "모집글 작성한 유저 이름")
+        private String username;
+
+        @Schema(description = "유저 평점")
+        private float userScore;
+
+        @Schema(description = "유저 이미지")
+        private String userImage;
+
+        @Schema(description = "글 제목")
+        private String title;
+
+        @Schema(description = "글 설명")
+        private String description;
+
+        @Schema(description = "기숙사 (BURAM | KB | SUGLIM | NURI)")
+        private Dormitory dormitory;
+
+        @Schema(description = "최소 주문 금액")
+        private int minPrice;
+
+        @Schema(description = "최소 인원")
+        private int minPeople;
+
+        @Schema(description = "배달비 (추후 수정 예정)")
+        private int deliveryFee;
+
+        @Schema(description = "모집글 이미지")
+        private String thumbnailImage;
+
+        @Schema(description = "생성 시간")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime createDate;
+
+        @Schema(description = "마감 시간")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime deadlineDate;
+
+        @Schema(description = "유저의 참여 여부")
+        private boolean participate;
     }
 
     @Data
@@ -113,9 +201,9 @@ public class RecruitApiController {
     static class CreateRecruitRequest {
         @Schema(description = "배달지점명")
         private String restaurant;
-        @Schema(description = "배달거점 (BURAM|KB|SUGLIM|NURI)")
+        @Schema(description = "배달거점 (BURAM | KB | SUGLIM | NURI)")
         private Dormitory dormitory;
-        @Schema(description = "마감 기준 (NUMBER|PRICE|TIME")
+        @Schema(description = "마감 기준 (NUMBER | PRICE | TIME)")
         private Criteria criteria;
         @Schema(description = "최소주문금액")
         private int minPrice;
@@ -125,9 +213,10 @@ public class RecruitApiController {
         private int deliveryFee;
         @Schema(description = "쿠폰 사용 금액")
         private int coupon;
-        @Schema(description = "배달앱 (BAEMIN|YOGIYO|COUPANG)")
+        @Schema(description = "배달앱 (BAEMIN | YOGIYO | COUPANG)")
         private Platform platform;
-        @Schema(description = "마감 시간 (예시: 2020-12-24T16:28:27)")
+        @Schema(description = "마감 시간 (예시: 2020-12-24 16:28:27)")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
         @Schema(description = "글 제목")
         private String title;
@@ -197,5 +286,8 @@ public class RecruitApiController {
 
         @Schema(description = "모집글 제목", example = "글 제목")
         private String title;
+
+        @Schema(description = "썸네일")
+        private String thumbnailImage;
     }
 }
