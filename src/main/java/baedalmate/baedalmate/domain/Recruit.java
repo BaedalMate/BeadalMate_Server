@@ -42,6 +42,12 @@ public class Recruit {
     @OneToMany(mappedBy = "recruit")
     private List<Order> orders;
 
+    @OneToMany(mappedBy = "recruit")
+    private List<ShippingFee> shippingFees;
+
+    @OneToMany(mappedBy = "recruit")
+    private List<Tag> tags;
+
     @CreationTimestamp
     private LocalDateTime createDate;
 
@@ -57,7 +63,7 @@ public class Recruit {
     private Recruit() {
     }
     private Recruit(int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-                    String restaurant, Platform platform, int coupon, int deliveryFee, String title, String description) {
+                    String restaurant, Platform platform, int coupon, String title, String description) {
         this.minPeople = minPeople;
         this.minPrice = minPrice;
         this.deadlineDate = deadlineDate;
@@ -66,7 +72,6 @@ public class Recruit {
         this.restaurant = restaurant;
         this.platform = platform;
         this.coupon = coupon;
-        this.deliveryFee = deliveryFee;
         this.title = title;
         this.description = description;
     }
@@ -75,8 +80,8 @@ public class Recruit {
     public static Recruit createRecruit(
             User user,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-            String restaurant, Platform platform, int coupon, int deliveryFee, String title, String description) {
-        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, restaurant, platform, coupon, deliveryFee, title, description);
+            String restaurant, Platform platform, int coupon, String title, String description) {
+        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, restaurant, platform, coupon, title, description);
         recruit.setUser(user);
         return recruit;
     }
@@ -89,5 +94,15 @@ public class Recruit {
     public void addOrder(Order order) {
         orders.add(order);
         order.setRecruit(this);
+    }
+
+    public void addShippingFee(ShippingFee shippingFee) {
+        shippingFees.add(shippingFee);
+        shippingFee.setRecruit(this);
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        tag.setRecruit(this);
     }
 }
