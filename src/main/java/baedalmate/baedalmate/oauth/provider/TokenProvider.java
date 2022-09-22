@@ -3,6 +3,8 @@ package baedalmate.baedalmate.oauth.provider;
 
 import baedalmate.baedalmate.config.AppProperties;
 import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.errors.errorcode.UserErrorCode;
+import baedalmate.baedalmate.errors.exceptions.RestApiException;
 import baedalmate.baedalmate.oauth.authentication.OAuth2UserDetails;
 import baedalmate.baedalmate.oauth.exception.ResourceNotFoundException;
 import baedalmate.baedalmate.repository.UserRepository;
@@ -26,6 +28,7 @@ public class TokenProvider {
 
     @Autowired
     public UserRepository userRepository;
+
     public String createToken(Authentication authentication) {
         OAuth2UserDetails principalDetails = (OAuth2UserDetails) authentication.getPrincipal();
         Date now = new Date();
@@ -56,21 +59,9 @@ public class TokenProvider {
                 .getBody();
         return Long.parseLong(claims.getSubject());
     }
-    public boolean validateToken(String authToken) {
-        try {
-            Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
-            return true;
-        } catch (SignatureException ex) {
-            logger.error("Invalid JWT signature");
-        } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
-        }
-        return false;
+
+    public boolean validateToken(String authToken) throws SecurityException, JwtException {
+        Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
+        return true;
     }
 }

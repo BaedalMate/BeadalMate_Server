@@ -56,7 +56,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
                     .nickname(oAuth2User.getUsername())
                     .role("ROLE_USER").build();
             userRepository.save(user);
-            return userRepository.findOne(user.getId());
+            return user;
         }
     }
 

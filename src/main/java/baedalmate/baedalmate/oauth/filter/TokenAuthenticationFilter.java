@@ -1,8 +1,12 @@
 package baedalmate.baedalmate.oauth.filter;
 
 
+import baedalmate.baedalmate.errors.errorcode.UserErrorCode;
 import baedalmate.baedalmate.oauth.provider.TokenProvider;
 import baedalmate.baedalmate.oauth.service.PrincipalDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -19,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
@@ -33,7 +39,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
-            System.out.println(jwt);
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
                 UserDetails userDetails = principalDetailsService.loadUserById(userId);
@@ -41,6 +46,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (SecurityException | MalformedJwtException e) {
+            request.setAttribute("exception", UserErrorCode.WRONG_TYPE_TOKEN.getHttpStatus());
+        } catch (ExpiredJwtException e) {
+            request.setAttribute("exception", UserErrorCode.EXPIRED_TOKEN.getHttpStatus());
+        } catch (UnsupportedJwtException e) {
+            request.setAttribute("exception", UserErrorCode.UNSUPPORTED_TOKEN.getHttpStatus());
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("exception", UserErrorCode.WRONG_TOKEN.getHttpStatus());
         } catch (Exception ex) {
             logger.error("Could not set user authentication in security context", ex);
         }
