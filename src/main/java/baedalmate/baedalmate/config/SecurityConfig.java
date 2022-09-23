@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.config;
 
+import baedalmate.baedalmate.oauth.entrypoint.CustomAuthenticationEntryPoint;
 import baedalmate.baedalmate.oauth.filter.OAuth2AccessTokenAuthenticationFilter;
 import baedalmate.baedalmate.oauth.filter.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
@@ -51,7 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
 //                .successHandler(oAuth2AuthenticationSuccessHandler)
 //                .failureHandler(oAuth2AuthenticationFailureHandler);
-        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling()
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .and()
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
     }
 }
