@@ -8,14 +8,12 @@ import lombok.Data;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -34,12 +32,10 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
     private static final String HTTP_METHOD = "POST";    //HTTP 메서드의 방식은 POST이다.
 
-    private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization";  //AccessToken을 해더에 보낼 때, 해더의 key는 Authorization이다.
-
     private static final AntPathRequestMatcher DEFAULT_OAUTH2_LOGIN_PATH_REQUEST_MATCHER =
             new AntPathRequestMatcher(DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX +"*", HTTP_METHOD); //=>   /login/oauth2/* 의 요청에, POST으로 온 요청에 매칭된다.
 
-    public OAuth2AccessTokenAuthenticationFilter(AccessTokenAuthenticationProvider accessTokenAuthenticationProvider,   //Provider를 등록해주었다. 이는 조금 이따 설명하겠다.
+    public OAuth2AccessTokenAuthenticationFilter(AccessTokenAuthenticationProvider accessTokenAuthenticationProvider,   //Provider를 등록
                                                  AuthenticationSuccessHandler authenticationSuccessHandler,  //로그인 성공 시 처리할  handler이다
                                                  AuthenticationFailureHandler authenticationFailureHandler) { //로그인 실패 시 처리할 handler이다.
 
@@ -50,7 +46,6 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
         this.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         this.setAuthenticationFailureHandler(authenticationFailureHandler);
-
     }
 
 

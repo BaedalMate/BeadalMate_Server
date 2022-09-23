@@ -20,6 +20,4 @@ public class OAuth2LoginFailureHandler  extends SimpleUrlAuthenticationFailureHa
         System.out.println("로그인 실패!!! :" + exception.getMessage());
         response.sendRedirect("/"); //로그인창으로 이동
     }
-
-
 }

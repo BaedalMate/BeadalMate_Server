@@ -22,9 +22,6 @@ public class User {
     @GeneratedValue
     @Column(name = "user_id")
     private Long id;
-    private String name;
-    private String password;
-    private String email;
     private String nickname;
     @Setter
     private String role;
