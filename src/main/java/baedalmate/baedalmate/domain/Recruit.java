@@ -1,10 +1,12 @@
 package baedalmate.baedalmate.domain;
 
+import baedalmate.baedalmate.domain.embed.Place;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,7 +18,7 @@ public class Recruit {
     @Column(name = "recruit_id")
     private Long id;
 
-    private String restaurant;
+    private Place place;
 
     private Dormitory dormitory;
 
@@ -33,20 +35,20 @@ public class Recruit {
 
     private int coupon;
 
-    private int deliveryFee;
+    private boolean freeShipping;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "recruit")
-    private List<Order> orders;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
+    private List<Order> orders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recruit")
-    private List<ShippingFee> shippingFees;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
+    private List<ShippingFee> shippingFees = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recruit")
-    private List<Tag> tags;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
+    private List<Tag> tags = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createDate;
@@ -62,27 +64,37 @@ public class Recruit {
     //== constructor ==//
     private Recruit() {
     }
+
     private Recruit(int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-                    String restaurant, Platform platform, int coupon, String title, String description) {
+                    Place place, Platform platform, int coupon, String title, String description, boolean freeShipping) {
         this.minPeople = minPeople;
         this.minPrice = minPrice;
         this.deadlineDate = deadlineDate;
         this.criteria = criteria;
         this.dormitory = dormitory;
-        this.restaurant = restaurant;
+        this.place = place;
         this.platform = platform;
         this.coupon = coupon;
         this.title = title;
         this.description = description;
+        this.freeShipping = freeShipping;
     }
 
     //== 생성 메서드 ==//
     public static Recruit createRecruit(
             User user,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-            String restaurant, Platform platform, int coupon, String title, String description) {
-        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, restaurant, platform, coupon, title, description);
+            Place place, Platform platform, int coupon, String title, String description, boolean freeShipping,
+            List<ShippingFee> shippingFees, Order order, List<Tag> tags) {
+        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, freeShipping);
         recruit.setUser(user);
+        for(ShippingFee shippingFee : shippingFees) {
+            recruit.addShippingFee(shippingFee);
+        }
+        recruit.addOrder(order);
+        for(Tag tag : tags) {
+            recruit.addTag(tag);
+        }
         return recruit;
     }
 

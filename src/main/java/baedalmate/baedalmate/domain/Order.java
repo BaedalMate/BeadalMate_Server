@@ -29,14 +29,13 @@ public class Order {
     //== constructor ==//
     private Order() {}
 
-    private Order(User user, Recruit recruit) {
+    private Order(User user) {
         this.user = user;
-        this.recruit = recruit;
     }
 
     //== 생성 메서드 ==//
-    public static Order createOrder(User user, Recruit recruit, List<Menu> menus) {
-        Order order = new Order(user, recruit);
+    public static Order createOrder(User user, List<Menu> menus) {
+        Order order = new Order(user);
         for (Menu menu: menus) {
             order.addMenu(menu);
         }
