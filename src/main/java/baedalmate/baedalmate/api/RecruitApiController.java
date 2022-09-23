@@ -55,7 +55,7 @@ public class RecruitApiController {
         Order order = Order.createOrder(user, menus);
         Long orderId = orderService.createOrder(order);
         // 태그 생성
-        List<Tag> tags = createRecruitRequest.getTag().stream()
+        List<Tag> tags = createRecruitRequest.getTags().stream()
                 .map(m -> Tag.createTag(m.getTagname()))
                 .collect(Collectors.toList());
         // 배달비 생성
@@ -90,16 +90,15 @@ public class RecruitApiController {
     @ApiOperation(value = "모집글 리스트 조회")
     @GetMapping(value = "/recruit/list")
     public RecruitList getRecruitList(
-            @ApiParam(value = "카테고리별 조회(구현x)")
+            @ApiParam(value = "카테고리별 조회(구현x), 유저 평점순 정렬 안됨")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
-            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=createDate,DESC")
+            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate,ASC")
             @SortDefault.SortDefaults({
-                    @SortDefault(sort = "createDate", direction = Sort.Direction.DESC)
+                    @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
                     Pageable pageable) {
         Page<Recruit> recruits = recruitService.findAll(pageable);
-
         List<RecruitDto> collect = recruits.getContent().stream()
                 .map(r -> new RecruitDto(
                         r.getId(),
@@ -115,6 +114,147 @@ public class RecruitApiController {
                 ))
                 .collect(Collectors.toList());
         return new RecruitList(collect);
+    }
+
+    @ApiOperation(value = "메인페이지 모집글 리스트 조회")
+    @GetMapping(value = "/recruit/main/list")
+    public MainRecruitList getMainRecruitList(
+            @PageableDefault(size = 5)
+            @ApiParam(value = "예시: {ip}:8080/recruit/main/list?page=0&size=5&sort=deadlineDate,ASC")
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
+            }) Pageable pageable) {
+        Page<Recruit> recruits = recruitService.findAll(pageable);
+        List<MainRecruitDto> collect = recruits.getContent().stream()
+                .map(r -> new MainRecruitDto(
+                            r.getId(),
+                            r.getPlace().getName(),
+                            r.getMinPeople(),
+                            r.getCurrentPeople(),
+                            r.getCreateDate(),
+                            r.getDeadlineDate(),
+                            r.getUser().getNickname(),
+                            r.getUser().getScore(),
+                            r.getDormitory().getName(),
+                            r.getMinShippingFee()
+                        )
+                )
+                .collect(Collectors.toList());
+        return new MainRecruitList(collect);
+    }
+
+    @ApiOperation(value = "메인페이지 태그 포함된 모집글 리스트 조회")
+    @GetMapping(value = "/recruit/tag/list")
+    public TagRecruitList getTagRecruitList(
+            @PageableDefault(size = 5)
+            @ApiParam(value = "예시: {ip}:8080/recruit/tag/list?page=0&size=5&sort=deadlineDate,ASC")
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
+            }) Pageable pageable) {
+        Page<Recruit> recruits = recruitService.findAll(pageable);
+        List<TagRecruitDto> collect = recruits.getContent().stream()
+                .map(r -> new TagRecruitDto(
+                        r.getId(),
+                        r.getPlace().getName(),
+                        r.getMinPrice(),
+                        r.getCreateDate(),
+                        r.getDeadlineDate(),
+                        r.getUser().getNickname(),
+                        r.getUser().getScore(),
+                        r.getDormitory().getName(),
+                        r.getMinShippingFee(),
+                        r.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+        return new TagRecruitList(collect);
+    }
+
+    @Data
+    @Schema
+    @AllArgsConstructor
+    static class TagRecruitList {
+        private List<TagRecruitDto> recruitList;
+    }
+
+    @Data
+    @Schema
+    @AllArgsConstructor
+    static class TagRecruitDto {
+        @Schema(description = "해당 모집글 id", example = "1")
+        private Long id;
+
+        @Schema(description = "식당 이름", example = "도미노피자")
+        private String place;
+
+        @Schema(description = "최소 금액", example = "15000")
+        private int minPrice;
+
+        @Schema(description = "글 작성 시간")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime createDate;
+
+        @Schema(description = "마감 시간")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime deadlineDate;
+
+        @Schema(description = "유저 이름", example = "유상")
+        private String username;
+
+        @Schema(description = "유저 평점", example = "4.1")
+        private float userScore;
+
+        @Schema(description = "배달 거점", example = "수림학사")
+        private String dormitory;
+
+        @Schema(description = "배달비")
+        private int shippingFee;
+
+        @Schema(description = "태그")
+        private List<TagDto> tags;
+    }
+
+    @Data
+    @Schema
+    @AllArgsConstructor
+    static class MainRecruitList {
+        private List<MainRecruitDto> recruitList;
+    }
+
+    @Data
+    @Schema
+    @AllArgsConstructor
+    static class MainRecruitDto {
+        @Schema(description = "해당 모집글 id", example = "1")
+        private Long id;
+
+        @Schema(description = "식당 이름", example = "도미노피자")
+        private String place;
+
+        @Schema(description = "최소 인원", example = "4")
+        private int minPeople;
+
+        @Schema(description = "현재 인원", example = "1")
+        private int currentPeople;
+
+        @Schema(description = "글 작성 시간")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime createDate;
+
+        @Schema(description = "마감 시간")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime deadlineDate;
+
+        @Schema(description = "유저 이름", example = "유상")
+        private String username;
+
+        @Schema(description = "유저 평점", example = "4.1")
+        private float userScore;
+
+        @Schema(description = "배달 거점", example = "수림학사")
+        private String dormitory;
+
+        @Schema(description = "배달비")
+        private int shippingFee;
     }
 
     @Data
@@ -165,7 +305,7 @@ public class RecruitApiController {
         @Schema(description = "메뉴")
         private List<MenuDto> menu;
         @Schema(description = "태그")
-        private List<TagDto> tag;
+        private List<TagDto> tags;
     }
 
     @Data
@@ -185,6 +325,7 @@ public class RecruitApiController {
 
     @Data
     @Schema
+    @AllArgsConstructor
     static class TagDto {
         @Schema(description = "태그명")
         private String tagname;

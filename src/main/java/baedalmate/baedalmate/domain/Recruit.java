@@ -18,6 +18,7 @@ public class Recruit {
     @Column(name = "recruit_id")
     private Long id;
 
+    @Embedded
     private Place place;
 
     private Dormitory dormitory;
@@ -26,8 +27,11 @@ public class Recruit {
 
     private Platform platform;
 
-    @Column(columnDefinition = "integer default 0", nullable = false)
+    @Column(columnDefinition = "integer default 1", nullable = false)
     private int currentPeople;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int views;
 
     private int minPeople;
 
@@ -59,7 +63,8 @@ public class Recruit {
 
     private String description;
 
-
+    @Column(columnDefinition = "boolean default true", nullable = false)
+    private boolean active;
 
     //== constructor ==//
     private Recruit() {
@@ -116,5 +121,16 @@ public class Recruit {
     public void addTag(Tag tag) {
         tags.add(tag);
         tag.setRecruit(this);
+    }
+
+    //== Getter ==//
+    public int getMinShippingFee() {
+        if(freeShipping) return 0;
+
+        int min = shippingFees.get(0).getShippingFee();
+        for(ShippingFee shippingFee : shippingFees) {
+            min = Math.min(shippingFee.getShippingFee(), min);
+        }
+        return min;
     }
 }
