@@ -55,7 +55,9 @@ public class RecruitApiController {
         Order order = Order.createOrder(user, menus);
         Long orderId = orderService.createOrder(order);
         // 태그 생성
-        List<Tag> tags = createRecruitRequest.getTags().stream()
+        List<Tag> tags = createRecruitRequest
+                .getTags()
+                .stream()
                 .map(m -> Tag.createTag(m.getTagname()))
                 .collect(Collectors.toList());
         // 배달비 생성
@@ -265,8 +267,7 @@ public class RecruitApiController {
     }
 
     @Data
-    @Schema(description = "모집글 생성")
-    static class CreateRecruitRequest {
+    @Schema(description = "모집글 생성") static class CreateRecruitRequest {
         @Schema(description = "배달지점명")
         @NotNull
         private PlaceDto place;
@@ -325,6 +326,7 @@ public class RecruitApiController {
 
     @Data
     @Schema
+    @NoArgsConstructor
     @AllArgsConstructor
     static class TagDto {
         @Schema(description = "태그명")
