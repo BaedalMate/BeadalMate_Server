@@ -49,7 +49,7 @@ public class RecruitApiController {
         User user = userService.findOne(principalDetails.getId());
         // menu 생성
         List<Menu> menus = createRecruitRequest.getMenu().stream()
-                .map(m -> Menu.createMenu(m.getName(), m.getPrice()))
+                .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
                 .collect(Collectors.toList());
 
         // order 생성
@@ -446,6 +446,8 @@ public class RecruitApiController {
         private String name;
         @Schema(description = "가격", example = "15000")
         private int price;
+        @Schema(description = "수량", example = "1")
+        private int quantity;
     }
 
    @Data
