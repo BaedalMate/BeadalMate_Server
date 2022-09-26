@@ -4,6 +4,7 @@ import baedalmate.baedalmate.domain.*;
 import baedalmate.baedalmate.domain.embed.Place;
 import baedalmate.baedalmate.oauth.annotation.CurrentUser;
 import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
+import baedalmate.baedalmate.repository.CategoryRepository;
 import baedalmate.baedalmate.service.OrderService;
 import baedalmate.baedalmate.service.RecruitService;
 import baedalmate.baedalmate.service.UserService;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,7 @@ public class RecruitApiController {
     private final UserService userService;
     private final RecruitService recruitService;
     private final OrderService orderService;
+    private final CategoryRepository categoryRepository;
 
     @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
@@ -51,25 +54,43 @@ public class RecruitApiController {
         List<Menu> menus = createRecruitRequest.getMenu().stream()
                 .map(m -> Menu.createMenu(m.getName(), m.getPrice()))
                 .collect(Collectors.toList());
+
         // order 생성
         Order order = Order.createOrder(user, menus);
         Long orderId = orderService.createOrder(order);
+
         // 태그 생성
-        List<Tag> tags = createRecruitRequest
-                .getTags()
-                .stream()
-                .map(m -> Tag.createTag(m.getTagname()))
-                .collect(Collectors.toList());
+        List<Tag> tags;
+        if(createRecruitRequest.getTags().size()>0) {
+            tags = createRecruitRequest
+                    .getTags()
+                    .stream()
+                    .map(m -> Tag.createTag(m.getTagname()))
+                    .collect(Collectors.toList());
+        } else {
+            tags = new ArrayList<>();
+        }
+
         // 배달비 생성
-        List<ShippingFee> shippingFees = createRecruitRequest.getShippingFee().stream()
-                .map(m -> ShippingFee.createShippingFee(m.getShippingFee(), m.getLowerPrice(), m.getUpperPrice()))
-                .collect(Collectors.toList());
+        List<ShippingFee> shippingFees;
+        if(createRecruitRequest.isFreeShipping()) { // 무료배달이면 shippingFees는 빈 ArrayList
+            shippingFees = new ArrayList<>();
+        }
+        else {
+            shippingFees = createRecruitRequest.getShippingFee().stream()
+                    .map(m -> ShippingFee.createShippingFee(m.getShippingFee(), m.getLowerPrice(), m.getUpperPrice()))
+                    .collect(Collectors.toList());
+        }
         // place 생성
         PlaceDto placeDto = createRecruitRequest.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
+        // CategoryRecruit 생성
+        Category category = categoryRepository.findOne(createRecruitRequest.getCategoryId());
+
         // recruit 생성
         Recruit recruit = Recruit.createRecruit(
                 user,
+                category,
                 createRecruitRequest.getMinPeople(),
                 createRecruitRequest.getMinPrice(),
                 createRecruitRequest.getDeadlineDate(),
@@ -268,6 +289,9 @@ public class RecruitApiController {
 
     @Data
     @Schema(description = "모집글 생성") static class CreateRecruitRequest {
+        @Schema(description = "카테고리 id")
+        @NotNull
+        private Long categoryId;
         @Schema(description = "배달지점명")
         @NotNull
         private PlaceDto place;
@@ -306,6 +330,7 @@ public class RecruitApiController {
         @Schema(description = "메뉴")
         private List<MenuDto> menu;
         @Schema(description = "태그")
+        @NotNull
         private List<TagDto> tags;
     }
 

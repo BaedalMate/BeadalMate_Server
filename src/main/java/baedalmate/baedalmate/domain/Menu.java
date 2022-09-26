@@ -13,6 +13,7 @@ public class Menu {
     @JoinColumn(name = "order_id")
     private Order order;
 
+    @Column(name = "menu_name")
     private String name;
 
     private int price;

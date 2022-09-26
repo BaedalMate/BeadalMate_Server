@@ -71,5 +71,6 @@ public class User {
     //== 연관관계 편의메서드 ==//
     public void addRecruit(Recruit recruit) {
         recruits.add(recruit);
+        recruit.setUser(this);
     }
 }
