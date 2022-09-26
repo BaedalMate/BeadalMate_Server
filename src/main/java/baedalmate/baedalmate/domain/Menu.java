@@ -18,17 +18,21 @@ public class Menu {
 
     private int price;
 
+    @Column(columnDefinition = "integer default 1")
+    private int quantity;
+
     //== constructor ==//
     private Menu() {}
 
-    private Menu(String name, int price) {
+    private Menu(String name, int price, int quantity) {
         this.name = name;
         this.price = price;
+        this.quantity = quantity;
     }
 
     //== 생성 메서드 ==//
-    public static Menu createMenu(String name, int price) {
-        Menu menu = new Menu(name, price);
+    public static Menu createMenu(String name, int price, int quantity) {
+        Menu menu = new Menu(name, price, quantity);
 
         return menu;
     }
