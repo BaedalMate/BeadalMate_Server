@@ -1,0 +1,11 @@
+--insert into category(category_id, category_name) values (1, '한식');
+--insert into category(category_id, category_name) values (2, '중식');
+--insert into category(category_id, category_name) values (3, '일식');
+--insert into category(category_id, category_name) values (4, '양식');
+--insert into category(category_id, category_name) values (5, '패스트푸드');
+--insert into category(category_id, category_name) values (6, '분식');
+--insert into category(category_id, category_name) values (7, '카페디저트');
+--insert into category(category_id, category_name) values (8, '치킨');
+--insert into category(category_id, category_name) values (9, '피자');
+--insert into category(category_id, category_name) values (10, '아시안');
+--insert into category(category_id, category_name) values (11, '도시락');
