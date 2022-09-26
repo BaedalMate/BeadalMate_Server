@@ -12,10 +12,11 @@ public class Tag {
     @Column(name = "tag_id")
     private Long id;
 
-    @Column(name = "tagname")
+    @Column(name = "tag_name")
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recruit_id")
     private Recruit recruit;
 
     //== constructor ==//

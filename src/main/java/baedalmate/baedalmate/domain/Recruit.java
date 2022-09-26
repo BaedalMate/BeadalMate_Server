@@ -3,6 +3,7 @@ package baedalmate.baedalmate.domain;
 import baedalmate.baedalmate.domain.embed.Place;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -54,8 +55,15 @@ public class Recruit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
     private List<Tag> tags = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     @CreationTimestamp
     private LocalDateTime createDate;
+
+    @UpdateTimestamp
+    private LocalDateTime updateDate;
 
     private LocalDateTime deadlineDate;
 
@@ -87,12 +95,13 @@ public class Recruit {
 
     //== 생성 메서드 ==//
     public static Recruit createRecruit(
-            User user,
+            User user, Category category,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
             Place place, Platform platform, int coupon, String title, String description, boolean freeShipping,
             List<ShippingFee> shippingFees, Order order, List<Tag> tags) {
         Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, freeShipping);
-        recruit.setUser(user);
+        user.addRecruit(recruit);
+        category.addRecruit(recruit);
         for(ShippingFee shippingFee : shippingFees) {
             recruit.addShippingFee(shippingFee);
         }
@@ -106,6 +115,10 @@ public class Recruit {
     //== 연관관계 편의 메서드 ==//
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public void addOrder(Order order) {
@@ -123,6 +136,9 @@ public class Recruit {
         tag.setRecruit(this);
     }
 
+    public void addCategory(Category category) {
+
+    }
     //== Getter ==//
     public int getMinShippingFee() {
         if(freeShipping) return 0;
