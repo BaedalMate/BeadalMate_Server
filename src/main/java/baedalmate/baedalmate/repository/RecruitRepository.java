@@ -12,6 +12,10 @@ public class RecruitRepository {
 
     private final EntityManager em;
 
+    public Recruit findOne(Long recruitId) {
+        return em.find(Recruit.class, recruitId);
+    }
+
     public void save(Recruit recruit) {
         em.persist(recruit);
     }
