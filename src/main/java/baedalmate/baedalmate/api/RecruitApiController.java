@@ -13,10 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -192,8 +189,90 @@ public class RecruitApiController {
         return new TagRecruitList(collect);
     }
 
+    @ApiOperation(value = "모집글 상세 조회")
+    @GetMapping(value = "/recruit/{id}")
+    public RecruitDetail getRecruit(
+            @ApiParam(value = "모집글 id")
+            @PathVariable("id")
+            Long recruitId
+        ) {
+        // Recruit 조회
+        Recruit recruit = recruitService.findById(recruitId);
+
+        // PlaceDto 생성
+        Place place = recruit.getPlace();
+        PlaceDto placeDto = new PlaceDto(
+                place.getName(),
+                place.getAddressName(),
+                place.getRoadAddressName(),
+                place.getX(),
+                place.getY()
+        );
+
+        // ShippingFeeDetail 생성
+        List<ShippingFeeDto> shippingFeeDetails = recruit.getShippingFees()
+                .stream().map(s -> new ShippingFeeDto(
+                            s.getShippingFee(),
+                            s.getLowerPrice(),
+                            s.getUpperPrice()
+                    )
+                )
+                .collect(Collectors.toList());
+
+        return new RecruitDetail(
+                recruit.getId(),
+                recruit.getTitle(),
+                recruit.getDescription(),
+                placeDto,
+                recruit.getDeadlineDate(),
+                recruit.getMinShippingFee(),
+                shippingFeeDetails,
+                recruit.getCoupon(),
+                recruit.getCurrentPeople(),
+                recruit.getMinPeople(),
+                recruit.getDormitory().getName(),
+                recruit.getUser().getNickname(),
+                recruit.getUser().getScore()
+        );
+    }
+
     @Data
     @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class RecruitDetail {
+        @Schema(description = "모집글 id")
+        private Long recruitId;
+        @Schema(description = "모집글 제목")
+        private String title;
+        @Schema(description = "모집글 설명")
+        private String description;
+        @Schema(description = "배달 가게 정보")
+        private PlaceDto place;
+        @Schema(description = "마감 시간")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+        private LocalDateTime deadlineDate;
+        @Schema(description = "최소 배달비")
+        private int shippingFee;
+        @Schema(description = "배달비 상세")
+        private List<ShippingFeeDto> shippingFeeDetail;
+        @Schema(description = "쿠폰 사용 금액")
+        private int coupon;
+        @Schema(description = "모집 현재 인원")
+        private int currentPeople;
+        @Schema(description = "모집 최소 인원")
+        private int minPeople;
+        @Schema(description = "거점")
+        private String dormitory;
+        @Schema(description = "유저 이름")
+        private String username;
+        @Schema(description = "유저 평점")
+        private float score;
+    }
+
+    @Data
+    @Schema
+    @NoArgsConstructor
     @AllArgsConstructor
     static class TagRecruitList {
         private List<TagRecruitDto> recruitList;
@@ -336,6 +415,8 @@ public class RecruitApiController {
 
     @Data
     @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class PlaceDto {
         @Schema(description = "장소명")
         private String name;// 장소명, 업체명
@@ -369,6 +450,8 @@ public class RecruitApiController {
 
    @Data
    @Schema
+   @NoArgsConstructor
+   @AllArgsConstructor
    static class ShippingFeeDto {
        @Schema(description = "배달비")
        private int shippingFee;

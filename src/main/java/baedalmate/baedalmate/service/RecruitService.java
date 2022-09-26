@@ -23,6 +23,10 @@ public class RecruitService {
         return recruit.getId();
     }
 
+    public Recruit findById(Long recruitId) {
+        return recruitRepository.findOne(recruitId);
+    }
+
     public Page<Recruit> findAll(Pageable pageable) {
         return recruitJpaRepository.findAll(pageable);
     }
