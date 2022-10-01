@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 public class Menu {
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "menu_id")
     private Long id;

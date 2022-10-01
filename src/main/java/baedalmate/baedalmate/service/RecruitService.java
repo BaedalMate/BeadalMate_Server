@@ -5,6 +5,7 @@ import baedalmate.baedalmate.domain.Recruit;
 import baedalmate.baedalmate.repository.RecruitJpaRepository;
 import baedalmate.baedalmate.repository.RecruitRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,11 @@ public class RecruitService {
     }
 
     public Recruit findById(Long recruitId) {
-        return recruitRepository.findOne(recruitId);
+        if(recruitJpaRepository.findById(recruitId).isEmpty()){
+            // 예외 던져야함
+        }
+        recruitJpaRepository.updateView(recruitId);
+        return recruitJpaRepository.findById(recruitId).get();
     }
 
     public List<Recruit> findAll(Pageable pageable) {
@@ -50,14 +55,15 @@ public class RecruitService {
 
     public List<Recruit> findAllByCategory(Long categoryId, Pageable pageable) {
         String sort = pageable.getSort().toString();
+        Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         if(sort.contains("score")) {
-            return recruitJpaRepository.findAllByCategoryUsingJoinOrderByScore(categoryId, pageable);
+            return recruitJpaRepository.findAllByCategoryUsingJoinOrderByScore(categoryId, p);
         }
         if(sort.contains("deadlineDate")) {
-            return recruitJpaRepository.findAllByCategoryUsingJoinOrderByDeadlineDate(categoryId, pageable);
+            return recruitJpaRepository.findAllByCategoryUsingJoinOrderByDeadlineDate(categoryId, p);
         }
         if(sort.contains("view")) {
-            return recruitJpaRepository.findAllByCategoryUsingJoinOrderByView(categoryId, pageable);
+            return recruitJpaRepository.findAllByCategoryUsingJoinOrderByView(categoryId, p);
         }
         return new ArrayList<Recruit>();
     }

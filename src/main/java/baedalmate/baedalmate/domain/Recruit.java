@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 public class Recruit {
 
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "recruit_id")
     private Long id;
