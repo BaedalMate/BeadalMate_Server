@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
 
-    @Query("select r from Recruit r join fetch r.user u join fetch r.shippingFees where r.active = true order by u.score DESC")
+    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.active = true order by r.user.score DESC")
     List<Recruit> findAllUsingJoinOrderByScore(Pageable pageable);
 
     @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.active = true order by r.deadlineDate ASC")
@@ -21,7 +21,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.active = true order by r.view DESC")
     List<Recruit> findAllUsingJoinOrderByView(Pageable pageable);
 
-    @Query("select r from Recruit r join fetch r.user u join fetch r.shippingFees where r.category.id = :id and r.active = true order by u.score DESC")
+    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.category.id = :id and r.active = true order by r.user.score DESC")
     List<Recruit> findAllByCategoryUsingJoinOrderByScore(@Param("id") Long categoryId, Pageable pageable);
 
     @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.category.id = :id and r.active = true order by r.deadlineDate ASC")
