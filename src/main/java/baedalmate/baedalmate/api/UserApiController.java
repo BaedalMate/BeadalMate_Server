@@ -27,7 +27,7 @@ public class UserApiController {
     public UserDto getUserInfo(
             @CurrentUser PrincipalDetails principalDetails) {
         User user = userService.findOne(principalDetails.getId());
-        return new UserDto(user.getNickname(), user.getProfileImage(), user.getAddress(), user.getDormitory());
+        return new UserDto(user.getNickname(), user.getProfileImage(), user.getAddress(), user.getDormitoryName());
     }
 
     @Data

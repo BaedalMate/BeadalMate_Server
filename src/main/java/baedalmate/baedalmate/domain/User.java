@@ -61,7 +61,7 @@ public class User {
         return address.getStreet() + " " + address.getDetail();
     }
 
-    public String getDormitory() {
+    public String getDormitoryName() {
         if(dormitory == null) {
             return "";
         }

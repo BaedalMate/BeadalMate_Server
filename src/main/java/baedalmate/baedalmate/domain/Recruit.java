@@ -32,7 +32,7 @@ public class Recruit {
     private int currentPeople;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
-    private int views;
+    private int view;
 
     private int minPeople;
 

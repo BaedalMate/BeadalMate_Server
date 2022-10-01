@@ -14,7 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -110,16 +109,24 @@ public class RecruitApiController {
     @ApiOperation(value = "모집글 리스트 조회")
     @GetMapping(value = "/recruit/list")
     public RecruitList getRecruitList(
-            @ApiParam(value = "카테고리별 조회(구현x), 유저 평점순 정렬 안됨")
+            @ApiParam(value = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
-            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate,ASC")
+            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate,ASC&categoryId=1")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
                     Pageable pageable) {
-        Page<Recruit> recruits = recruitService.findAll(pageable);
-        List<RecruitDto> collect = recruits.getContent().stream()
+//        List<RecruitFlatDto> recruits = recruitService.(pageable);
+
+
+        List<Recruit> recruits;
+        if(categoryId == null) {
+            recruits = recruitService.findAll(pageable);
+        } else {
+            recruits = recruitService.findAllByCategory(categoryId, pageable);
+        }
+        List<RecruitDto> collect = recruits.stream()
                 .map(r -> new RecruitDto(
                         r.getId(),
                         r.getPlace().getName(),
@@ -140,12 +147,12 @@ public class RecruitApiController {
     @GetMapping(value = "/recruit/main/list")
     public MainRecruitList getMainRecruitList(
             @PageableDefault(size = 5)
-            @ApiParam(value = "예시: {ip}:8080/recruit/main/list?page=0&size=5&sort=deadlineDate,ASC")
+            @ApiParam(value = "예시: {ip}:8080/recruit/main/list?page=0&size=5&sort=deadlineDate")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
-        Page<Recruit> recruits = recruitService.findAll(pageable);
-        List<MainRecruitDto> collect = recruits.getContent().stream()
+        List<Recruit> recruits = recruitService.findAll(pageable);
+        List<MainRecruitDto> collect = recruits.stream()
                 .map(r -> new MainRecruitDto(
                             r.getId(),
                             r.getPlace().getName(),
@@ -166,13 +173,17 @@ public class RecruitApiController {
     @ApiOperation(value = "메인페이지 태그 포함된 모집글 리스트 조회")
     @GetMapping(value = "/recruit/tag/list")
     public TagRecruitList getTagRecruitList(
+            @CurrentUser PrincipalDetails principalDetails,
             @PageableDefault(size = 5)
             @ApiParam(value = "예시: {ip}:8080/recruit/tag/list?page=0&size=5&sort=deadlineDate,ASC")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
-        Page<Recruit> recruits = recruitService.findAll(pageable);
-        List<TagRecruitDto> collect = recruits.getContent().stream()
+        // 유저 정보 조회
+        User user = userService.findOne(principalDetails.getId());
+
+        List<Recruit> recruits = recruitService.findAllWithTag(user.getDormitory(), pageable);
+        List<TagRecruitDto> collect = recruits.stream()
                 .map(r -> new TagRecruitDto(
                         r.getId(),
                         r.getPlace().getName(),
