@@ -37,14 +37,15 @@ public class RecruitService {
 
     public List<Recruit> findAll(Pageable pageable) {
         String sort = pageable.getSort().toString();
+        Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         if(sort.contains("score")) {
-            return recruitJpaRepository.findAllUsingJoinOrderByScore(pageable);
+            return recruitJpaRepository.findAllUsingJoinOrderByScore(p);
         }
         if(sort.contains("deadlineDate")) {
-            return recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(pageable);
+            return recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(p);
         }
         if(sort.contains("view")) {
-            return recruitJpaRepository.findAllUsingJoinOrderByView(pageable);
+            return recruitJpaRepository.findAllUsingJoinOrderByView(p);
         }
         return new ArrayList<Recruit>();
     }
