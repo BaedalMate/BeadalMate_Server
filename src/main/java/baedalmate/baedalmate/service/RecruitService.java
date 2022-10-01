@@ -31,6 +31,7 @@ public class RecruitService {
         if(recruitJpaRepository.findById(recruitId).isEmpty()){
             // 예외 던져야함
         }
+        recruitJpaRepository.updateView(recruitId);
         return recruitJpaRepository.findById(recruitId).get();
     }
 
