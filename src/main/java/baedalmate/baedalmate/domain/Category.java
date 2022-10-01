@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Getter
 public class Category {
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "category_id")
     private Long id;
