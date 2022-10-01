@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
 
@@ -32,4 +33,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
 
     @Query("select r from Recruit r join fetch r.user join fetch r.tags where r.dormitory = :dormitory and r.active = true order by r.deadlineDate ASC")
     List<Recruit> findAllWithTagsUsingJoinOrderByDeadlineDate(@Param("dormitory") Dormitory dormitory, Pageable pageable);
+
+    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.id = :id")
+    Optional<Recruit> findById(@Param("id") Long recruitId);
 }
