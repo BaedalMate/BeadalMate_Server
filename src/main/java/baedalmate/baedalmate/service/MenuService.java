@@ -14,6 +14,7 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
 
+    @Transactional
     public Long createMenu(Order order, Menu menu) {
         order.addMenu(menu);
         menuRepository.save(menu);
