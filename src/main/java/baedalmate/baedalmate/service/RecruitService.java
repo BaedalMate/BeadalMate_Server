@@ -31,6 +31,7 @@ public class RecruitService {
         return recruitJpaRepository.findById(recruitId).get();
     }
 
+    @Transactional
     public Recruit getRecruitDetailById(Long recruitId) {
         Recruit recruit = recruitJpaRepository.findById(recruitId).get();
 
