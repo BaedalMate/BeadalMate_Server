@@ -2,6 +2,7 @@ package baedalmate.baedalmate.service;
 
 import baedalmate.baedalmate.domain.*;
 import baedalmate.baedalmate.domain.embed.Place;
+import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
 import baedalmate.baedalmate.repository.CategoryRepository;
 import baedalmate.baedalmate.repository.UserRepository;
 import org.assertj.core.api.Assertions;
@@ -55,7 +56,7 @@ class 모집글참여테스트 {
                 .build();
         userRepository.save(user2);
 
-        Category category = categoryRepository.findOne((long)2);
+        Category category = categoryRepository.findOne((long) 2);
 
         // when
         Recruit recruit = Recruit.createRecruit(user1, category, 3, 10000, LocalDateTime.now(), Criteria.NUMBER, Dormitory.SULIM,
@@ -71,9 +72,12 @@ class 모집글참여테스트 {
 
         Order order2 = Order.createOrder(user2);
         Long order2Id = orderService.createOrder(recruit, order2);
-
-        Order order3 = Order.createOrder(user2);
-        Long order3Id = orderService.createOrder(recruit, order3);
+        try {
+            Order order3 = Order.createOrder(user2);
+            Long order3Id = orderService.createOrder(recruit, order3);
+        } catch (ExistOrderException e) {
+            System.out.println(e.getMessage());
+        }
 
         // then
         Assertions.assertThat(recruit.getCurrentPeople()).isEqualTo(2);
