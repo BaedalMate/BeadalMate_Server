@@ -1,9 +1,11 @@
 package baedalmate.baedalmate.service;
 
 import baedalmate.baedalmate.domain.*;
+import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
 import baedalmate.baedalmate.repository.OrderJpaRepository;
 import baedalmate.baedalmate.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,18 +18,17 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderJpaRepository orderJpaRepository;
 
     @Transactional
     public Long createOrder(Recruit recruit, Order order) {
         recruit.addOrder(order);
         orderRepository.save(order);
 
-        List<Order> orders = orderJpaRepository.findAllByRecruit(recruit);
+        List<Order> orders = recruit.getOrders();
         // 중복 검사
         List<User> users = orders.stream().map(o -> o.getUser()).collect(Collectors.toList());
-        if(orders.size() != users.stream().distinct().count()) {
-            // 예외 throw
+        if(orders.size() != users.stream().distinct().collect(Collectors.toList()).size()) {
+            throw new ExistOrderException();
         }
 
         // 인원수 검사
