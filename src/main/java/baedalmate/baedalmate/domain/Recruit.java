@@ -71,8 +71,8 @@ public class Recruit {
 
     private String description;
 
-    @Column(columnDefinition = "boolean default true", nullable = false)
-    private boolean active;
+//    @Column(columnDefinition = "boolean default true", nullable = false)
+    private boolean active = true;
 
     //== constructor ==//
     private Recruit() {
@@ -98,14 +98,13 @@ public class Recruit {
             User user, Category category,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
             Place place, Platform platform, int coupon, String title, String description, boolean freeShipping,
-            List<ShippingFee> shippingFees, Order order, List<Tag> tags) {
+            List<ShippingFee> shippingFees, List<Tag> tags) {
         Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, freeShipping);
         user.addRecruit(recruit);
         category.addRecruit(recruit);
         for(ShippingFee shippingFee : shippingFees) {
             recruit.addShippingFee(shippingFee);
         }
-        recruit.addOrder(order);
         for(Tag tag : tags) {
             recruit.addTag(tag);
         }
@@ -148,5 +147,15 @@ public class Recruit {
             min = Math.min(shippingFee.getShippingFee(), min);
         }
         return min;
+    }
+
+    //== Set Methods ==//
+    public int updateCurrentPeople() {
+        currentPeople = currentPeople + 1;
+        return currentPeople;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
