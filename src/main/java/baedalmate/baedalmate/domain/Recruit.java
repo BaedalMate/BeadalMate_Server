@@ -28,7 +28,7 @@ public class Recruit {
 
     private Platform platform;
 
-    @Column(columnDefinition = "integer default 1", nullable = false)
+    @Column(columnDefinition = "integer default 0", nullable = false)
     private int currentPeople;
 
     @Column(columnDefinition = "integer default 0", nullable = false)
