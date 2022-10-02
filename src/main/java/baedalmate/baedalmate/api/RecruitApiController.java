@@ -215,7 +215,7 @@ public class RecruitApiController {
             Long recruitId
         ) {
         // Recruit 조회
-        Recruit recruit = recruitService.findById(recruitId);
+        Recruit recruit = recruitService.getRecruitDetailById(recruitId);
 
         // PlaceDto 생성
         Place place = recruit.getPlace();

@@ -28,11 +28,14 @@ public class RecruitService {
     }
 
     public Recruit findById(Long recruitId) {
-        if(recruitJpaRepository.findById(recruitId).isEmpty()){
-            // 예외 던져야함
-        }
-        recruitJpaRepository.updateView(recruitId);
         return recruitJpaRepository.findById(recruitId).get();
+    }
+
+    public Recruit getRecruitDetailById(Long recruitId) {
+        Recruit recruit = recruitJpaRepository.findById(recruitId).get();
+
+        recruitJpaRepository.updateView(recruitId);
+        return recruit;
     }
 
     public List<Recruit> findAll(Pageable pageable) {
