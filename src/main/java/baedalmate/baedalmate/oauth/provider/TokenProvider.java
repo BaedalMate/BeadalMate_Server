@@ -3,10 +3,7 @@ package baedalmate.baedalmate.oauth.provider;
 
 import baedalmate.baedalmate.config.AppProperties;
 import baedalmate.baedalmate.domain.User;
-import baedalmate.baedalmate.errors.errorcode.UserErrorCode;
-import baedalmate.baedalmate.errors.exceptions.RestApiException;
 import baedalmate.baedalmate.oauth.authentication.OAuth2UserDetails;
-import baedalmate.baedalmate.oauth.exception.ResourceNotFoundException;
 import baedalmate.baedalmate.repository.UserRepository;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;

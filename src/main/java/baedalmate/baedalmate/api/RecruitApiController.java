@@ -5,6 +5,7 @@ import baedalmate.baedalmate.domain.embed.Place;
 import baedalmate.baedalmate.oauth.annotation.CurrentUser;
 import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import baedalmate.baedalmate.repository.CategoryRepository;
+import baedalmate.baedalmate.service.MenuService;
 import baedalmate.baedalmate.service.OrderService;
 import baedalmate.baedalmate.service.RecruitService;
 import baedalmate.baedalmate.service.UserService;
@@ -37,6 +38,7 @@ public class RecruitApiController {
     private final RecruitService recruitService;
     private final OrderService orderService;
     private final CategoryRepository categoryRepository;
+    private final MenuService menuService;
 
     @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
@@ -46,14 +48,6 @@ public class RecruitApiController {
     ) {
         // 유저 정보 조회
         User user = userService.findOne(principalDetails.getId());
-        // menu 생성
-        List<Menu> menus = createRecruitRequest.getMenu().stream()
-                .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
-                .collect(Collectors.toList());
-
-        // order 생성
-        Order order = Order.createOrder(user, menus);
-        Long orderId = orderService.createOrder(order);
 
         // 태그 생성
         List<Tag> tags;
@@ -99,10 +93,23 @@ public class RecruitApiController {
                 createRecruitRequest.getDescription(),
                 createRecruitRequest.isFreeShipping(),
                 shippingFees,
-                order,
                 tags
         );
         Long id = recruitService.createRecruit(recruit);
+
+        // order 생성
+        Order order = Order.createOrder(user);
+        orderService.createOrder(recruit, order);
+
+        // menu 생성
+        List<Menu> menus = createRecruitRequest.getMenu().stream()
+                .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
+                .collect(Collectors.toList());
+
+        for(MenuDto menuDto : createRecruitRequest.getMenu()) {
+            menuService.createMenu(order, Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity()));
+        }
+
         return new CreateRecruitResponse(id);
     }
 
@@ -117,8 +124,6 @@ public class RecruitApiController {
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
                     Pageable pageable) {
-//        List<RecruitFlatDto> recruits = recruitService.(pageable);
-
 
         List<Recruit> recruits;
         if(categoryId == null) {
@@ -181,7 +186,9 @@ public class RecruitApiController {
             }) Pageable pageable) {
         // 유저 정보 조회
         User user = userService.findOne(principalDetails.getId());
-
+        if(user.getDormitory() == null) {
+            // throw exception
+        }
         List<Recruit> recruits = recruitService.findAllWithTag(user.getDormitory(), pageable);
         List<TagRecruitDto> collect = recruits.stream()
                 .map(r -> new TagRecruitDto(
@@ -208,7 +215,7 @@ public class RecruitApiController {
             Long recruitId
         ) {
         // Recruit 조회
-        Recruit recruit = recruitService.findById(recruitId);
+        Recruit recruit = recruitService.getRecruitDetailById(recruitId);
 
         // PlaceDto 생성
         Place place = recruit.getPlace();

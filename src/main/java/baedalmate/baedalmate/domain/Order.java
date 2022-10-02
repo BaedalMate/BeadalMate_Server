@@ -34,11 +34,8 @@ public class Order {
     }
 
     //== 생성 메서드 ==//
-    public static Order createOrder(User user, List<Menu> menus) {
+    public static Order createOrder(User user) {
         Order order = new Order(user);
-        for (Menu menu: menus) {
-            order.addMenu(menu);
-        }
         return order;
     }
     //== 연관관계 편의 메서드 ==//

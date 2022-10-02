@@ -28,29 +28,34 @@ public class RecruitService {
     }
 
     public Recruit findById(Long recruitId) {
-        if(recruitJpaRepository.findById(recruitId).isEmpty()){
-            // 예외 던져야함
-        }
-        recruitJpaRepository.updateView(recruitId);
         return recruitJpaRepository.findById(recruitId).get();
+    }
+
+    public Recruit getRecruitDetailById(Long recruitId) {
+        Recruit recruit = recruitJpaRepository.findById(recruitId).get();
+
+        recruitJpaRepository.updateView(recruitId);
+        return recruit;
     }
 
     public List<Recruit> findAll(Pageable pageable) {
         String sort = pageable.getSort().toString();
+        Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         if(sort.contains("score")) {
-            return recruitJpaRepository.findAllUsingJoinOrderByScore(pageable);
+            return recruitJpaRepository.findAllUsingJoinOrderByScore(p);
         }
         if(sort.contains("deadlineDate")) {
-            return recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(pageable);
+            return recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(p);
         }
         if(sort.contains("view")) {
-            return recruitJpaRepository.findAllUsingJoinOrderByView(pageable);
+            return recruitJpaRepository.findAllUsingJoinOrderByView(p);
         }
         return new ArrayList<Recruit>();
     }
 
     public List<Recruit> findAllWithTag(Dormitory dormitory, Pageable pageable) {
-        return recruitJpaRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(dormitory, pageable);
+        Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return recruitJpaRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(dormitory, p);
     }
 
     public List<Recruit> findAllByCategory(Long categoryId, Pageable pageable) {

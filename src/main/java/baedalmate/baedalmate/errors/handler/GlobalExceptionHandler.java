@@ -2,6 +2,8 @@ package baedalmate.baedalmate.errors.handler;
 
 import baedalmate.baedalmate.errors.errorcode.CommonErrorCode;
 import baedalmate.baedalmate.errors.errorcode.ErrorCode;
+import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
+import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.errors.exceptions.RestApiException;
 import baedalmate.baedalmate.errors.response.ErrorResponse;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,18 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
+
+    @ExceptionHandler(ExistOrderException.class)
+    public ResponseEntity<Object> handleExistOrderException(ExistOrderException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode);
+    }
 
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
@@ -49,31 +63,31 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
-        return ResponseEntity.status(errorCode.getHttpStatus())
+        return ResponseEntity.status(errorCode.getHttpStatus().value())
                 .body(makeErrorResponse(errorCode));
     }
 
     private ErrorResponse makeErrorResponse(ErrorCode errorCode) {
         return ErrorResponse.builder()
-                .code(errorCode.name())
+                .code(errorCode.getHttpStatus().value())
                 .message(errorCode.getMessage())
                 .build();
     }
 
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode, String message) {
-        return ResponseEntity.status(errorCode.getHttpStatus())
+        return ResponseEntity.status(errorCode.getHttpStatus().value())
                 .body(makeErrorResponse(errorCode, message));
     }
 
     private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message) {
         return ErrorResponse.builder()
-                .code(errorCode.name())
+                .code(errorCode.getHttpStatus().value())
                 .message(message)
                 .build();
     }
 
     private ResponseEntity<Object> handleExceptionInternal(BindException e, ErrorCode errorCode) {
-        return ResponseEntity.status(errorCode.getHttpStatus())
+        return ResponseEntity.status(errorCode.getHttpStatus().value())
                 .body(makeErrorResponse(e, errorCode));
     }
 
@@ -85,7 +99,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.toList());
 
         return ErrorResponse.builder()
-                .code(errorCode.name())
+                .code(errorCode.getHttpStatus().value())
                 .message(errorCode.getMessage())
                 .errors(validationErrorList)
                 .build();

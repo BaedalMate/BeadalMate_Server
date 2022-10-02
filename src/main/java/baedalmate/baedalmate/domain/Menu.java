@@ -1,8 +1,11 @@
 package baedalmate.baedalmate.domain;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
