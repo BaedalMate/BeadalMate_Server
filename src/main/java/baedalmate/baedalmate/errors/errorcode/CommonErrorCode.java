@@ -11,6 +11,7 @@ public enum CommonErrorCode implements ErrorCode {
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Resource not exists"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     EXIST_ORDER(HttpStatus.BAD_REQUEST, "User already ordered"),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "Image not exist"),
     ;
 
     private final HttpStatus httpStatus;
