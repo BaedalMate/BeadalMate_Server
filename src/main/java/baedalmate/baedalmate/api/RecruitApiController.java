@@ -5,10 +5,7 @@ import baedalmate.baedalmate.domain.embed.Place;
 import baedalmate.baedalmate.oauth.annotation.CurrentUser;
 import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import baedalmate.baedalmate.repository.CategoryRepository;
-import baedalmate.baedalmate.service.MenuService;
-import baedalmate.baedalmate.service.OrderService;
-import baedalmate.baedalmate.service.RecruitService;
-import baedalmate.baedalmate.service.UserService;
+import baedalmate.baedalmate.service.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +36,7 @@ public class RecruitApiController {
     private final OrderService orderService;
     private final CategoryRepository categoryRepository;
     private final MenuService menuService;
+    private final CategoryImageService categoryImageService;
 
     @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
@@ -74,8 +72,12 @@ public class RecruitApiController {
         // place 생성
         PlaceDto placeDto = createRecruitRequest.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
-        // CategoryRecruit 생성
+
+        // Category 조회
         Category category = categoryRepository.findOne(createRecruitRequest.getCategoryId());
+
+        // 랜덤 카테고리 이미지 조회
+        CategoryImage categoryImage = categoryImageService.getRandomCategoryImage(category);
 
         // recruit 생성
         Recruit recruit = Recruit.createRecruit(
@@ -91,6 +93,7 @@ public class RecruitApiController {
                 createRecruitRequest.getCoupon(),
                 createRecruitRequest.getTitle(),
                 createRecruitRequest.getDescription(),
+                categoryImage.getName(),
                 createRecruitRequest.isFreeShipping(),
                 shippingFees,
                 tags

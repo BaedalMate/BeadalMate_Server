@@ -71,6 +71,8 @@ public class Recruit {
 
     private String description;
 
+    private String image;
+
 //    @Column(columnDefinition = "boolean default true", nullable = false)
     private boolean active = true;
 
@@ -79,7 +81,7 @@ public class Recruit {
     }
 
     private Recruit(int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-                    Place place, Platform platform, int coupon, String title, String description, boolean freeShipping) {
+                    Place place, Platform platform, int coupon, String title, String description, String image, boolean freeShipping) {
         this.minPeople = minPeople;
         this.minPrice = minPrice;
         this.deadlineDate = deadlineDate;
@@ -90,6 +92,7 @@ public class Recruit {
         this.coupon = coupon;
         this.title = title;
         this.description = description;
+        this.image = image;
         this.freeShipping = freeShipping;
     }
 
@@ -97,9 +100,9 @@ public class Recruit {
     public static Recruit createRecruit(
             User user, Category category,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-            Place place, Platform platform, int coupon, String title, String description, boolean freeShipping,
+            Place place, Platform platform, int coupon, String title, String description, String image, boolean freeShipping,
             List<ShippingFee> shippingFees, List<Tag> tags) {
-        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, freeShipping);
+        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, image, freeShipping);
         user.addRecruit(recruit);
         category.addRecruit(recruit);
         for(ShippingFee shippingFee : shippingFees) {
