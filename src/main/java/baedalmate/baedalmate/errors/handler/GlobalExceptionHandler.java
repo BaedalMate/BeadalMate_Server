@@ -3,6 +3,7 @@ package baedalmate.baedalmate.errors.handler;
 import baedalmate.baedalmate.errors.errorcode.CommonErrorCode;
 import baedalmate.baedalmate.errors.errorcode.ErrorCode;
 import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
+import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
 import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.errors.exceptions.RestApiException;
 import baedalmate.baedalmate.errors.response.ErrorResponse;
@@ -22,23 +23,28 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e) {
-        ErrorCode errorCode = e.getErrorCode();
-        return handleExceptionInternal(errorCode);
-    }
-
-    @ExceptionHandler(ExistOrderException.class)
-    public ResponseEntity<Object> handleExistOrderException(ExistOrderException e) {
-        ErrorCode errorCode = e.getErrorCode();
-        return handleExceptionInternal(errorCode);
-    }
+//    @ExceptionHandler(ResourceNotFoundException.class)
+//    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e) {
+//        ErrorCode errorCode = e.getErrorCode();
+//        return handleExceptionInternal(errorCode);
+//    }
+//
+//    @ExceptionHandler(ExistOrderException.class)
+//    public ResponseEntity<Object> handleExistOrderException(ExistOrderException e) {
+//        ErrorCode errorCode = e.getErrorCode();
+//        return handleExceptionInternal(errorCode);
+//    }
 
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }
+
+//    @ExceptionHandler(InvalidParameterException.class)
+//    public ResponseEntity<Object> handleInvalidParamterException(InvalidParameterException e) {
+//        ErrorCode error
+//    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException e) {
