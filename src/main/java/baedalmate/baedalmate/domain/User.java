@@ -37,7 +37,8 @@ public class User {
     private SocialType socialType;
     private String socialId;
 
-    private Dormitory dormitory;
+    @Builder.Default
+    private Dormitory dormitory = Dormitory.SUNGLIM;
 
     @OneToMany(mappedBy = "user")
     private List<Recruit> recruits = new ArrayList<>();
