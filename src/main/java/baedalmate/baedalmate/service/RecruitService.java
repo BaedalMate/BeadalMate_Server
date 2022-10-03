@@ -32,11 +32,8 @@ public class RecruitService {
     }
 
     @Transactional
-    public Recruit getRecruitDetailById(Long recruitId) {
-        Recruit recruit = recruitJpaRepository.findById(recruitId).get();
-
-        recruitJpaRepository.updateView(recruitId);
-        return recruit;
+    public int updateView(Long recruitId) {
+        return recruitJpaRepository.updateView(recruitId);
     }
 
     public List<Recruit> findAll(Pageable pageable) {
