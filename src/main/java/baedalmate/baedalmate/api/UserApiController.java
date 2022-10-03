@@ -27,7 +27,7 @@ public class UserApiController {
     public UserDto getUserInfo(
             @CurrentUser PrincipalDetails principalDetails) {
         User user = userService.findOne(principalDetails.getId());
-        return new UserDto(user.getNickname(), user.getProfileImage(), user.getAddress(), user.getDormitoryName());
+        return new UserDto(user.getNickname(), user.getProfileImage(), user.getAddress(), user.getDormitoryName(), user.getScore());
     }
 
     @Data
@@ -38,5 +38,6 @@ public class UserApiController {
         private String profileImage;
         private String address;
         private String dormitory;
+        private float score;
     }
 }
