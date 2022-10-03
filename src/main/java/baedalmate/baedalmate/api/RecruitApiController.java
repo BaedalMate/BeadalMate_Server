@@ -219,7 +219,10 @@ public class RecruitApiController {
         User user = userService.findOne(principalDetails.getId());
 
         // Recruit 조회
-        Recruit recruit = recruitService.getRecruitDetailById(recruitId);
+        Recruit recruit = recruitService.findById(recruitId);
+
+        // Recruit 조회수 증가
+        int view = recruitService.updateView(recruitId);
 
         // PlaceDto 생성
         Place place = recruit.getPlace();

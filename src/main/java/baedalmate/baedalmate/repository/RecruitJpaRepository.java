@@ -40,5 +40,5 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
 
     @Modifying
     @Query("update Recruit r set r.view = r.view + 1 where r.id = :id")
-    int updateView(Long id);
+    int updateView(@Param("id") Long recruitId);
 }
