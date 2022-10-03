@@ -20,10 +20,18 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<Recruit> recruits = new ArrayList<>();
 
+    @OneToMany(mappedBy = "category")
+    private List<CategoryImage> images = new ArrayList<>();
+
     //== 연관관계 편의 메서드 ==//
     public void addRecruit(Recruit recruit) {
         recruits.add(recruit);
         recruit.setCategory(this);
+    }
+
+    public void addCategoryImage(CategoryImage categoryImage) {
+        images.add(categoryImage);
+        categoryImage.setCategory(this);
     }
 
     //== Constructor ==//
