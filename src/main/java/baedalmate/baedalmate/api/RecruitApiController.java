@@ -210,10 +210,14 @@ public class RecruitApiController {
     @ApiOperation(value = "모집글 상세 조회")
     @GetMapping(value = "/recruit/{id}")
     public RecruitDetail getRecruit(
+            @CurrentUser PrincipalDetails principalDetails,
             @ApiParam(value = "모집글 id")
             @PathVariable("id")
             Long recruitId
         ) {
+        // 유저 조회
+        User user = userService.findOne(principalDetails.getId());
+
         // Recruit 조회
         Recruit recruit = recruitService.getRecruitDetailById(recruitId);
 
@@ -237,6 +241,7 @@ public class RecruitApiController {
                 )
                 .collect(Collectors.toList());
 
+        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         return new RecruitDetail(
                 recruit.getId(),
                 recruit.getTitle(),
@@ -250,7 +255,10 @@ public class RecruitApiController {
                 recruit.getMinPeople(),
                 recruit.getDormitory().getName(),
                 recruit.getUser().getNickname(),
-                recruit.getUser().getScore()
+                recruit.getUser().getScore(),
+                recruit.getUser().getProfileImage(),
+                recruit.isActive(),
+                host
         );
     }
 
@@ -286,6 +294,12 @@ public class RecruitApiController {
         private String username;
         @Schema(description = "유저 평점")
         private float score;
+        @Schema(description = "유저 프로필 이미지")
+        private String profileImage;
+        @Schema(description = "마감 여부")
+        private boolean active;
+        @Schema(description = "호스트 여부")
+        private boolean host;
     }
 
     @Data
