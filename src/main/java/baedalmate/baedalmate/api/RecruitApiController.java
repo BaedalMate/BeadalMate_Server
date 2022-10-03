@@ -145,7 +145,8 @@ public class RecruitApiController {
                         r.getDeadlineDate(),
                         r.getUser().getScore(),
                         r.getDormitory().getName(),
-                        r.getTitle()
+                        r.getTitle(),
+                        r.getImage()
                 ))
                 .collect(Collectors.toList());
         return new RecruitList(collect);
@@ -171,7 +172,8 @@ public class RecruitApiController {
                             r.getUser().getNickname(),
                             r.getUser().getScore(),
                             r.getDormitory().getName(),
-                            r.getMinShippingFee()
+                            r.getMinShippingFee(),
+                            r.getImage()
                         )
                 )
                 .collect(Collectors.toList());
@@ -204,7 +206,8 @@ public class RecruitApiController {
                         r.getUser().getScore(),
                         r.getDormitory().getName(),
                         r.getMinShippingFee(),
-                        r.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList())
+                        r.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
+                        r.getImage()
                 ))
                 .collect(Collectors.toList());
         return new TagRecruitList(collect);
@@ -351,6 +354,9 @@ public class RecruitApiController {
 
         @Schema(description = "태그")
         private List<TagDto> tags;
+
+        @Schema(description = "모집글 이미지")
+        private String image;
     }
 
     @Data
@@ -395,6 +401,9 @@ public class RecruitApiController {
 
         @Schema(description = "배달비")
         private int shippingFee;
+
+        @Schema(description = "모집글 이미지")
+        private String image;
     }
 
     @Data
@@ -405,7 +414,8 @@ public class RecruitApiController {
     }
 
     @Data
-    @Schema(description = "모집글 생성") static class CreateRecruitRequest {
+    @Schema(description = "모집글 생성")
+    static class CreateRecruitRequest {
         @Schema(description = "카테고리 id")
         @NotNull
         private Long categoryId;
@@ -546,5 +556,8 @@ public class RecruitApiController {
 
         @Schema(description = "모집글 제목", example = "글 제목")
         private String title;
+
+        @Schema(description = "모집글 이미지")
+        private String image;
     }
 }
