@@ -168,6 +168,7 @@ public class RecruitApiController {
                             r.getMinPeople(),
                             r.getMinPrice(),
                             r.getCurrentPeople(),
+                            r.getMinPrice(),
                             r.getCreateDate(),
                             r.getDeadlineDate(),
                             r.getUser().getNickname(),
@@ -389,7 +390,10 @@ public class RecruitApiController {
         @Schema(description = "현재 인원", example = "1")
         private int currentPeople;
 
-        @Schema(description = "글 작성 시간", example = "yyyy-MM-dd HH:mm:ss")
+        @Schema(description = "최소 금액")
+        private int minPrice;
+
+        @Schema(description = "글 작성 시간")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createDate;
 
