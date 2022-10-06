@@ -166,6 +166,7 @@ public class RecruitApiController {
                             r.getId(),
                             r.getPlace().getName(),
                             r.getMinPeople(),
+                            r.getMinPrice(),
                             r.getCurrentPeople(),
                             r.getCreateDate(),
                             r.getDeadlineDate(),
@@ -253,6 +254,7 @@ public class RecruitApiController {
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         return new RecruitDetail(
                 recruit.getId(),
+                recruit.getImage(),
                 recruit.getTitle(),
                 recruit.getDescription(),
                 placeDto,
@@ -278,6 +280,8 @@ public class RecruitApiController {
     static class RecruitDetail {
         @Schema(description = "모집글 id")
         private Long recruitId;
+        @Schema(description = "모집글 이미지")
+        private String image;
         @Schema(description = "모집글 제목")
         private String title;
         @Schema(description = "모집글 설명")
@@ -378,6 +382,9 @@ public class RecruitApiController {
 
         @Schema(description = "최소 인원", example = "4")
         private int minPeople;
+
+        @Schema(description = "최소 주문 금액", example = "10000")
+        private int minPrice;
 
         @Schema(description = "현재 인원", example = "1")
         private int currentPeople;
