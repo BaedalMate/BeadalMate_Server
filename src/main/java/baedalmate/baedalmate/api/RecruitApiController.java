@@ -253,12 +253,22 @@ public class RecruitApiController {
                 .collect(Collectors.toList());
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+        boolean participate = false;
+        for(Order order : recruit.getOrders()) {
+            if(order.getUser() == user) {
+                participate = true;
+            }
+        }
+
+        User hostUser = recruit.getUser();
+
         return new RecruitDetail(
                 recruit.getId(),
                 recruit.getImage(),
                 recruit.getTitle(),
                 recruit.getDescription(),
                 placeDto,
+                recruit.getPlatform().name(),
                 recruit.getDeadlineDate(),
                 recruit.getMinShippingFee(),
                 shippingFeeDetails,
@@ -266,11 +276,13 @@ public class RecruitApiController {
                 recruit.getCurrentPeople(),
                 recruit.getMinPeople(),
                 recruit.getDormitory().getName(),
-                recruit.getUser().getNickname(),
-                recruit.getUser().getScore(),
-                recruit.getUser().getProfileImage(),
+                hostUser.getNickname(),
+                hostUser.getScore(),
+                hostUser.getProfileImage(),
+                hostUser.getDormitoryName(),
                 recruit.isActive(),
-                host
+                host,
+                participate
         );
     }
 
@@ -289,6 +301,8 @@ public class RecruitApiController {
         private String description;
         @Schema(description = "배달 가게 정보")
         private PlaceDto place;
+        @Schema(description = "배달 플랫폼")
+        private String platform;
         @Schema(description = "마감 시간")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
@@ -310,10 +324,14 @@ public class RecruitApiController {
         private float score;
         @Schema(description = "유저 프로필 이미지")
         private String profileImage;
+        @Schema(description = "유저 거점")
+        private String userDormitory;
         @Schema(description = "마감 여부")
         private boolean active;
         @Schema(description = "호스트 여부")
         private boolean host;
+        @Schema(description = "참석 여부")
+        private boolean participate;
     }
 
     @Data
