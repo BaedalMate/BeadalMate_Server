@@ -122,7 +122,7 @@ public class RecruitApiController {
             @ApiParam(value = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
-            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate,ASC&categoryId=1")
+            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate&categoryId=1")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
@@ -166,6 +166,7 @@ public class RecruitApiController {
                             r.getId(),
                             r.getPlace().getName(),
                             r.getMinPeople(),
+                            r.getMinPrice(),
                             r.getCurrentPeople(),
                             r.getMinPrice(),
                             r.getCreateDate(),
@@ -186,7 +187,7 @@ public class RecruitApiController {
     public TagRecruitList getTagRecruitList(
             @CurrentUser PrincipalDetails principalDetails,
             @PageableDefault(size = 5)
-            @ApiParam(value = "예시: {ip}:8080/recruit/tag/list?page=0&size=5&sort=deadlineDate,ASC")
+            @ApiParam(value = "예시: {ip}:8080/recruit/tag/list?page=0&size=5&sort=deadlineDate")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
@@ -254,6 +255,7 @@ public class RecruitApiController {
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         return new RecruitDetail(
                 recruit.getId(),
+                recruit.getImage(),
                 recruit.getTitle(),
                 recruit.getDescription(),
                 placeDto,
@@ -279,13 +281,15 @@ public class RecruitApiController {
     static class RecruitDetail {
         @Schema(description = "모집글 id")
         private Long recruitId;
+        @Schema(description = "모집글 이미지")
+        private String image;
         @Schema(description = "모집글 제목")
         private String title;
         @Schema(description = "모집글 설명")
         private String description;
         @Schema(description = "배달 가게 정보")
         private PlaceDto place;
-        @Schema(description = "마감 시간")
+        @Schema(description = "마감 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
         @Schema(description = "최소 배달비")
@@ -333,11 +337,11 @@ public class RecruitApiController {
         @Schema(description = "최소 금액", example = "15000")
         private int minPrice;
 
-        @Schema(description = "글 작성 시간")
+        @Schema(description = "글 작성 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createDate;
 
-        @Schema(description = "마감 시간")
+        @Schema(description = "마감 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
 
@@ -380,6 +384,9 @@ public class RecruitApiController {
         @Schema(description = "최소 인원", example = "4")
         private int minPeople;
 
+        @Schema(description = "최소 주문 금액", example = "10000")
+        private int minPrice;
+
         @Schema(description = "현재 인원", example = "1")
         private int currentPeople;
 
@@ -390,7 +397,7 @@ public class RecruitApiController {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createDate;
 
-        @Schema(description = "마감 시간")
+        @Schema(description = "마감 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
 
