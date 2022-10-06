@@ -70,7 +70,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         @ApiModelProperty(value = "페이지 크기", allowableValues="range[0, 100]")
         private Integer size;
 
-        @ApiModelProperty(value = "정렬(사용법: deadlineDate | view | score)")
+        @ApiModelProperty(value = "정렬(사용법: deadlineDate|createDate,ASC|DESC)")
         private String sort;
     }
 }
