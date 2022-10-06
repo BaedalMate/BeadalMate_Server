@@ -122,7 +122,7 @@ public class RecruitApiController {
             @ApiParam(value = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
-            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate,ASC&categoryId=1")
+            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate&categoryId=1")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
@@ -186,7 +186,7 @@ public class RecruitApiController {
     public TagRecruitList getTagRecruitList(
             @CurrentUser PrincipalDetails principalDetails,
             @PageableDefault(size = 5)
-            @ApiParam(value = "예시: {ip}:8080/recruit/tag/list?page=0&size=5&sort=deadlineDate,ASC")
+            @ApiParam(value = "예시: {ip}:8080/recruit/tag/list?page=0&size=5&sort=deadlineDate")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
@@ -288,7 +288,7 @@ public class RecruitApiController {
         private String description;
         @Schema(description = "배달 가게 정보")
         private PlaceDto place;
-        @Schema(description = "마감 시간")
+        @Schema(description = "마감 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
         @Schema(description = "최소 배달비")
@@ -336,11 +336,11 @@ public class RecruitApiController {
         @Schema(description = "최소 금액", example = "15000")
         private int minPrice;
 
-        @Schema(description = "글 작성 시간")
+        @Schema(description = "글 작성 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createDate;
 
-        @Schema(description = "마감 시간")
+        @Schema(description = "마감 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
 
@@ -389,11 +389,11 @@ public class RecruitApiController {
         @Schema(description = "현재 인원", example = "1")
         private int currentPeople;
 
-        @Schema(description = "글 작성 시간")
+        @Schema(description = "글 작성 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createDate;
 
-        @Schema(description = "마감 시간")
+        @Schema(description = "마감 시간", example = "yyyy-MM-dd HH:mm:ss")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime deadlineDate;
 
