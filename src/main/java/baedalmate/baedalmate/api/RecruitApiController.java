@@ -224,7 +224,11 @@ public class RecruitApiController {
             Long recruitId
         ) {
         // 유저 조회
-        User user = userService.findOne(principalDetails.getId());
+        Long userId = principalDetails.getId();
+
+        System.out.println("유저 아이디 조회 완료");
+
+        User user = userService.findOne(userId);
 
         // Recruit 조회
         Recruit recruit = recruitService.findById(recruitId);
