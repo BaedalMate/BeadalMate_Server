@@ -224,10 +224,14 @@ public class RecruitApiController {
             Long recruitId
         ) {
         // 유저 조회
-        User user = principalDetails.getUser();
+        User user = userService.findOne(principalDetails.getId());
+
+        System.out.println("유저 조회 완료");
 
         // Recruit 조회
         Recruit recruit = recruitService.findById(recruitId);
+
+        System.out.println("모집글 조회 완료");
 
         // Recruit 조회수 증가
         int view = recruitService.updateView(recruitId);
@@ -242,6 +246,8 @@ public class RecruitApiController {
                 place.getY()
         );
 
+        System.out.println("장소 조회 완료");
+
         // ShippingFeeDetail 생성
         List<ShippingFeeDto> shippingFeeDetails = recruit.getShippingFees()
                 .stream().map(s -> new ShippingFeeDto(
@@ -253,12 +259,15 @@ public class RecruitApiController {
                 .collect(Collectors.toList());
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+        System.out.println("호스트 조회 완료");
+
         boolean participate = false;
         for(Order order : recruit.getOrders()) {
-            if(order.getUser().getId() == user.getId()) {
+            if(order.getUser() == user) {
                 participate = true;
             }
         }
+        System.out.println("주문 조회 완료");
 
         User hostUser = recruit.getUser();
 
