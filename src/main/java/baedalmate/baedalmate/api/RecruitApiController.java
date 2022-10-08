@@ -224,7 +224,7 @@ public class RecruitApiController {
             Long recruitId
         ) {
         // 유저 조회
-        User user = principalDetails.getUser();
+        User user = userService.findOne(principalDetails.getId());
 
         // Recruit 조회
         Recruit recruit = recruitService.findById(recruitId);
