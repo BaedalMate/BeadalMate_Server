@@ -223,6 +223,8 @@ public class RecruitApiController {
             @PathVariable("id")
             Long recruitId
         ) {
+        System.out.println("유저 조회 전");
+
         // 유저 조회
         User user = userService.findOne(principalDetails.getId());
 
