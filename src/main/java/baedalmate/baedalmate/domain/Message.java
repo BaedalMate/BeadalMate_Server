@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 public class Message {
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "message_id")
     private Long id;
