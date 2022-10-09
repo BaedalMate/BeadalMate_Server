@@ -13,10 +13,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Schema
 public class MessageDto {
-
-    @Schema(description = "메세지 타입 (ENTER | TALK")
-    @NotNull
-    private MessageType type;
     //채팅방 ID
     @Schema(description = "채팅방 id")
     @NotNull
