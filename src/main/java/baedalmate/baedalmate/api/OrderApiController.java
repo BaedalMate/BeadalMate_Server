@@ -1,9 +1,6 @@
 package baedalmate.baedalmate.api;
 
-import baedalmate.baedalmate.domain.Menu;
-import baedalmate.baedalmate.domain.Order;
-import baedalmate.baedalmate.domain.Recruit;
-import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.domain.*;
 import baedalmate.baedalmate.oauth.annotation.CurrentUser;
 import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import baedalmate.baedalmate.repository.OrderJpaRepository;
@@ -57,6 +54,8 @@ public class OrderApiController {
             Menu menu = Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity());
             menuService.createMenu(order, menu);
         }
+
+        Message message = Message.createMessage(MessageType.ENTER, "", user, recruit.getChatRoom());
 
         return new CreateOrderResponse(order.getId());
     }
