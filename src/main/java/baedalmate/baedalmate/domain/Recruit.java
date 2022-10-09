@@ -59,6 +59,9 @@ public class Recruit {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @OneToOne(mappedBy = "recruit")
+    private ChatRoom chatRoom;
+
     @CreationTimestamp
     private LocalDateTime createDate;
 
@@ -138,9 +141,6 @@ public class Recruit {
         tag.setRecruit(this);
     }
 
-    public void addCategory(Category category) {
-
-    }
     //== Getter ==//
     public int getMinShippingFee() {
         if(freeShipping) return 0;
@@ -160,5 +160,9 @@ public class Recruit {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
     }
 }

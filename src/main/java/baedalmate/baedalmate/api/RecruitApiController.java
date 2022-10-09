@@ -37,6 +37,8 @@ public class RecruitApiController {
     private final CategoryRepository categoryRepository;
     private final MenuService menuService;
     private final CategoryImageService categoryImageService;
+    private final ChatRoomService chatRoomService;
+    private final MessageService messageService;
 
     @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
@@ -112,6 +114,14 @@ public class RecruitApiController {
         for(MenuDto menuDto : createRecruitRequest.getMenu()) {
             menuService.createMenu(order, Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity()));
         }
+
+        // chat room 생성
+        ChatRoom chatRoom = ChatRoom.createChatRoom(recruit);
+        chatRoomService.save(chatRoom);
+
+        // message 생성
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+        messageService.save(message);
 
         return new CreateRecruitResponse(id);
     }

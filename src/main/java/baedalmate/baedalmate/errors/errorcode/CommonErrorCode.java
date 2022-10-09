@@ -12,6 +12,7 @@ public enum CommonErrorCode implements ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     EXIST_ORDER(HttpStatus.BAD_REQUEST, "User already ordered"),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "Image not exist"),
+    API_ARGUMENT_NOT_VALID(HttpStatus.BAD_REQUEST, "Api request body invalid"),
     ;
 
     private final HttpStatus httpStatus;

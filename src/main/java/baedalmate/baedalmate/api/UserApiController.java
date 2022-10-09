@@ -31,7 +31,7 @@ public class UserApiController {
     public UserInfoResponse getUserInfo(
             @CurrentUser PrincipalDetails principalDetails) {
         User user = userService.findOne(principalDetails.getId());
-        return new UserInfoResponse(user.getNickname(), user.getProfileImage(), user.getDormitoryName(), user.getScore());
+        return new UserInfoResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getDormitoryName(), user.getScore());
     }
 
     @ApiOperation(value = "유저 거점 변경")
@@ -54,6 +54,8 @@ public class UserApiController {
     @NoArgsConstructor
     @AllArgsConstructor
     static class UserInfoResponse {
+        @Schema(description = "유저 id")
+        private Long userId;
         @Schema(description = "유저 닉네임")
         private String nickname;
         @Schema(description = "유저 프로필 이미지")
