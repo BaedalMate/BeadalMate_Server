@@ -8,11 +8,15 @@ import baedalmate.baedalmate.dto.MessageDto;
 import baedalmate.baedalmate.service.ChatRoomService;
 import baedalmate.baedalmate.service.MessageService;
 import baedalmate.baedalmate.service.UserService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
+@Api(tags = {"메시지 api"})
 @RestController
 @RequiredArgsConstructor
 public class MessageApiController {
@@ -23,7 +27,7 @@ public class MessageApiController {
     private final ChatRoomService chatRoomService;
 
     @MessageMapping("/chat/message")
-    public void enter(MessageDto messageDto) {
+    public void enter(@Valid MessageDto messageDto) {
 //        if (MessageType.ENTER.equals(message.getType())) {
 //            message.setMessage(message.getSender()+"님이 입장하였습니다.");
 //        }
