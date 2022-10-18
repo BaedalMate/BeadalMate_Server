@@ -34,12 +34,12 @@ public class MessageApiController {
         // 유저 조회
         User user = userService.findOne(messageDto.getSenderId());
         // 채팅방 조회
-        ChatRoom chatRoom = chatRoomService.findById(messageDto.getRoomId());
+        ChatRoom chatRoom = chatRoomService.findOne(messageDto.getRoomId());
 
         // 메세지 db 저장
         Message message = Message.createMessage(MessageType.TALK, messageDto.getMessage(), user, chatRoom);
         messageService.save(message);
-        messageDto.setSenderNickName(user.getNickname());
+        messageDto.setSender(user.getNickname());
 
         sendingOperations.convertAndSend("/topic/chat/room/"+messageDto.getRoomId(), messageDto);
     }

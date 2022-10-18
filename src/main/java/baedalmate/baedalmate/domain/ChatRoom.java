@@ -35,5 +35,6 @@ public class ChatRoom {
     //== 연관관계 편의 메서드 ==//
     public void addMessage(Message message) {
         messages.add(message);
+        message.setChatRoom(this);
     }
 }

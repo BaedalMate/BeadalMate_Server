@@ -42,7 +42,7 @@ public class Message {
         Message message = new Message(messageType, messageContent);
 
         message.setUser(user);
-        message.setChatRoom(chatRoom);
+        chatRoom.addMessage(message);
 
         return message;
     }

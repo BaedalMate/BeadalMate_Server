@@ -21,7 +21,7 @@ public class ChatRoomService {
         return chatRoom.getId();
     }
 
-    public ChatRoom findById(Long id) {
+    public ChatRoom findOne(Long id) {
         return chatRoomJpaRepository.findOne(id);
     }
 }
