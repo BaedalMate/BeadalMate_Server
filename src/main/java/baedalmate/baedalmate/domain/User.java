@@ -46,6 +46,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
+
     @CreationTimestamp
     private Timestamp createDate;
     @UpdateTimestamp
@@ -73,5 +76,10 @@ public class User {
     public void addRecruit(Recruit recruit) {
         recruits.add(recruit);
         recruit.setUser(this);
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setUser(this);
     }
 }

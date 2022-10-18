@@ -55,6 +55,9 @@ public class Recruit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
     private List<Tag> tags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -139,6 +142,11 @@ public class Recruit {
     public void addTag(Tag tag) {
         tags.add(tag);
         tag.setRecruit(this);
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setRecruit(this);
     }
 
     //== Getter ==//

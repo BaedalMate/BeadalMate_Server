@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderJpaRepository orderJpaRepository;
 
     @Transactional
     public Long createOrder(Recruit recruit, Order order) {
@@ -47,5 +48,9 @@ public class OrderService {
             recruit.setActive(false);
         }
         return order.getId();
+    }
+
+    public List<Order> findByRecruitId(Long recruitId) {
+        return orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
     }
 }

@@ -38,7 +38,7 @@ public class UserApiController {
     @PutMapping(value = "/user")
     public Map<String, Object> setDormitory(
             @CurrentUser PrincipalDetails principalDetails,
-            @ApiParam(value = "유저 거점 (KB | SUNGLIM | SULIM | BULAM | NURI)")
+            @ApiParam(value = "유저 거점 (KB | SUNGLIM | SULIM | BURAM | NURI)")
             @RequestParam("dormitory") String dormitoryName
     ) {
         UserDto userDto = new UserDto();

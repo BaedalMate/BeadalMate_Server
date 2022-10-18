@@ -296,6 +296,40 @@ public class RecruitApiController {
         );
     }
 
+    @ApiOperation(value = "모집글 참여인원 조회")
+    @GetMapping("/recruit/users/{recruitId}")
+    public UserList getRecruitUsers(
+            @RequestParam("recruitId") Long recruitId,
+            @RequestBody UserList userList
+    ) {
+        Recruit recruit = recruitService.findById(recruitId);
+        List<Order> orders = orderService.findByRecruitId(recruitId);
+        List<UserDto> users = orders.stream()
+                .map(o -> new UserDto(o.getUser().getId(), o.getUser().getNickname()))
+                .collect(Collectors.toList());
+
+        return new UserList(users);
+    }
+
+    @Data
+    @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class UserList {
+        private List<UserDto> users;
+    }
+
+    @Data
+    @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class UserDto {
+        @Schema(description = "유저 id")
+        private Long id;
+        @Schema(description = "유저 닉네임")
+        private String nickname;
+    }
+
     @Data
     @Schema
     @NoArgsConstructor
