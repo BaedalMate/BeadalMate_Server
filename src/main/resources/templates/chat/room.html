@@ -45,13 +45,15 @@
             room_name : '',
             chatrooms: [
             ],
-            token: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjY2MDgwNzQ2LCJleHAiOjE2NjYzODMxNDZ9.I7UPMm62sm_2mAMfRUjNMe9Htm5G5kIdn9yd6WGmdcAmmQjpHU45u1tvNB9bRqudUcRN0FMtl09V5NFq6raOsg'
+            token: ''
         },
         created() {
             this.findAllRoom();
         },
         methods: {
             findAllRoom: function() {
+                var token = prompt('토큰을 입력해 주세요.');
+                this.token = 'Bearer ' + token;
                 axios.get('/api/v1/rooms',
                 {
                     headers: {
