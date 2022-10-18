@@ -5,10 +5,7 @@ import baedalmate.baedalmate.oauth.annotation.CurrentUser;
 import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import baedalmate.baedalmate.repository.OrderJpaRepository;
 import baedalmate.baedalmate.repository.OrderRepository;
-import baedalmate.baedalmate.service.MenuService;
-import baedalmate.baedalmate.service.OrderService;
-import baedalmate.baedalmate.service.RecruitService;
-import baedalmate.baedalmate.service.UserService;
+import baedalmate.baedalmate.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,11 +26,10 @@ import java.util.List;
 public class OrderApiController {
 
     private final MenuService menuService;
-    private final OrderJpaRepository orderJpaRepository;
-    private final OrderRepository orderRepository;
     private final OrderService orderService;
     private final UserService userService;
     private final RecruitService recruitService;
+    private final MessageService messageService;
 
     @ApiOperation(value = "모집글 참여")
     @PostMapping(value = "/order")
@@ -55,8 +51,12 @@ public class OrderApiController {
             menuService.createMenu(order, menu);
         }
 
-        Message message = Message.createMessage(MessageType.ENTER, "", user, recruit.getChatRoom());
+        // chat room 조회
+        ChatRoom chatRoom = recruit.getChatRoom();
 
+        // message 생성
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+        messageService.save(message);
         return new CreateOrderResponse(order.getId());
     }
 

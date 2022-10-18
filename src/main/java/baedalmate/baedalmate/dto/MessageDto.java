@@ -22,7 +22,7 @@ public class MessageDto {
     @NotNull
     private Long senderId;
     @Schema(description = "보낸사람 닉네임 (보낼 때 포함안하셔도 됩니다)")
-    private String senderNickName;
+    private String sender;
     //내용
     @Schema(description = "메세지 내용")
     @NotNull

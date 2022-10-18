@@ -61,7 +61,7 @@ public class ChatRoomApiController {
     @ApiOperation(value = "특정 채팅방 조회")
     @GetMapping("/room/{roomId}")
     public ChatRoomDetail getMessages(@PathVariable Long roomId) {
-        ChatRoom chatRoom = chatRoomService.findById(roomId);
+        ChatRoom chatRoom = chatRoomService.findOne(roomId);
         List<MessageInfo> messageInfos = chatRoom.getMessages().stream()
                 .map(m -> new MessageInfo(m.getId(), m.getUser().getNickname(), m.getMessage(), m.getCreateDate()))
                 .collect(Collectors.toList());
