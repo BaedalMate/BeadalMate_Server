@@ -40,6 +40,7 @@ public class MessageApiController {
         Message message = Message.createMessage(MessageType.TALK, messageDto.getMessage(), user, chatRoom);
         messageService.save(message);
         messageDto.setSender(user.getNickname());
+        messageDto.setSenderImage(user.getProfileImage());
 
         sendingOperations.convertAndSend("/topic/chat/room/"+messageDto.getRoomId(), messageDto);
     }
