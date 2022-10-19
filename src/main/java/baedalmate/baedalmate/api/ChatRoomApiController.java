@@ -48,7 +48,7 @@ public class ChatRoomApiController {
         List<ChatRoomInfo> chatRoomInfos = chatRooms.stream().distinct().map(
                 c -> {
                     Message message = c.getMessages().get(c.getMessages().size()-1);
-                    MessageInfo messageInfo = new MessageInfo(message.getId(), message.getUser().getNickname(), message.getMessage(), message.getCreateDate());
+                    MessageInfo messageInfo = new MessageInfo(message.getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
                     return new ChatRoomInfo(c.getId(), c.getRecruit().getImage(), messageInfo);
                 }
         ).collect(Collectors.toList());
@@ -63,7 +63,7 @@ public class ChatRoomApiController {
     public ChatRoomDetail getMessages(@PathVariable Long roomId) {
         ChatRoom chatRoom = chatRoomService.findOne(roomId);
         List<MessageInfo> messageInfos = chatRoom.getMessages().stream()
-                .map(m -> new MessageInfo(m.getId(), m.getUser().getNickname(), m.getMessage(), m.getCreateDate()))
+                .map(m -> new MessageInfo(m.getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate()))
                 .collect(Collectors.toList());
         Recruit recruit = chatRoom.getRecruit();
         RecruitInfo recruitInfo = new RecruitInfo(
@@ -129,6 +129,8 @@ public class ChatRoomApiController {
         private Long id;
         @Schema(description = "보낸 사람 닉네임")
         private String sender;
+        @Schema(description = "보낸 사람 프로필 이미지")
+        private String senderImage;
         @Schema(description = "메세지 내용")
         private String message;
         @Schema(description = "보낸 시간")
