@@ -57,7 +57,7 @@ public class OrderApiController {
         // message 생성
         Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
         messageService.save(message);
-        return new CreateOrderResponse(order.getId());
+        return new CreateOrderResponse(order.getId(), chatRoom.getId());
     }
 
     @Data
@@ -86,6 +86,9 @@ public class OrderApiController {
     @NoArgsConstructor
     @AllArgsConstructor
     static class CreateOrderResponse {
+        @Schema(description = "주문 id", example = "1")
         private Long id;
+        @Schema(description = "채팅방 id", example = "1")
+        private Long chatRoomId;
     }
 }
