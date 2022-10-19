@@ -25,6 +25,8 @@ public class MessageDto {
     private String sender;
     @Schema(description = "보낸사람 프로필이미지 (보낼 때 포함X)")
     private String senderImage;
+    // 메세지 타입
+    private MessageType type;
     //내용
     @Schema(description = "메세지 내용")
     @NotNull
