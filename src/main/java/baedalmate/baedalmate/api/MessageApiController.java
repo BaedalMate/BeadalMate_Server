@@ -39,6 +39,7 @@ public class MessageApiController {
         // 메세지 db 저장
         Message message = Message.createMessage(MessageType.TALK, messageDto.getMessage(), user, chatRoom);
         messageService.save(message);
+        messageDto.setType(MessageType.TALK);
         messageDto.setSender(user.getNickname());
         messageDto.setSenderImage(user.getProfileImage());
 
