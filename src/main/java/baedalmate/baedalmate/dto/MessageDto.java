@@ -21,8 +21,10 @@ public class MessageDto {
     @Schema(description = "보낸사람 id")
     @NotNull
     private Long senderId;
-    @Schema(description = "보낸사람 닉네임 (보낼 때 포함안하셔도 됩니다)")
+    @Schema(description = "보낸사람 닉네임 (보낼 때 포함X)")
     private String sender;
+    @Schema(description = "보낸사람 프로필이미지 (보낼 때 포함X)")
+    private String senderImage;
     //내용
     @Schema(description = "메세지 내용")
     @NotNull

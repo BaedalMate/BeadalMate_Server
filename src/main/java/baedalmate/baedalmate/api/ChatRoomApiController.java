@@ -49,7 +49,7 @@ public class ChatRoomApiController {
                 c -> {
                     Message message = c.getMessages().get(c.getMessages().size()-1);
                     MessageInfo messageInfo = new MessageInfo(message.getId(), message.getUser().getNickname(), message.getMessage(), message.getCreateDate());
-                    return new ChatRoomInfo(c.getId(), messageInfo);
+                    return new ChatRoomInfo(c.getId(), c.getRecruit().getImage(), messageInfo);
                 }
         ).collect(Collectors.toList());
         Collections.sort(chatRoomInfos);
@@ -97,6 +97,8 @@ public class ChatRoomApiController {
 
         @Schema(description = "채팅방 id")
         private Long id;
+        @Schema(description = "모집글 이미지")
+        private String image;
         @Schema(description = "채팅방 최근 메세지")
         private MessageInfo lastMessage;
 
