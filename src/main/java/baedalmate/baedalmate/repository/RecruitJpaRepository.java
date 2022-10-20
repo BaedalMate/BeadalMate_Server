@@ -36,7 +36,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     List<Recruit> findAllWithTagsUsingJoinOrderByDeadlineDate(@Param("dormitory") Dormitory dormitory, Pageable pageable);
 
     @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.id = :id")
-    Optional<Recruit> findById(@Param("id") Long recruitId);
+    Optional<Recruit> findByIdUsingJoin(@Param("id") Long recruitId);
 
     @Modifying
     @Query("update Recruit r set r.view = r.view + 1 where r.id = :id")

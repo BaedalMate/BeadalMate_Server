@@ -27,8 +27,8 @@ public class RecruitService {
         return recruit.getId();
     }
 
-    public Recruit findById(Long recruitId) {
-        return recruitJpaRepository.findById(recruitId).get();
+    public Recruit findOne(Long recruitId) {
+        return recruitJpaRepository.findByIdUsingJoin(recruitId).get();
     }
 
     @Transactional

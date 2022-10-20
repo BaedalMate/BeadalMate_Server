@@ -233,7 +233,7 @@ public class RecruitApiController {
         User user = userService.findOne(principalDetails.getId());
 
         // Recruit 조회
-        Recruit recruit = recruitService.findById(recruitId);
+        Recruit recruit = recruitService.findOne(recruitId);
 
         // Recruit 조회수 증가
         int view = recruitService.updateView(recruitId);

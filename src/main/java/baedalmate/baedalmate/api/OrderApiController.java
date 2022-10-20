@@ -42,7 +42,7 @@ public class OrderApiController {
 
         Order order = Order.createOrder(user);
 
-        Recruit recruit = recruitService.findById(createOrderRequest.getRecruitId());
+        Recruit recruit = recruitService.findOne(createOrderRequest.getRecruitId());
 
         orderService.createOrder(recruit, order);
 
@@ -62,6 +62,8 @@ public class OrderApiController {
 
     @Data
     @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class CreateOrderRequest {
         @Schema(description = "모집글 id")
         @NotNull
@@ -73,6 +75,8 @@ public class OrderApiController {
 
     @Data
     @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class MenuDto {
         @Schema(description = "메뉴명", example = "하와이안피자")
         private String name;
