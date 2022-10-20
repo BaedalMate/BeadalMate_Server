@@ -264,7 +264,8 @@ public class RecruitApiController {
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         boolean participate = false;
-        for(Order order : recruit.getOrders()) {
+        List<Order> orders = orderService.findByRecruit(recruit);
+        for(Order order : orders) {
             if(order.getUser() == user) {
                 participate = true;
             }
