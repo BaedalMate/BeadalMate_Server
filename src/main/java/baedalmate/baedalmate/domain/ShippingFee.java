@@ -19,7 +19,7 @@ public class ShippingFee {
 
     private int upperPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "recruit_id")
     private Recruit recruit;
 

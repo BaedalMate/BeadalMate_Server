@@ -15,7 +15,7 @@ public class Tag {
     @Column(name = "tag_name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "recruit_id")
     private Recruit recruit;
 
