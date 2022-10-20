@@ -21,15 +21,15 @@ public class OrderService {
 
     @Transactional
     public Long createOrder(Recruit recruit, Order order) {
-        recruit.addOrder(order);
-        orderRepository.save(order);
-
         List<Order> orders = recruit.getOrders();
         // 중복 검사
         List<User> users = orders.stream().map(o -> o.getUser()).collect(Collectors.toList());
-        if(orders.size() != users.stream().distinct().collect(Collectors.toList()).size()) {
+        if(users.contains(order.getUser())) {
             throw new ExistOrderException();
         }
+
+        recruit.addOrder(order);
+        orderRepository.save(order);
 
         // 인원수 검사
         if (recruit.getMinPeople() <= recruit.updateCurrentPeople() && recruit.getCriteria() == Criteria.NUMBER) {
