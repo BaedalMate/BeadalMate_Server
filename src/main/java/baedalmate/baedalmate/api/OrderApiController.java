@@ -48,6 +48,7 @@ public class OrderApiController {
 
         orderService.createOrder(recruit, order);
 
+        // 메뉴 생성
         for(MenuDto menuDto : createOrderRequest.getMenu()) {
             Menu menu = Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity());
             menuService.createMenu(order, menu);
