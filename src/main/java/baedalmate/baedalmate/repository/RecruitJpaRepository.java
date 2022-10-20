@@ -34,7 +34,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Query("select r from Recruit r join fetch r.user join fetch r.tags where r.dormitory = :dormitory and r.active = true order by r.deadlineDate ASC")
     List<Recruit> findAllWithTagsUsingJoinOrderByDeadlineDate(@Param("dormitory") Dormitory dormitory, Pageable pageable);
 
-    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees join fetch r.chatRoom where r.id = :id")
+    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees join fetch r.chatRoom join fetch r.orders where r.id = :id")
     Optional<Recruit> findByIdUsingJoin(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
