@@ -122,6 +122,9 @@ public class RecruitApiController {
         ChatRoom chatRoom = ChatRoom.createChatRoom(recruit);
         chatRoomService.save(chatRoom);
 
+        // message 생성
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+        messageService.save(message);
         return new CreateRecruitResponse(id);
     }
 
