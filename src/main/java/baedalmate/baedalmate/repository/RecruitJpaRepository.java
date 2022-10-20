@@ -31,11 +31,11 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.category.id = :id and r.active = true order by r.view DESC")
     List<Recruit> findAllByCategoryUsingJoinOrderByView(@Param("id") Long categoryId, Pageable pageable);
 
-    @Query("select r from Recruit r join fetch r.user join fetch r.tags where r.dormitory = :dormitory and r.active = true order by r.deadlineDate ASC")
-    List<Recruit> findAllWithTagsUsingJoinOrderByDeadlineDate(@Param("dormitory") Dormitory dormitory, Pageable pageable);
+    @Query("select r from Recruit r join fetch r.user where r.dormitory = :dormitory and r.active = true order by r.deadlineDate ASC")
+    List<Recruit> findAllUsingJoinOrderByDeadlineDate(@Param("dormitory") Dormitory dormitory, Pageable pageable);
 
-    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees join fetch r.chatRoom where r.id = :id")
-    Optional<Recruit> findByIdUsingJoin(@Param("id") Long recruitId);
+    @Query("select r from Recruit r join fetch r.user join fetch r.chatRoom where r.id = :id")
+    Recruit findByIdUsingJoin(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.view = r.view + 1 where r.id = :id")

@@ -38,7 +38,8 @@ public class RecruitApiController {
     private final MenuService menuService;
     private final CategoryImageService categoryImageService;
     private final ChatRoomService chatRoomService;
-    private final MessageService messageService;
+    private final ShippingFeeService shippingFeeService;
+    private final TagService tagService;
 
     @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
@@ -51,7 +52,7 @@ public class RecruitApiController {
 
         // 태그 생성
         List<Tag> tags;
-        if(createRecruitRequest.getTags().size()>0) {
+        if (createRecruitRequest.getTags().size() > 0) {
             tags = createRecruitRequest
                     .getTags()
                     .stream()
@@ -63,13 +64,14 @@ public class RecruitApiController {
 
         // 배달비 생성
         List<ShippingFee> shippingFees;
-        if(createRecruitRequest.isFreeShipping()) { // 무료배달이면 shippingFees는 빈 ArrayList
-            shippingFees = new ArrayList<>();
-        }
-        else {
-            shippingFees = createRecruitRequest.getShippingFee().stream()
+        if (!createRecruitRequest.isFreeShipping()) {
+            shippingFees = createRecruitRequest
+                    .getShippingFee()
+                    .stream()
                     .map(m -> ShippingFee.createShippingFee(m.getShippingFee(), m.getLowerPrice(), m.getUpperPrice()))
                     .collect(Collectors.toList());
+        } else {
+            shippingFees = new ArrayList<>();
         }
         // place 생성
         PlaceDto placeDto = createRecruitRequest.getPlace();
@@ -111,7 +113,7 @@ public class RecruitApiController {
                 .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
                 .collect(Collectors.toList());
 
-        for(MenuDto menuDto : createRecruitRequest.getMenu()) {
+        for (MenuDto menuDto : createRecruitRequest.getMenu()) {
             menuService.createMenu(order, Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity()));
         }
 
@@ -121,7 +123,6 @@ public class RecruitApiController {
         // chat room 생성
         ChatRoom chatRoom = ChatRoom.createChatRoom(recruit);
         chatRoomService.save(user, chatRoom);
-
         return new CreateRecruitResponse(id);
     }
 
@@ -138,7 +139,7 @@ public class RecruitApiController {
                     Pageable pageable) {
 
         List<Recruit> recruits;
-        if(categoryId == null) {
+        if (categoryId == null) {
             recruits = recruitService.findAll(pageable);
         } else {
             recruits = recruitService.findAllByCategory(categoryId, pageable);
@@ -174,18 +175,18 @@ public class RecruitApiController {
         List<Recruit> recruits = recruitService.findAll(pageable);
         List<MainRecruitDto> collect = recruits.stream()
                 .map(r -> new MainRecruitDto(
-                            r.getId(),
-                            r.getPlace().getName(),
-                            r.getMinPeople(),
-                            r.getCurrentPeople(),
-                            r.getMinPrice(),
-                            r.getCreateDate(),
-                            r.getDeadlineDate(),
-                            r.getUser().getNickname(),
-                            r.getUser().getScore(),
-                            r.getDormitory().getName(),
-                            r.getMinShippingFee(),
-                            r.getImage()
+                                r.getId(),
+                                r.getPlace().getName(),
+                                r.getMinPeople(),
+                                r.getCurrentPeople(),
+                                r.getMinPrice(),
+                                r.getCreateDate(),
+                                r.getDeadlineDate(),
+                                r.getUser().getNickname(),
+                                r.getUser().getScore(),
+                                r.getDormitory().getName(),
+                                r.getMinShippingFee(),
+                                r.getImage()
                         )
                 )
                 .collect(Collectors.toList());
@@ -203,7 +204,7 @@ public class RecruitApiController {
             }) Pageable pageable) {
         // 유저 정보 조회
         User user = userService.findOne(principalDetails.getId());
-        if(user.getDormitory() == null) {
+        if (user.getDormitory() == null) {
             // throw exception
         }
         List<Recruit> recruits = recruitService.findAllWithTag(user.getDormitory(), pageable);
@@ -218,7 +219,7 @@ public class RecruitApiController {
                         r.getUser().getScore(),
                         r.getDormitory().getName(),
                         r.getMinShippingFee(),
-                        r.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
+                        tagService.findByRecruitId(r.getId()).stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
                         r.getImage()
                 ))
                 .collect(Collectors.toList());
@@ -231,8 +232,8 @@ public class RecruitApiController {
             @CurrentUser PrincipalDetails principalDetails,
             @ApiParam(value = "모집글 id")
             @PathVariable("id")
-            Long recruitId
-        ) {
+                    Long recruitId
+    ) {
         // 유저 조회
         User user = userService.findOne(principalDetails.getId());
 
@@ -252,21 +253,22 @@ public class RecruitApiController {
                 place.getY()
         );
 
+        List<ShippingFee> shippingFees = shippingFeeService.findByRecruitId(recruit.getId());
         // ShippingFeeDetail 생성
-        List<ShippingFeeDto> shippingFeeDetails = recruit.getShippingFees()
+        List<ShippingFeeDto> shippingFeeDetails = shippingFees
                 .stream().map(s -> new ShippingFeeDto(
-                            s.getShippingFee(),
-                            s.getLowerPrice(),
-                            s.getUpperPrice()
-                    )
+                                s.getShippingFee(),
+                                s.getLowerPrice(),
+                                s.getUpperPrice()
+                        )
                 )
                 .collect(Collectors.toList());
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         boolean participate = false;
         List<Order> orders = orderService.findByRecruit(recruit);
-        for(Order order : orders) {
-            if(order.getUser().getId() == user.getId()) {
+        for (Order order : orders) {
+            if (order.getUser().getId() == user.getId()) {
                 participate = true;
             }
         }
@@ -535,18 +537,18 @@ public class RecruitApiController {
         private int quantity;
     }
 
-   @Data
-   @Schema
-   @NoArgsConstructor
-   @AllArgsConstructor
-   static class ShippingFeeDto {
-       @Schema(description = "배달비")
-       private int shippingFee;
-       @Schema(description = "해당 가격 이상")
-       private int lowerPrice;
-       @Schema(description = "해당 가격 이하")
-       private int upperPrice;
-   }
+    @Data
+    @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
+    static class ShippingFeeDto {
+        @Schema(description = "배달비")
+        private int shippingFee;
+        @Schema(description = "해당 가격 이상")
+        private int lowerPrice;
+        @Schema(description = "해당 가격 이하")
+        private int upperPrice;
+    }
 
     @Data
     @Schema
