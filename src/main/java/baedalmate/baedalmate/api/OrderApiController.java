@@ -40,9 +40,11 @@ public class OrderApiController {
         // 유저 정보 조회
         User user = userService.findOne(principalDetails.getId());
 
+        // 주문 생성
         Order order = Order.createOrder(user);
 
-        Recruit recruit = recruitService.findById(createOrderRequest.getRecruitId());
+        // 모집글 조회
+        Recruit recruit = recruitService.findOne(createOrderRequest.getRecruitId());
 
         orderService.createOrder(recruit, order);
 
@@ -50,6 +52,9 @@ public class OrderApiController {
             Menu menu = Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity());
             menuService.createMenu(order, menu);
         }
+
+        orderService.updateCurrentPrice(order);
+        recruitService.updateCurrentPeople(recruit);
 
         // chat room 조회
         ChatRoom chatRoom = recruit.getChatRoom();
@@ -62,6 +67,8 @@ public class OrderApiController {
 
     @Data
     @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class CreateOrderRequest {
         @Schema(description = "모집글 id")
         @NotNull
@@ -73,6 +80,8 @@ public class OrderApiController {
 
     @Data
     @Schema
+    @NoArgsConstructor
+    @AllArgsConstructor
     static class MenuDto {
         @Schema(description = "메뉴명", example = "하와이안피자")
         private String name;

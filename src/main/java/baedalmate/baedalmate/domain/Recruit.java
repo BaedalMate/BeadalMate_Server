@@ -34,6 +34,9 @@ public class Recruit {
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int view;
 
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int currentPrice;
+
     private int minPeople;
 
     private int minPrice;
@@ -156,6 +159,11 @@ public class Recruit {
     public int updateCurrentPeople() {
         currentPeople = currentPeople + 1;
         return currentPeople;
+    }
+
+    public int updateCurrentPrice(int price) {
+        currentPrice = currentPrice + price;
+        return currentPrice;
     }
 
     public void setActive(boolean active) {
