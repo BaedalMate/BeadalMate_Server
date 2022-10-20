@@ -1,9 +1,6 @@
 package baedalmate.baedalmate.service;
 
-import baedalmate.baedalmate.domain.ChatRoom;
-import baedalmate.baedalmate.domain.Message;
-import baedalmate.baedalmate.domain.MessageType;
-import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.domain.*;
 import baedalmate.baedalmate.repository.ChatRoomJpaRepository;
 import baedalmate.baedalmate.repository.MessageJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,4 +29,9 @@ public class ChatRoomService {
     public ChatRoom findOne(Long id) {
         return chatRoomJpaRepository.findOne(id);
     }
+
+    public ChatRoom findByRecruitId(Long recruitId) {
+        return chatRoomJpaRepository.findByRecruitId(recruitId);
+    }
+
 }

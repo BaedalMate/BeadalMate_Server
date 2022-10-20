@@ -30,6 +30,7 @@ public class OrderApiController {
     private final UserService userService;
     private final RecruitService recruitService;
     private final MessageService messageService;
+    private final ChatRoomService chatRoomService;
 
     @ApiOperation(value = "모집글 참여")
     @PostMapping(value = "/order")
@@ -58,7 +59,7 @@ public class OrderApiController {
         recruitService.updateCurrentPeople(recruit);
 
         // chat room 조회
-        ChatRoom chatRoom = recruit.getChatRoom();
+        ChatRoom chatRoom = chatRoomService.findByRecruitId(recruit.getId());
 
         // message 생성
         Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
