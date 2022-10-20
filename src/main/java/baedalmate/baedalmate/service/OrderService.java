@@ -22,6 +22,10 @@ public class OrderService {
     private final OrderJpaRepository orderJpaRepository;
     private final RecruitJpaRepository recruitJpaRepository;
 
+    public List<Order> findByRecruit(Recruit recruit) {
+        return orderJpaRepository.findAllByRecruit(recruit);
+    }
+
     @Transactional
     public Long createOrder(Recruit recruit, Order order) {
         List<Order> orders = recruit.getOrders();
