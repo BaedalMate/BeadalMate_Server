@@ -2,7 +2,6 @@ package baedalmate.baedalmate.repository;
 
 import baedalmate.baedalmate.domain.Dormitory;
 import baedalmate.baedalmate.domain.Recruit;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -35,7 +34,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Query("select r from Recruit r join fetch r.user join fetch r.tags where r.dormitory = :dormitory and r.active = true order by r.deadlineDate ASC")
     List<Recruit> findAllWithTagsUsingJoinOrderByDeadlineDate(@Param("dormitory") Dormitory dormitory, Pageable pageable);
 
-    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.id = :id")
+    @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees join fetch r.chatRoom where r.id = :id")
     Optional<Recruit> findByIdUsingJoin(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
