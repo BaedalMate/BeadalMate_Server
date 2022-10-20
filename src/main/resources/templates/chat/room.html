@@ -82,7 +82,7 @@
             },
             enterRoom: function(roomId) {
                 var senderId = prompt('유저 id를 입력해 주세요.');
-                if(sender !== "") {
+                if(senderId !== "") {
                     localStorage.setItem('wschat.senderId',senderId);
                     localStorage.setItem('wschat.roomId',roomId);
                     location.href="/chat/room/enter/"+roomId;
