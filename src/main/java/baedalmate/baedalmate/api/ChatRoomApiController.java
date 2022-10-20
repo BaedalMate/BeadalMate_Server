@@ -49,7 +49,7 @@ public class ChatRoomApiController {
                 c -> {
                     Message message = c.getMessages().get(c.getMessages().size()-1);
                     MessageInfo messageInfo = new MessageInfo(message.getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
-                    return new ChatRoomInfo(c.getId(), c.getRecruit().getImage(), messageInfo);
+                    return new ChatRoomInfo(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo);
                 }
         ).collect(Collectors.toList());
         Collections.sort(chatRoomInfos);
@@ -68,6 +68,7 @@ public class ChatRoomApiController {
         Recruit recruit = chatRoom.getRecruit();
         RecruitInfo recruitInfo = new RecruitInfo(
                 recruit.getId(),
+                recruit.getImage(),
                 recruit.getCreateDate(),
                 recruit.getTitle(),
                 recruit.getCriteria(),
@@ -99,6 +100,8 @@ public class ChatRoomApiController {
         private Long id;
         @Schema(description = "모집글 이미지")
         private String image;
+        @Schema(description = "모집글 제목")
+        private String title;
         @Schema(description = "채팅방 최근 메세지")
         private MessageInfo lastMessage;
 
@@ -144,6 +147,8 @@ public class ChatRoomApiController {
     static class RecruitInfo {
         @Schema(description = "모집글 id")
         private Long recruitId;
+        @Schema(description = "모집글 이미지")
+        private String recruitImage;
         @Schema(description = "모집글 생성 시간")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createDate;
