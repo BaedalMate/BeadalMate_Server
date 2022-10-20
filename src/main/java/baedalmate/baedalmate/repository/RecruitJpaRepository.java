@@ -38,7 +38,16 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Query("select r from Recruit r join fetch r.user join fetch r.shippingFees where r.id = :id")
     Optional<Recruit> findByIdUsingJoin(@Param("id") Long recruitId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.view = r.view + 1 where r.id = :id")
     int updateView(@Param("id") Long recruitId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Recruit r set r.currentPrice = :price where r.id = :id")
+    int updateCurrentPrice(@Param("price") int price, @Param("id") Long recruitId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Recruit r set r.currentPeople = r.currentPeople + 1 where r.id = :id")
+    int updateCurrentPeople(@Param("id") Long recruitId);
+
 }

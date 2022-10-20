@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.service;
 
+import baedalmate.baedalmate.domain.Criteria;
 import baedalmate.baedalmate.domain.Dormitory;
 import baedalmate.baedalmate.domain.Recruit;
 import baedalmate.baedalmate.repository.RecruitJpaRepository;
@@ -49,6 +50,17 @@ public class RecruitService {
             return recruitJpaRepository.findAllUsingJoinOrderByView(p);
         }
         return new ArrayList<Recruit>();
+    }
+
+    @Transactional
+    public int updateCurrentPeople(Recruit recruit) {
+        int currentPeople = recruitJpaRepository.updateCurrentPeople(recruit.getId());
+
+        // 인원수 검사
+        if (recruit.getMinPeople() <= recruit.updateCurrentPeople() && recruit.getCriteria() == Criteria.NUMBER) {
+            recruit.setActive(false);
+        }
+        return currentPeople;
     }
 
     public List<Recruit> findAllWithTag(Dormitory dormitory, Pageable pageable) {

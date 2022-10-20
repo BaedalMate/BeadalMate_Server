@@ -115,6 +115,9 @@ public class RecruitApiController {
             menuService.createMenu(order, Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity()));
         }
 
+        orderService.updateCurrentPrice(order);
+        recruitService.updateCurrentPeople(recruit);
+
         // chat room 생성
         ChatRoom chatRoom = ChatRoom.createChatRoom(recruit);
         chatRoomService.save(chatRoom);
@@ -147,6 +150,7 @@ public class RecruitApiController {
                         r.getMinPeople(),
                         r.getMinPrice(),
                         r.getCurrentPeople(),
+                        r.getCurrentPrice(),
                         r.getCriteria(),
                         r.getCreateDate(),
                         r.getDeadlineDate(),
@@ -569,8 +573,11 @@ public class RecruitApiController {
         @Schema(description = "최소 주문 금액 ", example = "10000")
         private int minPrice;
 
-        @Schema(description = "현재 인언", example = "1")
+        @Schema(description = "현재 인원", example = "1")
         private int currentPeople;
+
+        @Schema(description = "현재 금액", example = "10000")
+        private int currentPrice;
 
         @Schema(description = "마감 기준")
         private Criteria criteria;

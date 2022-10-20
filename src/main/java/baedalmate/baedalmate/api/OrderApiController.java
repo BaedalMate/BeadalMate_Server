@@ -40,8 +40,10 @@ public class OrderApiController {
         // 유저 정보 조회
         User user = userService.findOne(principalDetails.getId());
 
+        // 주문 생성
         Order order = Order.createOrder(user);
 
+        // 모집글 조회
         Recruit recruit = recruitService.findOne(createOrderRequest.getRecruitId());
 
         orderService.createOrder(recruit, order);
@@ -50,6 +52,9 @@ public class OrderApiController {
             Menu menu = Menu.createMenu(menuDto.getName(), menuDto.getPrice(), menuDto.getQuantity());
             menuService.createMenu(order, menu);
         }
+
+        orderService.updateCurrentPrice(order);
+        recruitService.updateCurrentPeople(recruit);
 
         // chat room 조회
         ChatRoom chatRoom = recruit.getChatRoom();
