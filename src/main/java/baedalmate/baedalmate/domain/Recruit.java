@@ -79,7 +79,7 @@ public class Recruit {
 
     private String image;
 
-    //    @Column(columnDefinition = "boolean default true", nullable = false)
+//    @Column(columnDefinition = "boolean default true", nullable = false)
     private boolean active = true;
 
     //== constructor ==//
@@ -111,10 +111,10 @@ public class Recruit {
         Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, image, freeShipping);
         user.addRecruit(recruit);
         category.addRecruit(recruit);
-        for (ShippingFee shippingFee : shippingFees) {
+        for(ShippingFee shippingFee : shippingFees) {
             recruit.addShippingFee(shippingFee);
         }
-        for (Tag tag : tags) {
+        for(Tag tag : tags) {
             recruit.addTag(tag);
         }
         return recruit;
@@ -146,10 +146,10 @@ public class Recruit {
 
     //== Getter ==//
     public int getMinShippingFee() {
-        if (freeShipping) return 0;
+        if(freeShipping) return 0;
 
         int min = shippingFees.get(0).getShippingFee();
-        for (ShippingFee shippingFee : shippingFees) {
+        for(ShippingFee shippingFee : shippingFees) {
             min = Math.min(shippingFee.getShippingFee(), min);
         }
         return min;

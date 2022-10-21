@@ -29,7 +29,7 @@ public class RecruitService {
     }
 
     public Recruit findOne(Long recruitId) {
-        return recruitJpaRepository.findByIdUsingJoin(recruitId);
+        return recruitJpaRepository.findByIdUsingJoin(recruitId).get();
     }
 
     @Transactional
@@ -65,7 +65,7 @@ public class RecruitService {
 
     public List<Recruit> findAllWithTag(Dormitory dormitory, Pageable pageable) {
         Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        return recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(dormitory, p);
+        return recruitJpaRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(dormitory, p);
     }
 
     public List<Recruit> findAllByCategory(Long categoryId, Pageable pageable) {
