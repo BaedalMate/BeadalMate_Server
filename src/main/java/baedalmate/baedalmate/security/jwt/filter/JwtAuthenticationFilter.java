@@ -32,6 +32,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+//        String servletPath = request.getServletPath();
+//        if (servletPath.contains("/swagger-ui") || servletPath.contains("/room") || servletPath.equals("/api/refresh")) {
+//            filterChain.doFilter(request, response);
+//        }
         try {
             String jwt = getJwtFromRequest(request);
             if (redisService.getValues(jwt) != null) {
