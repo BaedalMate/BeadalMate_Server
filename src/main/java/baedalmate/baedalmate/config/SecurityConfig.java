@@ -1,19 +1,17 @@
 package baedalmate.baedalmate.config;
 
-import baedalmate.baedalmate.oauth.entrypoint.CustomAuthenticationEntryPoint;
-import baedalmate.baedalmate.oauth.filter.OAuth2AccessTokenAuthenticationFilter;
-import baedalmate.baedalmate.oauth.filter.TokenAuthenticationFilter;
+import baedalmate.baedalmate.security.jwt.errorhandling.JwtAuthenticationEntryPoint;
+import baedalmate.baedalmate.security.jwt.filter.JwtAuthenticationFilter;
+import baedalmate.baedalmate.security.logout.CustomLogoutHandler;
+import baedalmate.baedalmate.security.logout.CustomLogoutSuccessHandler;
+import baedalmate.baedalmate.security.oauth2.filter.OAuth2AccessTokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration // IoC 빈(bean)을 등록
@@ -22,42 +20,31 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
-    private final TokenAuthenticationFilter tokenAuthenticationFilter;
-
-
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomLogoutHandler customLogoutHandler;
+    private final CustomLogoutSuccessHandler customlogoutSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.csrf().disable();
-//        http.formLogin().disable();
-
-//        http.authorizeRequests()
-//                .anyRequest().permitAll();
-
-        http.authorizeRequests()
-                .antMatchers("/login/oauth2/*").permitAll() //로그인 화면 접근 가능
-                .antMatchers("/").permitAll(); //메인 화면 접근 가능
-//        http.oauth2Login()
-//                .authorizationEndpoint()
-//                .baseUri("/login")
-//                .and()
-//                .redirectionEndpoint()
-//                .baseUri("/login/oauth2/code/*");
-//                .and()
-//                .userInfoEndpoint()
-//                .userService(principalOauth2UserService);
-//                .and()
-//                .successHandler(oAuth2AuthenticationSuccessHandler)
-//                .failureHandler(oAuth2AuthenticationFailureHandler);
-        http.exceptionHandling()
-                .authenticationEntryPoint(customAuthenticationEntryPoint)
-            .and()
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+        http.cors().and().csrf().disable()
+                .formLogin().disable().headers().frameOptions().disable()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/v1/refresh").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .and()
+                .addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.logout()
+                .logoutUrl("/logout")
+                .addLogoutHandler(customLogoutHandler)
+                .logoutSuccessHandler(customlogoutSuccessHandler);
     }
 }
