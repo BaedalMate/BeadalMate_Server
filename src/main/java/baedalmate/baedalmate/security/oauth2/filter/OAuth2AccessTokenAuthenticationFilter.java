@@ -1,8 +1,8 @@
 package baedalmate.baedalmate.security.oauth2.filter;
 
-import com.eomyoosang.securityexample.security.oauth2.authentication.AccessTokenSocialTypeToken;
-import com.eomyoosang.securityexample.security.oauth2.provider.AccessTokenAuthenticationProvider;
-import com.eomyoosang.securityexample.security.oauth2.soical.SocialType;
+import baedalmate.baedalmate.security.oauth2.authentication.AccessTokenSocialTypeToken;
+import baedalmate.baedalmate.security.oauth2.provider.AccessTokenAuthenticationProvider;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.springframework.security.authentication.ProviderManager;

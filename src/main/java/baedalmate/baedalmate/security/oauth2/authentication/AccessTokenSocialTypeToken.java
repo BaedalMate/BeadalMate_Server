@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.oauth2.authentication;
 
-import com.eomyoosang.securityexample.security.oauth2.soical.SocialType;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import lombok.Builder;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

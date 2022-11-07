@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.logout;
 
-import com.eomyoosang.securityexample.service.RedisService;
+import baedalmate.baedalmate.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;

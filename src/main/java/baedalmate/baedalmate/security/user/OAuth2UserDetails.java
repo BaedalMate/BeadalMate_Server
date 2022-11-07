@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.user;
 
-import com.eomyoosang.securityexample.security.oauth2.soical.SocialType;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

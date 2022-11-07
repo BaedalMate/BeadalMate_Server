@@ -1,7 +1,7 @@
 package baedalmate.baedalmate.security.repository;
 
-import com.eomyoosang.securityexample.domain.User;
-import com.eomyoosang.securityexample.security.oauth2.soical.SocialType;
+import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;

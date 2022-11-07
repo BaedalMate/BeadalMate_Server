@@ -2,7 +2,7 @@ package baedalmate.baedalmate.repository;
 
 
 import baedalmate.baedalmate.domain.User;
-import baedalmate.baedalmate.oauth.SocialType;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

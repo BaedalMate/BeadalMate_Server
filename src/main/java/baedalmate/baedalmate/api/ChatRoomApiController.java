@@ -1,8 +1,8 @@
 package baedalmate.baedalmate.api;
 
 import baedalmate.baedalmate.domain.*;
-import baedalmate.baedalmate.oauth.annotation.CurrentUser;
-import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
+import baedalmate.baedalmate.security.annotation.AuthUser;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.service.ChatRoomService;
 import baedalmate.baedalmate.service.MessageService;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -36,7 +36,7 @@ public class ChatRoomApiController {
     @ApiOperation(value = "채팅방 전체 조회")
     @GetMapping("/rooms")
     public ChatRoomList getRooms(
-            @CurrentUser PrincipalDetails principalDetails
+            @AuthUser PrincipalDetails principalDetails
     ) {
 
         // 유저 조회

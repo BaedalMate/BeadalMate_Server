@@ -1,11 +1,11 @@
 package baedalmate.baedalmate.security.oauth2.provider;
 
-import com.eomyoosang.securityexample.domain.User;
-import com.eomyoosang.securityexample.security.oauth2.authentication.AccessTokenSocialTypeToken;
-import com.eomyoosang.securityexample.security.oauth2.exception.ExpiredAccessTokenException;
-import com.eomyoosang.securityexample.security.oauth2.service.LoadUserService;
-import com.eomyoosang.securityexample.security.repository.AuthRepository;
-import com.eomyoosang.securityexample.security.user.OAuth2UserDetails;
+import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.security.oauth2.authentication.AccessTokenSocialTypeToken;
+import baedalmate.baedalmate.security.oauth2.exception.ExpiredAccessTokenException;
+import baedalmate.baedalmate.security.oauth2.service.LoadUserService;
+import baedalmate.baedalmate.security.repository.AuthRepository;
+import baedalmate.baedalmate.security.user.OAuth2UserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -55,7 +55,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
                     .socialType(oAuth2User.getSocialType())
                     .socialId(oAuth2User.getSocialId())
                     .profileImage(oAuth2User.getImage())
-                    .name(oAuth2User.getUsername())
+                    .nickname(oAuth2User.getUsername())
                     .role("USER").build();
             return authRepository.save(user);
         }

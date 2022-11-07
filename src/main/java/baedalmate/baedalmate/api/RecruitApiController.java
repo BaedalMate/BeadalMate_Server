@@ -2,9 +2,9 @@ package baedalmate.baedalmate.api;
 
 import baedalmate.baedalmate.domain.*;
 import baedalmate.baedalmate.domain.embed.Place;
-import baedalmate.baedalmate.oauth.annotation.CurrentUser;
-import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import baedalmate.baedalmate.repository.CategoryRepository;
+import baedalmate.baedalmate.security.annotation.AuthUser;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.service.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.Api;
@@ -43,7 +43,7 @@ public class RecruitApiController {
     @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
     public CreateRecruitResponse createRecruit(
-            @CurrentUser PrincipalDetails principalDetails,
+            @AuthUser PrincipalDetails principalDetails,
             @RequestBody @Valid CreateRecruitRequest createRecruitRequest
     ) {
         // 유저 정보 조회
@@ -195,7 +195,7 @@ public class RecruitApiController {
     @ApiOperation(value = "메인페이지 태그 포함된 모집글 리스트 조회")
     @GetMapping(value = "/recruit/tag/list")
     public TagRecruitList getTagRecruitList(
-            @CurrentUser PrincipalDetails principalDetails,
+            @AuthUser PrincipalDetails principalDetails,
             @PageableDefault(size = 5)
             @ApiParam(value = "예시: {ip}:8080/recruit/tag/list?page=0&size=5&sort=deadlineDate")
             @SortDefault.SortDefaults({
@@ -228,7 +228,7 @@ public class RecruitApiController {
     @ApiOperation(value = "모집글 상세 조회")
     @GetMapping(value = "/recruit/{id}")
     public RecruitDetail getRecruit(
-            @CurrentUser PrincipalDetails principalDetails,
+            @AuthUser PrincipalDetails principalDetails,
             @ApiParam(value = "모집글 id")
             @PathVariable("id")
             Long recruitId

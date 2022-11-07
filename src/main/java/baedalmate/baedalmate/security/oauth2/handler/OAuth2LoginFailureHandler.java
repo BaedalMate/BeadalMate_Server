@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.oauth2.handler;
 
-import com.eomyoosang.securityexample.error.errorcode.UserErrorCode;
+import baedalmate.baedalmate.errors.errorcode.UserErrorCode;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;

@@ -61,7 +61,7 @@ class 모집글참여테스트 {
         // when
         Recruit recruit = Recruit.createRecruit(user1, category, 3, 10000, LocalDateTime.now(), Criteria.NUMBER, Dormitory.SULIM,
                 Place.createPlace("테스트", "테스트", "테스트", 1, 1), Platform.BAEMIN, 0, "테스트", "테스트",
-                true, new ArrayList<ShippingFee>(), new ArrayList<Tag>());
+                "", true, new ArrayList<ShippingFee>(), new ArrayList<Tag>());
 
         Long recruitId = recruitService.createRecruit(recruit);
 

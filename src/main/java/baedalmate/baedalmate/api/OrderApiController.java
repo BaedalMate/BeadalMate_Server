@@ -1,10 +1,8 @@
 package baedalmate.baedalmate.api;
 
 import baedalmate.baedalmate.domain.*;
-import baedalmate.baedalmate.oauth.annotation.CurrentUser;
-import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
-import baedalmate.baedalmate.repository.OrderJpaRepository;
-import baedalmate.baedalmate.repository.OrderRepository;
+import baedalmate.baedalmate.security.annotation.AuthUser;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,7 +33,7 @@ public class OrderApiController {
     @ApiOperation(value = "모집글 참여")
     @PostMapping(value = "/order")
     public CreateOrderResponse createOrder(
-            @CurrentUser PrincipalDetails principalDetails,
+            @AuthUser PrincipalDetails principalDetails,
             @RequestBody @Valid CreateOrderRequest createOrderRequest
     ) {
         // 유저 정보 조회

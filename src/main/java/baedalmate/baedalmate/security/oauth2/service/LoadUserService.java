@@ -1,9 +1,9 @@
 package baedalmate.baedalmate.security.oauth2.service;
 
-import com.eomyoosang.securityexample.security.oauth2.authentication.AccessTokenSocialTypeToken;
-import com.eomyoosang.securityexample.security.oauth2.dto.OAuth2UserInfo;
-import com.eomyoosang.securityexample.security.oauth2.soical.SocialType;
-import com.eomyoosang.securityexample.security.user.OAuth2UserDetails;
+import baedalmate.baedalmate.security.oauth2.authentication.AccessTokenSocialTypeToken;
+import baedalmate.baedalmate.security.oauth2.dto.OAuth2UserInfo;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
+import baedalmate.baedalmate.security.user.OAuth2UserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package baedalmate.baedalmate.security.jwt.errorhandling;
 
-import com.eomyoosang.securityexample.error.errorcode.ErrorCode;
-import com.eomyoosang.securityexample.error.errorcode.UserErrorCode;
+import baedalmate.baedalmate.errors.errorcode.ErrorCode;
+import baedalmate.baedalmate.errors.errorcode.UserErrorCode;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

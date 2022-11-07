@@ -1,11 +1,11 @@
 package baedalmate.baedalmate.security.oauth2.handler;
 
-import com.eomyoosang.securityexample.config.AppProperties;
-import com.eomyoosang.securityexample.domain.User;
-import com.eomyoosang.securityexample.dto.TokenResponse;
-import com.eomyoosang.securityexample.security.jwt.service.JwtTokenProvider;
-import com.eomyoosang.securityexample.security.repository.AuthRepository;
-import com.eomyoosang.securityexample.security.user.OAuth2UserDetails;
+import baedalmate.baedalmate.config.AppProperties;
+import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.dto.TokenResponse;
+import baedalmate.baedalmate.security.jwt.service.JwtTokenProvider;
+import baedalmate.baedalmate.security.repository.AuthRepository;
+import baedalmate.baedalmate.security.user.OAuth2UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

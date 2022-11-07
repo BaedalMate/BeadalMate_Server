@@ -1,8 +1,8 @@
 package baedalmate.baedalmate.security.jwt.service;
 
-import com.eomyoosang.securityexample.config.AppProperties;
-import com.eomyoosang.securityexample.security.repository.AuthRepository;
-import com.eomyoosang.securityexample.service.RedisService;
+import baedalmate.baedalmate.config.AppProperties;
+import baedalmate.baedalmate.security.repository.AuthRepository;
+import baedalmate.baedalmate.service.RedisService;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

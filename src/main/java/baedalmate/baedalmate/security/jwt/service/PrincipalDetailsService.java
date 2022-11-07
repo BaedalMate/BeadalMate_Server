@@ -1,8 +1,8 @@
 package baedalmate.baedalmate.security.jwt.service;
 
-import com.eomyoosang.securityexample.domain.User;
-import com.eomyoosang.securityexample.security.repository.AuthRepository;
-import com.eomyoosang.securityexample.security.user.PrincipalDetails;
+import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.security.repository.AuthRepository;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

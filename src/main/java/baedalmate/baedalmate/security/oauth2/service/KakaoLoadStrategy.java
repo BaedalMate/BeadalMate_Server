@@ -1,8 +1,8 @@
 package baedalmate.baedalmate.security.oauth2.service;
 
-import com.eomyoosang.securityexample.security.oauth2.dto.KakaoUserInfo;
-import com.eomyoosang.securityexample.security.oauth2.exception.ExpiredAccessTokenException;
-import com.eomyoosang.securityexample.security.oauth2.soical.SocialType;
+import baedalmate.baedalmate.security.oauth2.dto.KakaoUserInfo;
+import baedalmate.baedalmate.security.oauth2.exception.ExpiredAccessTokenException;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;

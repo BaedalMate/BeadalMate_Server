@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.oauth2.service;
 
-import com.eomyoosang.securityexample.security.oauth2.dto.OAuth2UserInfo;
+import baedalmate.baedalmate.security.oauth2.dto.OAuth2UserInfo;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

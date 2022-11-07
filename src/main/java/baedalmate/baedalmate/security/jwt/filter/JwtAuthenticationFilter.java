@@ -1,9 +1,9 @@
 package baedalmate.baedalmate.security.jwt.filter;
 
-import com.eomyoosang.securityexample.error.errorcode.UserErrorCode;
-import com.eomyoosang.securityexample.security.jwt.service.JwtTokenProvider;
-import com.eomyoosang.securityexample.security.jwt.service.PrincipalDetailsService;
-import com.eomyoosang.securityexample.service.RedisService;
+import baedalmate.baedalmate.errors.errorcode.UserErrorCode;
+import baedalmate.baedalmate.security.jwt.service.JwtTokenProvider;
+import baedalmate.baedalmate.security.jwt.service.PrincipalDetailsService;
+import baedalmate.baedalmate.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
