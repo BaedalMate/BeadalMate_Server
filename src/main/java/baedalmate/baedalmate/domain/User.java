@@ -1,7 +1,7 @@
 package baedalmate.baedalmate.domain;
 
 import baedalmate.baedalmate.domain.embed.Address;
-import baedalmate.baedalmate.oauth.SocialType;
+import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

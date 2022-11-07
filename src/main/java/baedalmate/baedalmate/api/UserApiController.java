@@ -2,8 +2,8 @@ package baedalmate.baedalmate.api;
 
 import baedalmate.baedalmate.domain.User;
 import baedalmate.baedalmate.dto.UserDto;
-import baedalmate.baedalmate.oauth.annotation.CurrentUser;
-import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
+import baedalmate.baedalmate.security.annotation.AuthUser;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +29,7 @@ public class UserApiController {
     @ApiOperation(value = "유저 정보 조회")
     @GetMapping(value = "/user")
     public UserInfoResponse getUserInfo(
-            @CurrentUser PrincipalDetails principalDetails) {
+            @AuthUser PrincipalDetails principalDetails) {
         User user = userService.findOne(principalDetails.getId());
         return new UserInfoResponse(user.getId(), user.getNickname(), user.getProfileImage(), user.getDormitoryName(), user.getScore());
     }
@@ -37,7 +37,7 @@ public class UserApiController {
     @ApiOperation(value = "유저 거점 변경")
     @PutMapping(value = "/user")
     public Map<String, Object> setDormitory(
-            @CurrentUser PrincipalDetails principalDetails,
+            @AuthUser PrincipalDetails principalDetails,
             @ApiParam(value = "유저 거점 (KB | SUNGLIM | SULIM | BULAM | NURI)")
             @RequestParam("dormitory") String dormitoryName
     ) {

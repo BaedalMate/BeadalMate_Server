@@ -8,6 +8,7 @@ import java.util.List;
 public class AppProperties {
     private final Auth auth = new Auth();
     private final OAuth2 oauth2 = new OAuth2();
+    private final Redis redis = new Redis();
     public static class Auth {
         private String tokenSecret;
         private long tokenExpirationMsec;
@@ -41,10 +42,29 @@ public class AppProperties {
             return this;
         }
     }
+    public static class Redis {
+        private String host;
+        private int port;
+        public String getHost() {
+            return host;
+        }
+        public int getPort() {
+            return port;
+        }
+        public void setHost(String host) {
+            this.host = host;
+        }
+        public void setPort(int port) {
+            this.port = port;
+        }
+    }
     public Auth getAuth() {
         return auth;
     }
     public OAuth2 getOauth2() {
         return oauth2;
+    }
+    public Redis getRedis() {
+        return redis;
     }
 }

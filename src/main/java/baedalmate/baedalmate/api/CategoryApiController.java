@@ -3,9 +3,9 @@ package baedalmate.baedalmate.api;
 import baedalmate.baedalmate.domain.Category;
 import baedalmate.baedalmate.domain.CategoryImage;
 import baedalmate.baedalmate.dto.ImageResponse;
-import baedalmate.baedalmate.oauth.annotation.CurrentUser;
-import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
 import baedalmate.baedalmate.repository.CategoryRepository;
+import baedalmate.baedalmate.security.annotation.AuthUser;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.service.CategoryImageService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class CategoryApiController {
 
     @PostMapping(value = "/category/uploads")
     public ImageResponse uploadCategoryImage(
-            @CurrentUser PrincipalDetails principalDetails,
+            @AuthUser PrincipalDetails principalDetails,
             @RequestParam("uploadfile") MultipartFile[] uploadfile,
             @RequestParam("categoryId") Long categoryId
     ) {

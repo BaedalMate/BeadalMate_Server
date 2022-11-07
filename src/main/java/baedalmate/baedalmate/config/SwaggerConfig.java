@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.config;
 
-import baedalmate.baedalmate.oauth.domain.PrincipalDetails;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
 import com.fasterxml.classmate.TypeResolver;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
