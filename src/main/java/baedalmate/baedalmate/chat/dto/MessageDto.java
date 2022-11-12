@@ -15,6 +15,8 @@ import java.time.LocalDateTime;
 public class MessageDto {
     @Schema(description = "메세지 id")
     private Long id;
+    @Schema(description = "보낸 사람 id")
+    private Long senderId;
     @Schema(description = "보낸 사람 닉네임")
     private String sender;
     @Schema(description = "보낸 사람 프로필 이미지")

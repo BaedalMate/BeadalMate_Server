@@ -48,7 +48,7 @@ public class ChatRoomService {
     public ChatRoomDetailDto getChatRoomDetail(Long id) {
         ChatRoom chatRoom = chatRoomJpaRepository.findById(id).get();
         List<MessageDto> messageInfos = chatRoom.getMessages().stream()
-                .map(m -> new MessageDto(m.getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate()))
+                .map(m -> new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate()))
                 .collect(Collectors.toList());
         Recruit recruit = chatRoom.getRecruit();
         RecruitDetailDto recruitDetail = new RecruitDetailDto(
@@ -73,7 +73,7 @@ public class ChatRoomService {
         List<ChatRoomDto> chatRoomInfos =  chatRooms.stream().distinct().map(
                 c -> {
                     Message message = c.getMessages().get(c.getMessages().size()-1);
-                    MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
+                    MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
                     return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo);
                 }
         ).collect(Collectors.toList());
