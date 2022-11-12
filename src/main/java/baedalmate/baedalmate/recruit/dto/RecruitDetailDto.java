@@ -39,6 +39,10 @@ public class RecruitDetailDto {
     private int currentPeople;
     @Schema(description = "모집 최소 인원")
     private int minPeople;
+    @Schema(description = "모집 현재 금액")
+    private int currentPrice;
+    @Schema(description = "모집 최소 금액")
+    private int minPrice;
     @Schema(description = "거점")
     private String dormitory;
     @Schema(description = "유저 이름")
