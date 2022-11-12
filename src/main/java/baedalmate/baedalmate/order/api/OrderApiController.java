@@ -1,0 +1,52 @@
+package baedalmate.baedalmate.order.api;
+
+import baedalmate.baedalmate.chat.domain.ChatRoom;
+import baedalmate.baedalmate.chat.domain.Message;
+import baedalmate.baedalmate.chat.domain.MessageType;
+import baedalmate.baedalmate.chat.service.ChatRoomService;
+import baedalmate.baedalmate.chat.service.MessageService;
+import baedalmate.baedalmate.order.dto.CreateOrderDto;
+import baedalmate.baedalmate.order.dto.OrderAndChatIdDto;
+import baedalmate.baedalmate.order.service.OrderService;
+import baedalmate.baedalmate.security.annotation.AuthUser;
+import baedalmate.baedalmate.security.user.PrincipalDetails;
+import baedalmate.baedalmate.user.domain.User;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+@Api(tags = {"모집글 참여 api"})
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1")
+public class OrderApiController {
+
+    private final OrderService orderService;
+    private final MessageService messageService;
+    private final ChatRoomService chatRoomService;
+
+    @ApiOperation(value = "모집글 참여")
+    @PostMapping(value = "/order")
+    public ResponseEntity<OrderAndChatIdDto> createOrder(
+            @AuthUser PrincipalDetails principalDetails,
+            @RequestBody @Valid CreateOrderDto createOrderDto
+    ) {
+        User user = principalDetails.getUser();
+
+        Long orderId = orderService.createOrder(user, createOrderDto);
+
+        // chat room 조회
+        ChatRoom chatRoom = chatRoomService.findByRecruitId(createOrderDto.getRecruitId());
+
+        // message 생성
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+        messageService.save(message);
+
+        OrderAndChatIdDto response = new OrderAndChatIdDto(orderId, chatRoom.getId());
+        return ResponseEntity.ok().body(response);
+    }
+}

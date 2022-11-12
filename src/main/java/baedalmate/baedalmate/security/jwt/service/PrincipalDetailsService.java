@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.jwt.service;
 
-import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.security.repository.AuthRepository;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
 import lombok.RequiredArgsConstructor;

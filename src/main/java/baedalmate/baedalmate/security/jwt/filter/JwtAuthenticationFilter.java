@@ -3,7 +3,7 @@ package baedalmate.baedalmate.security.jwt.filter;
 import baedalmate.baedalmate.errors.errorcode.UserErrorCode;
 import baedalmate.baedalmate.security.jwt.service.JwtTokenProvider;
 import baedalmate.baedalmate.security.jwt.service.PrincipalDetailsService;
-import baedalmate.baedalmate.service.RedisService;
+import baedalmate.baedalmate.user.service.RedisService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;

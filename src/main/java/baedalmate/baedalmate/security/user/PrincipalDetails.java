@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.user;
 
-import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.user.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

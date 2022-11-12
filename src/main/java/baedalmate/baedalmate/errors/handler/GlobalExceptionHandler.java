@@ -38,13 +38,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
         ErrorCode errorCode = e.getErrorCode();
-        return handleExceptionInternal(errorCode);
+        if(e.getMessage().isEmpty())
+            return handleExceptionInternal(errorCode);
+        else
+            return handleExceptionInternal(errorCode, e.getMessage());
     }
-
-//    @ExceptionHandler(InvalidParameterException.class)
-//    public ResponseEntity<Object> handleInvalidParamterException(InvalidParameterException e) {
-//        ErrorCode error
-//    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException e) {

@@ -9,4 +9,8 @@ public class InvalidParameterException extends RestApiException {
     public InvalidParameterException() {
         super(ERROR_CODE);
     }
+
+    public InvalidParameterException(String message) {
+        super(ERROR_CODE, message);
+    }
 }
