@@ -2,7 +2,7 @@ package baedalmate.baedalmate.security.jwt.service;
 
 import baedalmate.baedalmate.config.AppProperties;
 import baedalmate.baedalmate.security.repository.AuthRepository;
-import baedalmate.baedalmate.service.RedisService;
+import baedalmate.baedalmate.user.service.RedisService;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

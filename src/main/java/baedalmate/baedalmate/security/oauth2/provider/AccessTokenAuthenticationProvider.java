@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.security.oauth2.provider;
 
-import baedalmate.baedalmate.domain.User;
+import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.security.oauth2.authentication.AccessTokenSocialTypeToken;
 import baedalmate.baedalmate.security.oauth2.exception.ExpiredAccessTokenException;
 import baedalmate.baedalmate.security.oauth2.service.LoadUserService;

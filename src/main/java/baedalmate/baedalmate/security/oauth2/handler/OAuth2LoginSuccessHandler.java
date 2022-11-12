@@ -1,11 +1,11 @@
 package baedalmate.baedalmate.security.oauth2.handler;
 
 import baedalmate.baedalmate.config.AppProperties;
-import baedalmate.baedalmate.domain.User;
-import baedalmate.baedalmate.dto.TokenResponse;
+import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.security.jwt.service.JwtTokenProvider;
 import baedalmate.baedalmate.security.repository.AuthRepository;
 import baedalmate.baedalmate.security.user.OAuth2UserDetails;
+import baedalmate.baedalmate.user.dto.TokenDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -40,9 +40,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
         MediaType jsonMimeType = MediaType.APPLICATION_JSON;
 
-        TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken);
-        if (jsonConverter.canWrite(tokenResponse.getClass(), jsonMimeType)) {
-            jsonConverter.write(tokenResponse, jsonMimeType, new ServletServerHttpResponse(response));
+        TokenDto tokenDto = new TokenDto(accessToken, refreshToken);
+        if (jsonConverter.canWrite(tokenDto.getClass(), jsonMimeType)) {
+            jsonConverter.write(tokenDto, jsonMimeType, new ServletServerHttpResponse(response));
         }
     }
 }
