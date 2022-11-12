@@ -184,6 +184,8 @@ public class RecruitService {
                 recruit.getCoupon(),
                 recruit.getCurrentPeople(),
                 recruit.getMinPeople(),
+                recruit.getCurrentPrice(),
+                recruit.getMinPrice(),
                 recruit.getDormitory().getName(),
                 hostUser.getNickname(),
                 hostUser.getScore(),
