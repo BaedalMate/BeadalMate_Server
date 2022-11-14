@@ -19,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = {"모집글 api"})
 @RestController
@@ -115,6 +117,22 @@ public class RecruitApiController {
         int view = recruitService.updateView(recruitId);
 
         RecruitDetailDto response = recruitService.findOne(principalDetails.getUser(), recruitId);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @ApiOperation(value = "모집글 마감")
+    @GetMapping(value = "/recruit/close/{id}")
+    public ResponseEntity<Map<String, Object>> closeRecruit(
+            @AuthUser PrincipalDetails principalDetails,
+            @ApiParam(value = "모집글 id")
+            @PathVariable("id")
+                    Long recruitId
+    ) {
+        recruitService.closeRecruit(recruitId, principalDetails.getId());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", "success");
 
         return ResponseEntity.ok().body(response);
     }
