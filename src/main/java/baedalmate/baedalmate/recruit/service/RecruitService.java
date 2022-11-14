@@ -6,6 +6,7 @@ import baedalmate.baedalmate.category.domain.CategoryImage;
 import baedalmate.baedalmate.category.service.CategoryImageService;
 import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
+import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
 import baedalmate.baedalmate.errors.exceptions.InvalidPageException;
 import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
@@ -42,6 +43,25 @@ public class RecruitService {
     private final CategoryJpaRepository categoryJpaRepository;
     private final CategoryImageService categoryImageService;
     private final ChatRoomService chatRoomService;
+
+    @Transactional
+    public void closeRecruit(Long recruitId, Long userId) {
+        // 유저조회
+        User user = userJpaRepository.findById(userId).get();
+        // Recruit 조회
+        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+
+        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+
+        if(!host) {
+            throw new InvalidApiRequestException("Not host");
+        }
+
+        if(!recruit.isActive()) {
+            throw new InvalidApiRequestException("Already closed recruit");
+        }
+        recruitJpaRepository.setActiveFalse(recruitId);
+    }
 
     @Transactional
     public Long createRecruit(Long userId, CreateRecruitDto createRecruitDto) {
