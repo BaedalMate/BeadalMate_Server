@@ -25,4 +25,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Query("update Recruit r set r.currentPeople = r.currentPeople + 1 where r.id = :id")
     int updateCurrentPeople(@Param("id") Long recruitId);
 
+    @Modifying(clearAutomatically = true)
+    @Query("update Recruit r set r.currentPeople = r.currentPeople - 1 where r.id = :id")
+    int reduceCurrentPeople(@Param("id") Long recruitId);
 }

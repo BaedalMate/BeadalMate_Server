@@ -26,7 +26,24 @@ public class OrderService {
     private final RecruitJpaRepository recruitJpaRepository;
 
     public List<Order> findByRecruitId(Long recruitId) {
-        return orderJpaRepository.findAllByRecruitId(recruitId);
+        return orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
+    }
+
+    @Transactional
+    public void deleteOrder(Long userId, Long recruitId) {
+        Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
+        Recruit recruit = order.getRecruit();
+        // 현재 인원 감소
+        recruitJpaRepository.reduceCurrentPeople(recruit.getId());
+        int price = 0;
+        List<Menu> menus = order.getMenus();
+        for (Menu menu : menus) {
+            price += menu.getPrice();
+        }
+        // 현재 금액 감소
+        recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() - price, recruit.getId());
+        // order 삭제
+        orderJpaRepository.delete(order);
     }
 
     @Transactional
@@ -56,7 +73,7 @@ public class OrderService {
 
         // current price 갱신
         int price = 0;
-        for(MenuDto menuDto : createOrderDto.getMenu()) {
+        for (MenuDto menuDto : createOrderDto.getMenu()) {
             price += menuDto.getPrice();
         }
         recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() + price, recruit.getId());
@@ -65,23 +82,5 @@ public class OrderService {
         recruitJpaRepository.updateCurrentPeople(recruit.getId());
 
         return order.getId();
-    }
-
-    @Transactional
-    public int updateCurrentPrice(Order order) {
-        List<Menu> menus = order.getMenus();
-        Recruit recruit = order.getRecruit();
-
-        int sum = 0;
-        for (Menu menu : menus) {
-            sum += menu.getPrice() * menu.getQuantity();
-        }
-
-        recruitJpaRepository.updateCurrentPrice(sum + recruit.getCurrentPrice(), recruit.getId());
-        if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
-            recruit.setActive(false);
-        }
-
-        return recruit.getCurrentPrice();
     }
 }
