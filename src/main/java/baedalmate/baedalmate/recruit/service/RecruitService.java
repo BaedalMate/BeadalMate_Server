@@ -301,10 +301,10 @@ public class RecruitService {
         if(sort.contains("score")) {
             recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByScore(categoryId, pageable);
         }
-        if(sort.contains("deadlineDate")) {
+        else if(sort.contains("deadlineDate")) {
             recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByDeadlineDate(categoryId, pageable);
         }
-        if(sort.contains("view")) {
+        else if(sort.contains("view")) {
             recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByView(categoryId, pageable);
         }
         else {
