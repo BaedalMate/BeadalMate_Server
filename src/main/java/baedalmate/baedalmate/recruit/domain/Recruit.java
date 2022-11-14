@@ -5,7 +5,9 @@ import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.embed.Place;
 import baedalmate.baedalmate.user.domain.User;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Recruit {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -87,8 +90,7 @@ public class Recruit {
     private boolean active = true;
 
     //== constructor ==//
-    private Recruit() {
-    }
+//    private Recruit() { }
 
     private Recruit(int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
                     Place place, Platform platform, int coupon, String title, String description, String image, boolean freeShipping) {
