@@ -81,6 +81,13 @@ public class OrderService {
         // current people 갱신
         recruitJpaRepository.updateCurrentPeople(recruit.getId());
 
+        // 마감 기준 체크
+        if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() == recruit.getMinPeople()) {
+            recruitJpaRepository.setActiveFalse(recruit.getId());
+        } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
+            recruitJpaRepository.setActiveFalse(recruit.getId());
+        }
+
         return order.getId();
     }
 }
