@@ -163,7 +163,7 @@ public class RecruitService {
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         boolean participate = false;
-        List<Order> orders = orderJpaRepository.findAllByRecruitId(recruitId);
+        List<Order> orders = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
         for(Order order : orders) {
             if(order.getUser().getId() == user.getId()) {
                 participate = true;
