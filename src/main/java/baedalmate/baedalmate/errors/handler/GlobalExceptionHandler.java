@@ -2,9 +2,6 @@ package baedalmate.baedalmate.errors.handler;
 
 import baedalmate.baedalmate.errors.errorcode.CommonErrorCode;
 import baedalmate.baedalmate.errors.errorcode.ErrorCode;
-import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
-import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
-import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.errors.exceptions.RestApiException;
 import baedalmate.baedalmate.errors.response.ErrorResponse;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +35,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
         ErrorCode errorCode = e.getErrorCode();
-        if(e.getMessage().isEmpty())
+        if(e.getMessage() == null)
             return handleExceptionInternal(errorCode);
         else
             return handleExceptionInternal(errorCode, e.getMessage());
@@ -60,11 +57,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, errorCode);
     }
 
-//    @ExceptionHandler({Exception.class})
-//    public ResponseEntity<Object> handleAllException(Exception ex) {
-//        ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
-//        return handleExceptionInternal(errorCode);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleAllException(Exception ex) {
+        ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
+        return handleExceptionInternal(errorCode);
+    }
 
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
         return ResponseEntity.status(errorCode.getHttpStatus().value())

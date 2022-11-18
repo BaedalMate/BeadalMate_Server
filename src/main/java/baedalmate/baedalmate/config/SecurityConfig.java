@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/refresh", "/login").permitAll()
                 .antMatchers("/swagger-ui/**", "/chat/room/**").permitAll()
-                .antMatchers("/api/v1").authenticated()
+                .antMatchers("/api/v1/**").authenticated()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
