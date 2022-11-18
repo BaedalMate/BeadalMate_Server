@@ -15,28 +15,36 @@ public class RecruitRepository {
     private final EntityManager em;
 
     public List<Recruit> findAllUsingJoinOrderByScore(Pageable pageable) {
-        return em.createQuery("select r from Recruit r join fetch r.user where r.active = true order by r.user.score DESC", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user " +
+                        "where r.active = true and r.cancel = false " +
+                        "order by r.user.score DESC", Recruit.class)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
                 .getResultList();
     }
 
     public List<Recruit> findAllUsingJoinOrderByDeadlineDate(Pageable pageable) {
-        return em.createQuery("select r from Recruit r join fetch r.user where r.active = true order by r.deadlineDate ASC", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user " +
+                        "where r.active = true and r.cancel = false " +
+                        "order by r.deadlineDate ASC", Recruit.class)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
                 .getResultList();
     }
 
     public List<Recruit> findAllUsingJoinOrderByView(Pageable pageable) {
-        return em.createQuery("select r from Recruit r join fetch r.user where r.active = true order by r.deadlineDate ASC", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user " +
+                        "where r.active = true and r.cancel = false " +
+                        "order by r.deadlineDate ASC", Recruit.class)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
                 .getResultList();
     }
 
     public List<Recruit> findAllByCategoryUsingJoinOrderByScore(Long categoryId, Pageable pageable) {
-        return em.createQuery("select r from Recruit r join fetch r.user where r.category.id = :id and r.active = true order by r.user.score DESC", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user " +
+                        "where r.category.id = :id and r.active = true and r.cancel = false " +
+                        "order by r.user.score DESC", Recruit.class)
                 .setParameter("id", categoryId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -44,7 +52,9 @@ public class RecruitRepository {
     }
 
     public List<Recruit> findAllByCategoryUsingJoinOrderByDeadlineDate(Long categoryId, Pageable pageable) {
-        return em.createQuery("select r from Recruit r join fetch r.user where r.category.id = :id and r.active = true order by r.deadlineDate ASC", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user " +
+                        "where r.category.id = :id and r.active = true and r.cancel = false " +
+                        "order by r.deadlineDate ASC", Recruit.class)
                 .setParameter("id", categoryId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -52,7 +62,9 @@ public class RecruitRepository {
     }
 
     public List<Recruit> findAllByCategoryUsingJoinOrderByView(Long categoryId, Pageable pageable) {
-        return em.createQuery("select r from Recruit r join fetch r.user where r.category.id = :id and r.active = true order by r.view DESC", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user " +
+                        "where r.category.id = :id and r.active = true and r.cancel = false " +
+                        "order by r.view DESC", Recruit.class)
                 .setParameter("id", categoryId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -60,7 +72,9 @@ public class RecruitRepository {
     }
 
     public List<Recruit> findAllWithTagsUsingJoinOrderByDeadlineDate(Dormitory dormitory, Pageable pageable) {
-        return em.createQuery("select r from Recruit r join fetch r.user join fetch r.tags where r.dormitory = :dormitory and r.active = true order by r.deadlineDate ASC", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user join fetch r.tags " +
+                        "where r.dormitory = :dormitory and r.active = true and r.cancel = false " +
+                        "order by r.deadlineDate ASC", Recruit.class)
                 .setParameter("dormitory", dormitory)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -68,7 +82,8 @@ public class RecruitRepository {
     }
 
     public Recruit findByIdUsingJoin(Long id) {
-        return em.createQuery("select r from Recruit r join fetch r.user join fetch r.chatRoom where r.id = :id", Recruit.class)
+        return em.createQuery("select r from Recruit r join fetch r.user join fetch r.chatRoom " +
+                        "where r.id = :id", Recruit.class)
                 .setParameter("id", id)
                 .getSingleResult();
     }
