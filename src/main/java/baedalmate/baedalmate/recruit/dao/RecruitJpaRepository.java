@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+
 public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
 
     @Modifying(clearAutomatically = true)
@@ -31,4 +33,8 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.cancel = true where r.id = :id")
     void setCancelTrue(@Param("id") Long recruitId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Recruit r set r.active = false where r.active = true and r.cancel = false and r.deadlineDate < :date")
+    void setActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 }
