@@ -4,6 +4,7 @@ import baedalmate.baedalmate.category.domain.Category;
 import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.embed.Place;
+import baedalmate.baedalmate.review.domain.Review;
 import baedalmate.baedalmate.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -64,6 +65,9 @@ public class Recruit {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
     private List<Tag> tags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "recruit")
+    private List<Review> reviews = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -153,6 +157,11 @@ public class Recruit {
     public void addTag(Tag tag) {
         tags.add(tag);
         tag.setRecruit(this);
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setRecruit(this);
     }
 
     //== Getter ==//
