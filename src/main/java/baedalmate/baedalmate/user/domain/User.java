@@ -4,6 +4,7 @@ import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
 import baedalmate.baedalmate.recruit.domain.embed.Address;
+import baedalmate.baedalmate.review.domain.Review;
 import baedalmate.baedalmate.security.oauth2.soical.SocialType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,6 +50,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
+
     @CreationTimestamp
     private Timestamp createDate;
     @UpdateTimestamp
@@ -77,4 +81,10 @@ public class User {
         recruits.add(recruit);
         recruit.setUser(this);
     }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setUser(this);
+    }
+
 }
