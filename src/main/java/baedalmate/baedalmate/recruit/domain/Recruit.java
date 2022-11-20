@@ -89,6 +89,8 @@ public class Recruit {
 //    @Column(columnDefinition = "boolean default true", nullable = false)
     private boolean active = true;
 
+    private boolean cancel = false;
+
     //== constructor ==//
 //    private Recruit() { }
 

@@ -38,7 +38,7 @@ public class RecruitApiController {
             @AuthUser PrincipalDetails principalDetails,
             @RequestBody @Valid CreateRecruitDto createRecruitDto
     ) {
-        Long recruitId = recruitService.createRecruit(principalDetails.getId(), createRecruitDto);
+        Long recruitId = recruitService.create(principalDetails.getId(), createRecruitDto);
 
         RecruitIdDto response = new RecruitIdDto(recruitId);
 
@@ -129,7 +129,23 @@ public class RecruitApiController {
             @PathVariable("id")
                     Long recruitId
     ) {
-        recruitService.closeRecruit(recruitId, principalDetails.getId());
+        recruitService.close(recruitId, principalDetails.getId());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", "success");
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @ApiOperation(value = "모집글 취소")
+    @GetMapping(value = "/recruit/cancel/{id}")
+    public ResponseEntity<Map<String, Object>> cancelRecruit(
+            @AuthUser PrincipalDetails principalDetails,
+            @ApiParam(value = "모집글 id")
+            @PathVariable("id")
+                    Long recruitId
+    ) {
+        recruitService.cancel(recruitId, principalDetails.getId());
 
         Map<String, Object> response = new HashMap<>();
         response.put("result", "success");

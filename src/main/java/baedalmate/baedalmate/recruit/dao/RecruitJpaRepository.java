@@ -27,4 +27,8 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.active = false where r.id = :id")
     void setActiveFalse(@Param("id") Long recruitId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Recruit r set r.cancel = true where r.id = :id")
+    void setCancelTrue(@Param("id") Long recruitId);
 }

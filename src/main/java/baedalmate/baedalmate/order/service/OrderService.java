@@ -1,6 +1,7 @@
 package baedalmate.baedalmate.order.service;
 
 import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
+import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
 import baedalmate.baedalmate.order.dto.CreateOrderDto;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dto.MenuDto;
@@ -52,6 +53,13 @@ public class OrderService {
         // Recruit 조회
         Recruit recruit = recruitJpaRepository.findById(createOrderDto.getRecruitId()).get();
 
+        // 취소 또는 비활성 검사
+        if (recruit.isCancel()) {
+            throw new InvalidApiRequestException("Already canceled recruit");
+        }
+        if (recruit.isActive()) {
+            throw new InvalidApiRequestException("Already closed recruit");
+        }
         // 중복 검사
         List<Order> orders = recruit.getOrders();
         for (Order order : orders) {

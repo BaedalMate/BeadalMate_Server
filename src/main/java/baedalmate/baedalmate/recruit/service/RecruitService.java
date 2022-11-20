@@ -45,7 +45,27 @@ public class RecruitService {
     private final ChatRoomService chatRoomService;
 
     @Transactional
-    public void closeRecruit(Long recruitId, Long userId) {
+    public void cancel(Long recruitId, Long userId) {
+        // 유저조회
+        User user = userJpaRepository.findById(userId).get();
+        // Recruit 조회
+        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+
+        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+
+        if(!host) {
+            throw new InvalidApiRequestException("Not host");
+        }
+
+        if(recruit.isCancel()) {
+            throw new InvalidApiRequestException("Already canceled recruit");
+        }
+        recruitJpaRepository.setActiveFalse(recruitId);
+        recruitJpaRepository.setCancelTrue(recruitId);
+    }
+
+    @Transactional
+    public void close(Long recruitId, Long userId) {
         // 유저조회
         User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
@@ -64,7 +84,7 @@ public class RecruitService {
     }
 
     @Transactional
-    public Long createRecruit(Long userId, CreateRecruitDto createRecruitDto) {
+    public Long create(Long userId, CreateRecruitDto createRecruitDto) {
         // 유저조회
         User user = userJpaRepository.findById(userId).get();
 
@@ -285,17 +305,6 @@ public class RecruitService {
                 r.getMinShippingFee(),
                 r.getImage()
         )).collect(Collectors.toList());
-    }
-
-    @Transactional
-    public int updateCurrentPeople(Recruit recruit) {
-        int currentPeople = recruitJpaRepository.updateCurrentPeople(recruit.getId());
-
-        // 인원수 검사
-        if (recruit.getMinPeople() <= recruit.updateCurrentPeople() && recruit.getCriteria() == Criteria.NUMBER) {
-            recruit.setActive(false);
-        }
-        return currentPeople;
     }
 
     public List<MainPageRecruitDtoWithTag> findAllWithTag(Dormitory dormitory, Pageable pageable) {
