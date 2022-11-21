@@ -13,6 +13,7 @@ import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.dao.RecruitRepository;
+import baedalmate.baedalmate.recruit.dao.ShippingFeeJpaRepository;
 import baedalmate.baedalmate.recruit.dao.TagJpaRepository;
 import baedalmate.baedalmate.recruit.domain.*;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
@@ -44,6 +45,86 @@ public class RecruitService {
     private final CategoryJpaRepository categoryJpaRepository;
     private final CategoryImageService categoryImageService;
     private final ChatRoomService chatRoomService;
+    private final ShippingFeeJpaRepository shippingFeeJpaRepository;
+
+    @Transactional
+    public void update(Long userId, Long recruitId, UpdateRecruitDto updateRecruitDto) {
+        // 유저조회
+        User user = userJpaRepository.findById(userId).get();
+        // Recruit 조회
+        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+
+        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+
+        if (!host) {
+            throw new InvalidApiRequestException("Not host");
+        }
+
+        if (updateRecruitDto.getCategoryId() != null) {
+            Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
+            recruit.setCategory(category);
+        }
+        if (updateRecruitDto.getCategoryId() != null) {
+            PlaceDto placeDto = updateRecruitDto.getPlace();
+            Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
+            recruit.setPlace(place);
+        }
+        if (updateRecruitDto.getDormitory() != null) {
+            recruit.setDormitory(updateRecruitDto.getDormitory());
+        }
+        if (updateRecruitDto.getCriteria() != null) {
+            recruit.setCriteria(updateRecruitDto.getCriteria());
+        }
+        if (updateRecruitDto.getMinPrice() != null) {
+            recruit.setMinPrice(updateRecruitDto.getMinPrice());
+        }
+        if (updateRecruitDto.getMinPeople() != null) {
+            recruit.setMinPeople(updateRecruitDto.getMinPeople());
+        }
+        if (updateRecruitDto.getFreeShipping() != null) {
+            recruit.setFreeShipping(updateRecruitDto.getFreeShipping());
+            if (recruit.isFreeShipping()) {
+                shippingFeeJpaRepository.deleteByRecruitId(recruitId);
+            }
+        }
+        if (updateRecruitDto.getShippingFee() != null) {
+            shippingFeeJpaRepository.deleteByRecruitId(recruitId);
+            if (!recruit.isFreeShipping()) {
+                for(ShippingFeeDto sf : updateRecruitDto.getShippingFee()){
+                    ShippingFee shippingFee = ShippingFee.createShippingFee(sf.getShippingFee(), sf.getLowerPrice(), sf.getUpperPrice());
+                    shippingFee.setRecruit(recruit);
+                    shippingFeeJpaRepository.save(shippingFee);
+                }
+            }
+        }
+        if (updateRecruitDto.getPlatform() != null) {
+            recruit.setPlatform(updateRecruitDto.getPlatform());
+        }
+        if (updateRecruitDto.getDeadlineDate() != null) {
+            recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
+        }
+        if (updateRecruitDto.getTitle() != null) {
+            recruit.setTitle(updateRecruitDto.getTitle());
+        }
+        if (updateRecruitDto.getDescription() != null) {
+            recruit.setDescription(updateRecruitDto.getDescription());
+        }
+        if (updateRecruitDto.getTags() != null) {
+            tagJpaRepository.deleteByRecruitId(recruitId);
+            if (updateRecruitDto.getTags().size() > 4) {
+                throw new InvalidParameterException("Number of tag must be less than 5");
+            }
+            if (updateRecruitDto.getTags().size() > 0) {
+                for (TagDto tagDto : updateRecruitDto.getTags()) {
+                    Tag tag = Tag.createTag(tagDto.getTagname());
+                    tag.setRecruit(recruit);
+                    tagJpaRepository.save(tag);
+                }
+            }
+        }
+
+        recruitJpaRepository.save(recruit);
+    }
 
     @Transactional
     public void closeBySchedule() {
@@ -59,11 +140,11 @@ public class RecruitService {
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
 
-        if(!host) {
+        if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
 
-        if(recruit.isCancel()) {
+        if (recruit.isCancel()) {
             throw new InvalidApiRequestException("Already canceled recruit");
         }
         recruitJpaRepository.setActiveFalse(recruitId);
@@ -79,11 +160,11 @@ public class RecruitService {
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
 
-        if(!host) {
+        if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
 
-        if(!recruit.isActive()) {
+        if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
         recruitJpaRepository.setActiveFalse(recruitId);
@@ -96,15 +177,15 @@ public class RecruitService {
 
         // 태그 생성
         List<Tag> tags;
-        if(createRecruitDto.getTags().size()>4) {
+        if (createRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
         }
-        if(createRecruitDto.getTags().size()>0) {
+        if (createRecruitDto.getTags().size() > 0) {
             tags = createRecruitDto
                     .getTags()
                     .stream()
                     .map(t -> {
-                        if(t.getTagname().length()>8) {
+                        if (t.getTagname().length() > 8) {
                             throw new InvalidParameterException("Length of tag must be less than 9");
                         }
                         return Tag.createTag(t.getTagname());
@@ -116,10 +197,9 @@ public class RecruitService {
 
         // 배달비 생성
         List<ShippingFee> shippingFees;
-        if(createRecruitDto.isFreeShipping()) { // 무료배달이면 shippingFees는 빈 ArrayList
+        if (createRecruitDto.getFreeShipping()) { // 무료배달이면 shippingFees는 빈 ArrayList
             shippingFees = new ArrayList<>();
-        }
-        else {
+        } else {
             shippingFees = createRecruitDto.getShippingFee().stream()
                     .map(c -> ShippingFee.createShippingFee(c.getShippingFee(), c.getLowerPrice(), c.getUpperPrice()))
                     .collect(Collectors.toList());
@@ -158,7 +238,7 @@ public class RecruitService {
                 createRecruitDto.getTitle(),
                 createRecruitDto.getDescription(),
                 categoryImage.getName(),
-                createRecruitDto.isFreeShipping(),
+                createRecruitDto.getFreeShipping(),
                 shippingFees,
                 tags,
                 orders
@@ -168,7 +248,7 @@ public class RecruitService {
 
         // current price 갱신
         int price = 0;
-        for(MenuDto menuDto : createRecruitDto.getMenu()) {
+        for (MenuDto menuDto : createRecruitDto.getMenu()) {
             price += menuDto.getPrice();
         }
         recruitJpaRepository.updateCurrentPrice(price, recruit.getId());
@@ -210,8 +290,8 @@ public class RecruitService {
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         boolean participate = false;
         List<Order> orders = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
-        for(Order order : orders) {
-            if(order.getUser().getId() == user.getId()) {
+        for (Order order : orders) {
+            if (order.getUser().getId() == user.getId()) {
                 participate = true;
             }
         }
@@ -253,16 +333,13 @@ public class RecruitService {
         String sort = pageable.getSort().toString();
         Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Recruit> recruitList;
-        if(sort.contains("score")) {
+        if (sort.contains("score")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByScore(p);
-        }
-        else if(sort.contains("deadlineDate")) {
+        } else if (sort.contains("deadlineDate")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p);
-        }
-        else if(sort.contains("view")) {
+        } else if (sort.contains("view")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByView(p);
-        }
-        else {
+        } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
         return recruitList.stream().map(r -> new RecruitDto(
@@ -286,16 +363,13 @@ public class RecruitService {
         String sort = pageable.getSort().toString();
         Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Recruit> recruitList;
-        if(sort.contains("score")) {
+        if (sort.contains("score")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByScore(p);
-        }
-        else if(sort.contains("deadlineDate")) {
+        } else if (sort.contains("deadlineDate")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p);
-        }
-        else if(sort.contains("view")) {
+        } else if (sort.contains("view")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByView(p);
-        }
-        else {
+        } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
         return recruitList.stream().map(r -> new MainPageRecruitDto(
@@ -334,16 +408,13 @@ public class RecruitService {
     public List<RecruitDto> findAllByCategory(Long categoryId, Pageable pageable) {
         String sort = pageable.getSort().toString();
         List<Recruit> recruitList;
-        if(sort.contains("score")) {
+        if (sort.contains("score")) {
             recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByScore(categoryId, pageable);
-        }
-        else if(sort.contains("deadlineDate")) {
+        } else if (sort.contains("deadlineDate")) {
             recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByDeadlineDate(categoryId, pageable);
-        }
-        else if(sort.contains("view")) {
+        } else if (sort.contains("view")) {
             recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByView(categoryId, pageable);
-        }
-        else {
+        } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
         return recruitList.stream()
@@ -361,6 +432,6 @@ public class RecruitService {
                         r.getDormitory().getName(),
                         r.getTitle(),
                         r.getImage()
-        )).collect(Collectors.toList());
+                )).collect(Collectors.toList());
     }
 }
