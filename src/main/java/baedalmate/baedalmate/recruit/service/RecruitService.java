@@ -47,7 +47,7 @@ public class RecruitService {
 
     @Transactional
     public void closeBySchedule() {
-        recruitJpaRepository.setActiveFalseFromRecruitExceedTime(LocalDateTime.now());
+        recruitJpaRepository.setCancelTrueFromRecruitExceedTime(LocalDateTime.now());
     }
 
     @Transactional
