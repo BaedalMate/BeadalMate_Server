@@ -238,6 +238,7 @@ public class RecruitService {
                 hostUser.getProfileImage(),
                 hostUser.getDormitoryName(),
                 recruit.isActive(),
+                recruit.isCancel(),
                 host,
                 participate
         );
