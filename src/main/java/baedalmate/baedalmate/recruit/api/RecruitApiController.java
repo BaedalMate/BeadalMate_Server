@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.*;
+import org.hibernate.sql.Update;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -31,6 +32,22 @@ public class RecruitApiController {
 
     private final UserService userService;
     private final RecruitService recruitService;
+
+    @ApiOperation(value = "모집글 수정")
+    @PatchMapping(value = "/recruit/{id}")
+    public ResponseEntity<Map<String, Object>> updateRecruit(
+            @AuthUser PrincipalDetails principalDetails,
+            @RequestBody UpdateRecruitDto updateRecruitDto,
+            @PathVariable("id") Long recruitId
+    ) {
+        recruitService.update(principalDetails.getId(), recruitId, updateRecruitDto);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", "success");
+        response.put("id", recruitId);
+
+        return ResponseEntity.ok().body(response);
+    }
 
     @ApiOperation(value = "모집글 생성")
     @PostMapping(value = "/recruit/new")
