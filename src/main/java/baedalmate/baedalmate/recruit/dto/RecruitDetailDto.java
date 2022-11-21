@@ -55,6 +55,8 @@ public class RecruitDetailDto {
     private String userDormitory;
     @Schema(description = "마감 여부")
     private boolean active;
+    @Schema(description = "취소 여부")
+    private boolean cancel;
     @Schema(description = "호스트 여부")
     private boolean host;
     @Schema(description = "참석 여부")

@@ -35,6 +35,6 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     void setCancelTrue(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false where r.active = true and r.cancel = false and r.deadlineDate < :date")
-    void setActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
+    @Query("update Recruit r set r.active = false and r.cancel = true where r.active = true and r.cancel = false and r.deadlineDate < :date")
+    void setCancelTrueFromRecruitExceedTime(@Param("date") LocalDateTime date);
 }
