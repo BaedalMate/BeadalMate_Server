@@ -20,7 +20,8 @@ public class Tag {
     private Recruit recruit;
 
     //== constructor ==//
-    private Tag() {}
+    private Tag() {
+    }
 
     private Tag(String name) {
         this.name = name;

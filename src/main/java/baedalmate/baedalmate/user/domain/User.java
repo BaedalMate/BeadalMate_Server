@@ -60,17 +60,17 @@ public class User {
 
     //== Getter ==//
     public String getAddress() {
-        if(address == null) {
+        if (address == null) {
             return "";
         }
-        if(address.getStreet() == null || address.getDetail() == null || address.getZipcode() == null){
+        if (address.getStreet() == null || address.getDetail() == null || address.getZipcode() == null) {
             return "";
         }
         return address.getStreet() + " " + address.getDetail();
     }
 
     public String getDormitoryName() {
-        if(dormitory == null) {
+        if (dormitory == null) {
             return "";
         }
         return dormitory.getName();

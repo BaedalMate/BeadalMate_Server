@@ -29,7 +29,8 @@ public class Order {
     private List<Menu> menus = new ArrayList<>();
 
     //== constructor ==//
-    private Order() {}
+    private Order() {
+    }
 
     private Order(User user) {
         this.user = user;
@@ -38,11 +39,12 @@ public class Order {
     //== 생성 메서드 ==//
     public static Order createOrder(User user, List<Menu> menus) {
         Order order = new Order(user);
-        for(Menu menu : menus) {
+        for (Menu menu : menus) {
             order.addMenu(menu);
         }
         return order;
     }
+
     //== 연관관계 편의 메서드 ==//
     public void setRecruit(Recruit recruit) {
         this.recruit = recruit;

@@ -31,7 +31,8 @@ public class Message {
     private LocalDateTime createDate;
 
     //== constructor ==//
-    private Message() {}
+    private Message() {
+    }
 
     private Message(MessageType messageType, String message) {
         this.messageType = messageType;

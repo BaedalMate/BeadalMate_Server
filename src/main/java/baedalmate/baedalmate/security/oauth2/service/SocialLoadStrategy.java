@@ -15,7 +15,8 @@ import java.util.Map;
 
 public abstract class SocialLoadStrategy {
 
-    ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE  =  new ParameterizedTypeReference<>(){};
+    ParameterizedTypeReference<Map<String, Object>> RESPONSE_TYPE = new ParameterizedTypeReference<>() {
+    };
 
     protected final RestTemplate restTemplate = new RestTemplate();
 

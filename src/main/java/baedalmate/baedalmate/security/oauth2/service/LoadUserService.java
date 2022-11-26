@@ -35,7 +35,7 @@ public class LoadUserService {
     }
 
     private void setSocialLoadStrategy(SocialType socialType) {
-        switch (socialType){
+        switch (socialType) {
             case KAKAO:
                 this.socialLoadStrategy = new KakaoLoadStrategy();
                 break;

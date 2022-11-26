@@ -14,7 +14,8 @@ public class Place {
     private float y; // Y 좌표값 혹은 latitude
 
     //== constructor ==//
-    private Place() {}
+    private Place() {
+    }
 
     private Place(String name, String addressName, String roadAddressName, float x, float y) {
         this.name = name;

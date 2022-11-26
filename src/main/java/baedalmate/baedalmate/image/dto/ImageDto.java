@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class ImageDto {
     private List<String> images;
+
     public ImageDto() {
         this.images = new ArrayList<>();
     }

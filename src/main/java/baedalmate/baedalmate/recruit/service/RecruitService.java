@@ -90,7 +90,7 @@ public class RecruitService {
         if (updateRecruitDto.getShippingFee() != null) {
             shippingFeeJpaRepository.deleteByRecruitId(recruitId);
             if (!recruit.isFreeShipping()) {
-                for(ShippingFeeDto sf : updateRecruitDto.getShippingFee()){
+                for (ShippingFeeDto sf : updateRecruitDto.getShippingFee()) {
                     ShippingFee shippingFee = ShippingFee.createShippingFee(sf.getShippingFee(), sf.getLowerPrice(), sf.getUpperPrice());
                     shippingFee.setRecruit(recruit);
                     shippingFeeJpaRepository.save(shippingFee);

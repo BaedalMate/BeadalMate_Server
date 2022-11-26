@@ -12,13 +12,13 @@ import java.util.TimeZone;
 @SpringBootApplication
 public class BaedalmateApplication {
 
-	@PostConstruct
-	void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-	}
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(BaedalmateApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BaedalmateApplication.class, args);
+    }
 
 }

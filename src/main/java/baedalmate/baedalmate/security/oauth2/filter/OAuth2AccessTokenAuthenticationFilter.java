@@ -33,7 +33,7 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
     private static final String HTTP_METHOD = "POST";    //HTTP 메서드의 방식은 POST이다.
 
     private static final AntPathRequestMatcher DEFAULT_OAUTH2_LOGIN_PATH_REQUEST_MATCHER =
-            new AntPathRequestMatcher(DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX +"*", HTTP_METHOD); //=>   /login/oauth2/* 의 요청에, POST으로 온 요청에 매칭된다.
+            new AntPathRequestMatcher(DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX + "*", HTTP_METHOD); //=>   /login/oauth2/* 의 요청에, POST으로 온 요청에 매칭된다.
 
     public OAuth2AccessTokenAuthenticationFilter(AccessTokenAuthenticationProvider accessTokenAuthenticationProvider,   //Provider를 등록
                                                  AuthenticationSuccessHandler authenticationSuccessHandler,  //로그인 성공 시 처리할  handler이다
@@ -61,8 +61,8 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
         SocialAccessToken socialAccessToken = objectMapper.readValue(messageBody, SocialAccessToken.class);
 
         String accessToken = "";  //헤더의 AccessToken에 해당하는 값을 가져온다.
-        switch(socialType.getSocialName()) {
-            case("kakao"):
+        switch (socialType.getSocialName()) {
+            case ("kakao"):
                 accessToken = socialAccessToken.getKakaoAccessToken();
                 break;
             default:

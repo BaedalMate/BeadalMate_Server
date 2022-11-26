@@ -70,9 +70,9 @@ public class ChatRoomService {
 
         List<ChatRoom> chatRooms = messageJpaRepository.findAllByUserIdUsingJoin(user.getId())
                 .stream().map(m -> m.getChatRoom()).collect(Collectors.toList());
-        List<ChatRoomDto> chatRoomInfos =  chatRooms.stream().distinct().map(
+        List<ChatRoomDto> chatRoomInfos = chatRooms.stream().distinct().map(
                 c -> {
-                    Message message = c.getMessages().get(c.getMessages().size()-1);
+                    Message message = c.getMessages().get(c.getMessages().size() - 1);
                     MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
                     return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo);
                 }

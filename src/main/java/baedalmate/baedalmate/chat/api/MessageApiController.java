@@ -42,6 +42,6 @@ public class MessageApiController {
         messageDto.setSender(user.getNickname());
         messageDto.setSenderImage(user.getProfileImage());
 
-        sendingOperations.convertAndSend("/topic/chat/room/"+messageDto.getRoomId(), messageDto);
+        sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
     }
 }
