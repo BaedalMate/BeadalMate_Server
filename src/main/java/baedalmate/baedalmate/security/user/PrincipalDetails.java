@@ -28,7 +28,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         return user;
     }
 
-    public Long getId() { return user.getId(); }
+    public Long getId() {
+        return user.getId();
+    }
 
     @Override
     public String getUsername() {
@@ -58,7 +60,9 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collet = new ArrayList<GrantedAuthority>();
-        collet.add(()->{ return user.getRole();});
+        collet.add(() -> {
+            return user.getRole();
+        });
         return collet;
     }
 
@@ -76,6 +80,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     // User의 PrimaryKey
     @Override
     public String getName() {
-        return user.getId()+"";
+        return user.getId() + "";
     }
 }

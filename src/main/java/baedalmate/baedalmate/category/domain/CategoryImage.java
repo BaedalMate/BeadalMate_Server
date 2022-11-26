@@ -20,7 +20,8 @@ public class CategoryImage {
     private Category category;
 
     //== constructor ==//
-    private CategoryImage() {}
+    private CategoryImage() {
+    }
 
     private CategoryImage(String name) {
         this.name = name;
@@ -36,6 +37,6 @@ public class CategoryImage {
 
     //== 연관관계 편의 메서드 ==//
     public void setCategory(Category category) {
-        this.category= category;
+        this.category = category;
     }
 }

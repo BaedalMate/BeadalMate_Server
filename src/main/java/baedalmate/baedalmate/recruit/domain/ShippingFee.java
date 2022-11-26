@@ -24,7 +24,8 @@ public class ShippingFee {
     private Recruit recruit;
 
     //== constructor ==//
-    private ShippingFee() {}
+    private ShippingFee() {
+    }
 
     private ShippingFee(int shippingFee, int lowerPrice, int upperPrice) {
         this.shippingFee = shippingFee;

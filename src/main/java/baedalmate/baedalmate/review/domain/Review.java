@@ -27,7 +27,8 @@ public class Review {
     private Recruit recruit;
 
     //== constructor ==//
-    private Review() {}
+    private Review() {
+    }
 
     private Review(float score) {
         this.score = score;
@@ -43,7 +44,7 @@ public class Review {
     }
 
     //== setter ==//
-    public void setUser(User user){
+    public void setUser(User user) {
         this.user = user;
     }
 

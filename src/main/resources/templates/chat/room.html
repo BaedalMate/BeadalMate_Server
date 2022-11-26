@@ -10,6 +10,7 @@
         [v-cloak] {
             display: none;
         }
+
     </style>
 </head>
 <body>
@@ -29,7 +30,8 @@
         </div>
     </div>
     <ul class="list-group">
-        <li class="list-group-item list-group-item-action" v-for="item in chatrooms" v-bind:key="item.roomId" v-on:click="enterRoom(item.id)">
+        <li class="list-group-item list-group-item-action" v-for="item in chatrooms" v-bind:key="item.roomId"
+            v-on:click="enterRoom(item.id)">
             {{item.id}}
             {{item.lastMessage.message}}
         </li>
@@ -90,6 +92,7 @@
             }
         }
     });
+
 </script>
 </body>
 </html>

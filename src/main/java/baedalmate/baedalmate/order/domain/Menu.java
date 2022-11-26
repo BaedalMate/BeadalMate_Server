@@ -25,7 +25,8 @@ public class Menu {
     private int quantity;
 
     //== constructor ==//
-    private Menu() {}
+    private Menu() {
+    }
 
     private Menu(String name, int price, int quantity) {
         this.name = name;

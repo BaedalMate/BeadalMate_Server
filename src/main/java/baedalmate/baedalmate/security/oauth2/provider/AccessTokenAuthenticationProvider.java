@@ -39,7 +39,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
             return AccessTokenSocialTypeToken.builder().principal(oAuth2User).authorities(oAuth2User.getAuthorities()).build();
             //AccessTokenSocialTypeToken객체를 반환한다. principal은 OAuth2UserDetails객체이다. (formLogin에서는 UserDetails를 가져와서 결국 ContextHolder에 저장하기 때문에)
             //이렇게 구현하면 UserDetails 타입으로 회원의 정보를 어디서든 조회할 수 있다.
-        } catch(ExpiredAccessTokenException e) {
+        } catch (ExpiredAccessTokenException e) {
             throw e;
         }
     }
@@ -48,7 +48,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
     private User saveOrGet(OAuth2UserDetails oAuth2User) {
         //socailID(식별값)과 어떤 소셜 로그인 유형인지를 통해 DB에서 조회
         Optional<User> userBySocial = authRepository.findBySocialTypeAndSocialId(oAuth2User.getSocialType(), oAuth2User.getSocialId());
-        if(userBySocial.isPresent())
+        if (userBySocial.isPresent())
             return userBySocial.get();
         else {
             User user = User.builder()

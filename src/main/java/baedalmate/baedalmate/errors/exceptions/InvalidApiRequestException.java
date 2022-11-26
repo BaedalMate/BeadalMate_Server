@@ -9,6 +9,7 @@ public class InvalidApiRequestException extends RestApiException {
     public InvalidApiRequestException() {
         super(ERROR_CODE);
     }
+
     public InvalidApiRequestException(String message) {
         super(ERROR_CODE, message);
     }

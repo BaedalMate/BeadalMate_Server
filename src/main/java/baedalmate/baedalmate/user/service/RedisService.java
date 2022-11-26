@@ -25,14 +25,14 @@ public class RedisService {
     // 키-벨류 설정
     // 리프레시 토큰을 이용한 토큰 재발급 용
     // 리프레시 토큰 및 유저아이디 등록
-    public void setValues(String token, String id){
+    public void setValues(String token, String id) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         long time = appProperties.getAuth().getRefreshTokenExpirationMsec();
         values.set(token, id, Duration.ofMillis(time));
     }
 
     // 키값으로 벨류 가져오기
-    public String getValues(String token){
+    public String getValues(String token) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         return values.get(token);
     }

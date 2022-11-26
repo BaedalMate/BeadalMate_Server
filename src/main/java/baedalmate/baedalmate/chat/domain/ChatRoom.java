@@ -23,7 +23,8 @@ public class ChatRoom {
     private Recruit recruit;
 
     //== constructor ==//
-    private ChatRoom() {}
+    private ChatRoom() {
+    }
 
     //== 생성 메서드 ==//
     public static ChatRoom createChatRoom(Recruit recruit) {

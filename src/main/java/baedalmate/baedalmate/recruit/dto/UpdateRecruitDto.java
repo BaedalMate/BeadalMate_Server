@@ -39,7 +39,7 @@ public class UpdateRecruitDto {
     private String description;
     @Schema(description = "무료 배달 여부")
     private Boolean freeShipping;
-//    @Schema(description = "메뉴")
+    //    @Schema(description = "메뉴")
 //    private List<MenuDto> menu;
     @Schema(description = "태그")
     private List<TagDto> tags;

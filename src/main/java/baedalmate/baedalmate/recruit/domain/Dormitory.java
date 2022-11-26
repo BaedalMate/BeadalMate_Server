@@ -10,6 +10,7 @@ public enum Dormitory {
     NURI("누리학사");
 
     final private String name;
+
     public String getName() {
         return name;
     }

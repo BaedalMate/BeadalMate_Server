@@ -54,7 +54,7 @@ public class CategoryImageService {
 
     public CategoryImage getRandomCategoryImage(Category category) {
         List<CategoryImage> categoryImages = categoryImageJpaRepository.findByCategoryId(category.getId());
-        if(categoryImages.size()==0){
+        if (categoryImages.size() == 0) {
             throw new ImageNotFoundException();
         }
         Random rand = new Random();
