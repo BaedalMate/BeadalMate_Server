@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,16 @@ public class RecruitApiController {
 
     private final UserService userService;
     private final RecruitService recruitService;
+
+    @ApiOperation(value = "모집글 수정")
+    @GetMapping(value = "/recruit/{id}/participants")
+    public ResponseEntity<ParticipantsDto> getUser(
+            @AuthUser PrincipalDetails principalDetails,
+            @PathVariable("id") Long recruitId
+    ) {
+        ParticipantsDto response = recruitService.getParticipants(principalDetails.getId(), recruitId);
+        return ResponseEntity.ok().body(response);
+    }
 
     @ApiOperation(value = "모집글 수정")
     @PatchMapping(value = "/recruit/{id}")

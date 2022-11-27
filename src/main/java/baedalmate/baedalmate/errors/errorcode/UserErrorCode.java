@@ -13,7 +13,7 @@ public enum UserErrorCode implements ErrorCode {
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "Token expired"),
     UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "Unsupported token"),
     UNKNOWN_ERROR(HttpStatus.BAD_REQUEST, "Unknown error"),
-    ACCESS_DENIED(HttpStatus.BAD_REQUEST, "access_denied"),
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access denied"),
     WRONG_TOKEN(HttpStatus.BAD_REQUEST, "wrong token"),
     EXPIRED_SOCIAL_TOKEN(HttpStatus.UNAUTHORIZED, "Expired social token"),
     WRONG_TYPE_SIGNATURE(HttpStatus.UNAUTHORIZED, "Wrong type signature"),

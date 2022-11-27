@@ -6,6 +6,7 @@ import baedalmate.baedalmate.category.domain.CategoryImage;
 import baedalmate.baedalmate.category.service.CategoryImageService;
 import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
+import baedalmate.baedalmate.errors.exceptions.AccessDeniedException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
 import baedalmate.baedalmate.errors.exceptions.InvalidPageException;
 import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +49,22 @@ public class RecruitService {
     private final ChatRoomService chatRoomService;
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
 
+    public ParticipantsDto getParticipants(Long userId, Long recruitId) {
+        AtomicBoolean participate = new AtomicBoolean(false);
+        List<ParticipantDto> participants = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId)
+                .stream().map(o -> {
+                    if (o.getUser().getId() == userId) {
+                        participate.set(true);
+                    }
+                    return new ParticipantDto(o.getUser().getId(), o.getUser().getNickname(), o.getUser().getProfileImage());
+                })
+                .collect(Collectors.toList());
+        if(participate.get() == false){
+            throw new AccessDeniedException("User is not participant");
+        }
+        return new ParticipantsDto(recruitId, participants);
+    }
+
     @Transactional
     public void update(Long userId, Long recruitId, UpdateRecruitDto updateRecruitDto) {
         // 유저조회
@@ -59,7 +77,6 @@ public class RecruitService {
         if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
-
         if (updateRecruitDto.getCategoryId() != null) {
             Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
             recruit.setCategory(category);
