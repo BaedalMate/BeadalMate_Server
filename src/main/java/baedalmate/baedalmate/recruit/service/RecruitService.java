@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +50,44 @@ public class RecruitService {
     private final ChatRoomService chatRoomService;
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
 
+    public ParticipantsMenuDto getMenu(Long userId, Long recruitId) {
+        AtomicBoolean participate = new AtomicBoolean(false);
+        AtomicInteger total = new AtomicInteger(0);
+        AtomicInteger myTotal = new AtomicInteger();
+        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+        List<ParticipantMenuDto> participants = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId)
+                .stream().map(o -> {
+                    if (o.getUser().getId() == userId) {
+                        participate.set(true);
+                    }
+                    AtomicInteger t = new AtomicInteger(0);
+                    List<MenuDto> menu = o.getMenus().stream().map(m -> {
+                        t.addAndGet(m.getPrice() * m.getQuantity());
+                        return new MenuDto(m.getName(), m.getPrice(), m.getQuantity());
+                    }).collect(Collectors.toList());
+                    total.addAndGet(t.get());
+                    if (o.getUser().getId() == userId) {
+                        participate.set(true);
+                        myTotal.set(t.get());
+                    }
+                    return new ParticipantMenuDto(o.getUser().getId(), menu, t.get());
+                })
+                .collect(Collectors.toList());
+        if (participate.get() == false) {
+            throw new AccessDeniedException("User is not participant");
+        }
+
+        int shippingFee = 0;
+        if (!recruit.isFreeShipping()) {
+            for (ShippingFee sf : recruit.getShippingFees()) {
+                if (sf.getLowerPrice() <= total.get()) {
+                    shippingFee = sf.getShippingFee();
+                }
+            }
+        }
+        return new ParticipantsMenuDto(total.get(), participants.size(), participants, myTotal.get(), shippingFee, recruit.getCoupon());
+    }
+
     public ParticipantsDto getParticipants(Long userId, Long recruitId) {
         AtomicBoolean participate = new AtomicBoolean(false);
         List<ParticipantDto> participants = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId)
@@ -59,7 +98,7 @@ public class RecruitService {
                     return new ParticipantDto(o.getUser().getId(), o.getUser().getNickname(), o.getUser().getProfileImage());
                 })
                 .collect(Collectors.toList());
-        if(participate.get() == false){
+        if (participate.get() == false) {
             throw new AccessDeniedException("User is not participant");
         }
         return new ParticipantsDto(recruitId, participants);
