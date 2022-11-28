@@ -56,7 +56,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
                     .socialId(oAuth2User.getSocialId())
                     .profileImage(oAuth2User.getImage())
                     .nickname(oAuth2User.getUsername())
-                    .role("USER").build();
+                    .role("GUEST").build();
             return authRepository.save(user);
         }
     }
