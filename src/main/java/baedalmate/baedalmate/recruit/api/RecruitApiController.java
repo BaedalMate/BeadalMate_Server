@@ -34,9 +34,20 @@ public class RecruitApiController {
     private final UserService userService;
     private final RecruitService recruitService;
 
-    @ApiOperation(value = "모집글 수정")
+    @ApiOperation(value = "모집글 메뉴 조회")
+    @GetMapping(value = "/recruit/{id}/menu")
+    public ResponseEntity<ParticipantsMenuDto> getMenu(
+            @AuthUser PrincipalDetails principalDetails,
+            @PathVariable("id") Long recruitId
+
+    ) {
+        ParticipantsMenuDto response = recruitService.getMenu(principalDetails.getId(), recruitId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @ApiOperation(value = "모집글 참여자 조회")
     @GetMapping(value = "/recruit/{id}/participants")
-    public ResponseEntity<ParticipantsDto> getUser(
+    public ResponseEntity<ParticipantsDto> getParticipants(
             @AuthUser PrincipalDetails principalDetails,
             @PathVariable("id") Long recruitId
     ) {
