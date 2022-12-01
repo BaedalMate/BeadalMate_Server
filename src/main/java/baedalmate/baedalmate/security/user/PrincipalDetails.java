@@ -19,8 +19,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     }
 
     public static PrincipalDetails create(User user) {
-        List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
         return new PrincipalDetails(user);
     }
 
@@ -59,11 +57,11 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collet = new ArrayList<GrantedAuthority>();
-        collet.add(() -> {
-            return user.getRole();
+        Collection<GrantedAuthority> collect = new ArrayList<GrantedAuthority>();
+        collect.add(() -> {
+            return "ROLE_" + user.getRole();
         });
-        return collet;
+        return collect;
     }
 
     @Override
