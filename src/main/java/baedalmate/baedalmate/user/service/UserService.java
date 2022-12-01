@@ -66,6 +66,9 @@ public class UserService {
     @Transactional
     public User updateDormitory(Long id, String dormitory) {
         User user = userJpaRepository.findById(id).get();
+        if(user.getDormitory() == null) {
+            user.setRole("USER");
+        }
         switch (dormitory) {
             case "BURAM":
                 user.setDormitory(Dormitory.BURAM);

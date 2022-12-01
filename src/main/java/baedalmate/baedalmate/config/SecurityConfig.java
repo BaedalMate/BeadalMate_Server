@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.config;
 
+import baedalmate.baedalmate.security.jwt.errorhandling.JwtAccessDeniedHandler;
 import baedalmate.baedalmate.security.jwt.errorhandling.JwtAuthenticationEntryPoint;
 import baedalmate.baedalmate.security.jwt.filter.JwtAuthenticationFilter;
 import baedalmate.baedalmate.security.logout.CustomLogoutHandler;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomLogoutHandler customLogoutHandler;
@@ -43,10 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/refresh", "/login").permitAll()
                 .antMatchers("/swagger-ui/**", "/chat/room/**").permitAll()
-                .antMatchers("/api/v1/**").authenticated()
+//                .antMatchers("/api/v1/**").authenticated()
+                .antMatchers("/api/v1/user/**").hasAnyAuthority("ROLE_GUEST", "ROLE_USER")
+                .antMatchers("/api/v1/recruit/**", "/api/v1/order/**","/api/v1/review/**").hasAuthority("ROLE_USER")
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
                 .addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
