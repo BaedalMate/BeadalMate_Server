@@ -35,13 +35,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     }
 
     //    한글 출력을 위해 getWriter() 사용
-    private void setResponse(HttpServletResponse response, ErrorCode UserErrorCode) throws IOException {
+    private void setResponse(HttpServletResponse response, ErrorCode userErrorCode) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(UserErrorCode.getHttpStatus().value());
+        response.setStatus(userErrorCode.getHttpStatus().value());
 
         JSONObject responseJson = new JSONObject();
-        responseJson.put("message", UserErrorCode.getMessage());
-        responseJson.put("code", UserErrorCode.getHttpStatus().value());
+        responseJson.put("message", userErrorCode.getMessage());
+        responseJson.put("code", userErrorCode.getHttpStatus().value());
 
         response.getWriter().print(responseJson);
     }
