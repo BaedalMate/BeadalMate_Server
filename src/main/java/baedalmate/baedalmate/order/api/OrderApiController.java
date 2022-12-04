@@ -38,9 +38,7 @@ public class OrderApiController {
             @AuthUser PrincipalDetails principalDetails,
             @RequestBody @Valid CreateOrderDto createOrderDto
     ) {
-        User user = principalDetails.getUser();
-
-        Long orderId = orderService.createOrder(user, createOrderDto);
+        Long orderId = orderService.createOrder(principalDetails.getId(), createOrderDto);
 
         // chat room 조회
         ChatRoom chatRoom = chatRoomService.findByRecruitId(createOrderDto.getRecruitId());

@@ -10,6 +10,7 @@ import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
+import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
 
+    private final UserJpaRepository userJpaRepository;
     private final OrderJpaRepository orderJpaRepository;
     private final RecruitJpaRepository recruitJpaRepository;
 
@@ -48,7 +50,10 @@ public class OrderService {
     }
 
     @Transactional
-    public Long createOrder(User user, CreateOrderDto createOrderDto) {
+    public Long createOrder(Long userId, CreateOrderDto createOrderDto) {
+
+        // User 조회
+        User user = userJpaRepository.findById(userId).get();
 
         // Recruit 조회
         Recruit recruit = recruitJpaRepository.findById(createOrderDto.getRecruitId()).get();
@@ -63,7 +68,7 @@ public class OrderService {
         // 중복 검사
         List<Order> orders = recruit.getOrders();
         for (Order order : orders) {
-            if (order.getUser().getId() == user.getId()) {
+            if (order.getUser().getId() == userId) {
                 throw new ExistOrderException();
             }
         }
