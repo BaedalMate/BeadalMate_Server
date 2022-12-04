@@ -37,8 +37,7 @@ public class MessageApiController {
         ChatRoom chatRoom = chatRoomService.findOne(messageDto.getRoomId());
 
         // 메세지 db 저장
-        Message message = Message.createMessage(MessageType.TALK, messageDto.getMessage(), user, chatRoom);
-        messageService.save(message);
+        messageService.createMessage(messageDto.getRoomId(), messageDto.getSenderId(), MessageType.TALK, messageDto.getMessage());
         messageDto.setSender(user.getNickname());
         messageDto.setSenderImage(user.getProfileImage());
 

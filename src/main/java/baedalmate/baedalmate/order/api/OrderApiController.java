@@ -38,16 +38,9 @@ public class OrderApiController {
             @AuthUser PrincipalDetails principalDetails,
             @RequestBody @Valid CreateOrderDto createOrderDto
     ) {
-        Long orderId = orderService.createOrder(principalDetails.getId(), createOrderDto);
 
-        // chat room 조회
-        ChatRoom chatRoom = chatRoomService.findByRecruitId(createOrderDto.getRecruitId());
+        OrderAndChatIdDto response = orderService.createOrder(principalDetails.getId(), createOrderDto);
 
-        // message 생성
-        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
-        messageService.save(message);
-
-        OrderAndChatIdDto response = new OrderAndChatIdDto(orderId, chatRoom.getId());
         return ResponseEntity.ok().body(response);
     }
 

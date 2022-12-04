@@ -1,10 +1,16 @@
 package baedalmate.baedalmate.order.service;
 
+import baedalmate.baedalmate.chat.dao.ChatRoomJpaRepository;
+import baedalmate.baedalmate.chat.dao.MessageJpaRepository;
+import baedalmate.baedalmate.chat.domain.ChatRoom;
+import baedalmate.baedalmate.chat.domain.Message;
+import baedalmate.baedalmate.chat.domain.MessageType;
 import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
 import baedalmate.baedalmate.order.dto.CreateOrderDto;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dto.MenuDto;
+import baedalmate.baedalmate.order.dto.OrderAndChatIdDto;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.order.domain.Menu;
@@ -27,6 +33,8 @@ public class OrderService {
     private final UserJpaRepository userJpaRepository;
     private final OrderJpaRepository orderJpaRepository;
     private final RecruitJpaRepository recruitJpaRepository;
+    private final ChatRoomJpaRepository chatRoomJpaRepository;
+    private final MessageJpaRepository messageJpaRepository;
 
     public List<Order> findByRecruitId(Long recruitId) {
         return orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
@@ -50,7 +58,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Long createOrder(Long userId, CreateOrderDto createOrderDto) {
+    public OrderAndChatIdDto createOrder(Long userId, CreateOrderDto createOrderDto) {
 
         // User 조회
         User user = userJpaRepository.findById(userId).get();
@@ -100,7 +108,13 @@ public class OrderService {
         } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
             recruitJpaRepository.setActiveFalse(recruit.getId());
         }
+        // 입장 메세지 생성
+        ChatRoom chatRoom = chatRoomJpaRepository.findByRecruitId(createOrderDto.getRecruitId());
 
-        return order.getId();
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+
+        messageJpaRepository.save(message);
+
+        return new OrderAndChatIdDto(order.getId(), chatRoom.getId());
     }
 }
