@@ -50,6 +50,13 @@ public class Order {
         this.recruit = recruit;
     }
 
+    public void setMenus(List<Menu> menus) {
+        this.menus.clear();
+        for (Menu menu : menus) {
+            this.addMenu(menu);
+        }
+    }
+
     public void addMenu(Menu menu) {
         menus.add(menu);
         menu.setOrder(this);
