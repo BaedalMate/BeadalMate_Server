@@ -1,17 +1,13 @@
 package baedalmate.baedalmate.order.api;
 
-import baedalmate.baedalmate.chat.domain.ChatRoom;
-import baedalmate.baedalmate.chat.domain.Message;
-import baedalmate.baedalmate.chat.domain.MessageType;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
 import baedalmate.baedalmate.chat.service.MessageService;
-import baedalmate.baedalmate.order.dto.CreateOrderDto;
+import baedalmate.baedalmate.order.dto.OrderDto;
 import baedalmate.baedalmate.order.dto.DeleteOrderDto;
 import baedalmate.baedalmate.order.dto.OrderAndChatIdDto;
 import baedalmate.baedalmate.order.service.OrderService;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
-import baedalmate.baedalmate.user.domain.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +28,26 @@ public class OrderApiController {
     private final MessageService messageService;
     private final ChatRoomService chatRoomService;
 
+    @ApiOperation(value = "메뉴 수정")
+    @PutMapping(value = "/order")
+    public ResponseEntity<Map<String, Object>> updateMenu(
+            @AuthUser PrincipalDetails principalDetails,
+            @RequestBody OrderDto createOrderDto
+    ) {
+        orderService.updateOrder(principalDetails.getId(), createOrderDto);
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", "success");
+        return ResponseEntity.ok().body(response);
+    }
+
     @ApiOperation(value = "모집글 참여")
     @PostMapping(value = "/order")
     public ResponseEntity<OrderAndChatIdDto> participate(
             @AuthUser PrincipalDetails principalDetails,
-            @RequestBody @Valid CreateOrderDto createOrderDto
+            @RequestBody @Valid OrderDto orderDto
     ) {
 
-        OrderAndChatIdDto response = orderService.createOrder(principalDetails.getId(), createOrderDto);
+        OrderAndChatIdDto response = orderService.createOrder(principalDetails.getId(), orderDto);
 
         return ResponseEntity.ok().body(response);
     }
