@@ -12,7 +12,7 @@ import java.util.List;
 @Schema
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrderDto {
+public class OrderDto {
     @Schema(description = "모집글 id")
     @NotNull
     private Long recruitId;

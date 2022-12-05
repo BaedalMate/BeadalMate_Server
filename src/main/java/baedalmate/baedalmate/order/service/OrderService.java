@@ -1,15 +1,23 @@
 package baedalmate.baedalmate.order.service;
 
+import baedalmate.baedalmate.chat.dao.ChatRoomJpaRepository;
+import baedalmate.baedalmate.chat.dao.MessageJpaRepository;
+import baedalmate.baedalmate.chat.domain.ChatRoom;
+import baedalmate.baedalmate.chat.domain.Message;
+import baedalmate.baedalmate.chat.domain.MessageType;
 import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
-import baedalmate.baedalmate.order.dto.CreateOrderDto;
+import baedalmate.baedalmate.order.dto.OrderDto;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dto.MenuDto;
+import baedalmate.baedalmate.order.dto.OrderAndChatIdDto;
+import baedalmate.baedalmate.recruit.dao.MenuJpaRepository;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
+import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,16 +31,51 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
 
+    private final UserJpaRepository userJpaRepository;
     private final OrderJpaRepository orderJpaRepository;
     private final RecruitJpaRepository recruitJpaRepository;
+    private final ChatRoomJpaRepository chatRoomJpaRepository;
+    private final MessageJpaRepository messageJpaRepository;
+    private final MenuJpaRepository menuJpaRepository;
 
     public List<Order> findByRecruitId(Long recruitId) {
         return orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
     }
 
     @Transactional
+    public void updateOrder(Long userId, OrderDto orderDto) {
+        Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, orderDto.getRecruitId());
+        Recruit recruit = order.getRecruit();
+
+        // current price 갱신
+        int previousPrice = 0;
+        List<Menu> menus = order.getMenus();
+        for (Menu menu : menus) {
+            previousPrice += menu.getPrice();
+        }
+        int currentPrice = 0;
+        for (MenuDto menuDto : orderDto.getMenu()) {
+            currentPrice += menuDto.getPrice();
+        }
+
+        menuJpaRepository.deleteByOrderId(order.getId());
+
+        menus = orderDto.getMenu().stream()
+                .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
+                .collect(Collectors.toList());
+        recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() - previousPrice + currentPrice, recruit.getId());
+        order.setMenus(menus);
+        orderJpaRepository.save(order);
+        // 마감 기준 체크
+        if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
+            recruitJpaRepository.setActiveFalse(recruit.getId());
+        }
+    }
+
+    @Transactional
     public void deleteOrder(Long userId, Long recruitId) {
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
+
         Recruit recruit = order.getRecruit();
         // 현재 인원 감소
         recruitJpaRepository.reduceCurrentPeople(recruit.getId());
@@ -48,10 +91,13 @@ public class OrderService {
     }
 
     @Transactional
-    public Long createOrder(User user, CreateOrderDto createOrderDto) {
+    public OrderAndChatIdDto createOrder(Long userId, OrderDto orderDto) {
+
+        // User 조회
+        User user = userJpaRepository.findById(userId).get();
 
         // Recruit 조회
-        Recruit recruit = recruitJpaRepository.findById(createOrderDto.getRecruitId()).get();
+        Recruit recruit = recruitJpaRepository.findById(orderDto.getRecruitId()).get();
 
         // 취소 또는 비활성 검사
         if (recruit.isCancel()) {
@@ -63,7 +109,7 @@ public class OrderService {
         // 중복 검사
         List<Order> orders = recruit.getOrders();
         for (Order order : orders) {
-            if (order.getUser().getId() == user.getId()) {
+            if (order.getUser().getId() == userId) {
                 throw new ExistOrderException();
             }
         }
@@ -71,7 +117,7 @@ public class OrderService {
         List<User> users = orders.stream().map(o -> o.getUser()).collect(Collectors.toList());
 
         // order 생성
-        List<Menu> menus = createOrderDto.getMenu().stream()
+        List<Menu> menus = orderDto.getMenu().stream()
                 .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
                 .collect(Collectors.toList());
         Order order = Order.createOrder(user, menus);
@@ -81,7 +127,7 @@ public class OrderService {
 
         // current price 갱신
         int price = 0;
-        for (MenuDto menuDto : createOrderDto.getMenu()) {
+        for (MenuDto menuDto : orderDto.getMenu()) {
             price += menuDto.getPrice();
         }
         recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() + price, recruit.getId());
@@ -95,7 +141,13 @@ public class OrderService {
         } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
             recruitJpaRepository.setActiveFalse(recruit.getId());
         }
+        // 입장 메세지 생성
+        ChatRoom chatRoom = chatRoomJpaRepository.findByRecruitId(orderDto.getRecruitId());
 
-        return order.getId();
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+
+        messageJpaRepository.save(message);
+
+        return new OrderAndChatIdDto(order.getId(), chatRoom.getId());
     }
 }
