@@ -58,9 +58,6 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .alternateTypeRules(
                         AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class), typeResolver.resolve(Page.class))
                 )
-                .alternateTypeRules(
-                        AlternateTypeRules.newRule(typeResolver.resolve(PrincipalDetails.class), typeResolver.resolve(UserToken.class))
-                )
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .apiInfo(apiInfo())
@@ -80,12 +77,6 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
     private ApiKey apiKey() {
         return new ApiKey("Authorization", "Authorization", "header");
-    }
-
-    @Data
-    static class UserToken {
-        @ApiModelProperty(value = "QueryString 아니고 헤더임!!! 유의!!! Authorization: Bearer {token}")
-        private String token;
     }
 
     @Data
