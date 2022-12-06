@@ -26,4 +26,6 @@ public class ParticipantsMenuDto {
     private int shippingFeePerParticipant;
     @Schema(description = "쿠폰 금액")
     private int coupon;
+    @Schema(description = "요청자 결제 예정 금액")
+    private int myPaymentPrice;
 }
