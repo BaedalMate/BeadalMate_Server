@@ -15,8 +15,15 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebMvc
@@ -32,6 +39,19 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
+    private SecurityContext securityContext() {
+        return SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .build();
+    }
+
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+    }
+
     @Bean
     public Docket api() { //swagger를 연결하기 위한 Bean 작성
         return new Docket(DocumentationType.OAS_30)
@@ -41,6 +61,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .alternateTypeRules(
                         AlternateTypeRules.newRule(typeResolver.resolve(PrincipalDetails.class), typeResolver.resolve(UserToken.class))
                 )
+                .securityContexts(Arrays.asList(securityContext()))
+                .securitySchemes(Arrays.asList(apiKey()))
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.any())
@@ -51,9 +73,13 @@ public class SwaggerConfig implements WebMvcConfigurer {
     private ApiInfo apiInfo() { //선택
         return new ApiInfoBuilder()
                 .title("Baedalmate Release") //자신에게 맞는 타이틀을 작성해준다.
-                .description("backend api document") //알맞는 description을 작성해준다.
+                .description("토큰 입력 시 Bearer 꼭 추가!!") //알맞는 description을 작성해준다.
                 .version("0.1") //알맞는 버전을 작성해준다.
                 .build();
+    }
+
+    private ApiKey apiKey() {
+        return new ApiKey("Authorization", "Authorization", "header");
     }
 
     @Data
