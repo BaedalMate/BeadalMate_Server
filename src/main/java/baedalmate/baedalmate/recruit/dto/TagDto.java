@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TagDto {
-    @Schema(description = "태그명")
+    @Schema(description = "태그명", example = "존맛탱")
     private String tagname;
 }

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShippingFeeDto {
-    @Schema(description = "배달비")
+    @Schema(description = "배달비", example = "3000")
     private int shippingFee;
-    @Schema(description = "해당 가격 이상")
+    @Schema(description = "해당 가격 이상", example = "10000")
     private int lowerPrice;
-    @Schema(description = "해당 가격 이하")
+    @Schema(description = "해당 가격 이하", example = "30000")
     private int upperPrice;
 }

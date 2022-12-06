@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecruitIdDto {
-    @Schema(description = "Recruit id")
+    @Schema(description = "모집글 id")
     private Long id;
 }

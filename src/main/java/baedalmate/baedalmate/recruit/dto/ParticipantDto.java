@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParticipantDto {
-    @Schema(description = "유저 id")
+    @Schema(description = "유저 id", example = "1")
     private Long userId;
-    @Schema(description = "유저 닉네임")
+    @Schema(description = "유저 닉네임", example = "유상")
     private String nickname;
-    @Schema(description = "유저 프로필 이미지")
+    @Schema(description = "유저 프로필 이미지", example = "/images/12344.jpg")
     private String profileImage;
 }

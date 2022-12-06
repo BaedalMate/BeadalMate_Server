@@ -51,7 +51,7 @@ public class ChatRoomService {
                 .map(m -> new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate()))
                 .collect(Collectors.toList());
         Recruit recruit = chatRoom.getRecruit();
-        RecruitDetailDto recruitDetail = new RecruitDetailDto(
+        ChatRoomRecruitDetailDto recruitDetail = new ChatRoomRecruitDetailDto(
                 recruit.getId(),
                 recruit.getImage(),
                 recruit.getCreateDate(),
@@ -60,7 +60,8 @@ public class ChatRoomService {
                 recruit.getMinPrice(),
                 recruit.getMinPeople(),
                 recruit.getDeadlineDate(),
-                recruit.isActive()
+                recruit.isActive(),
+                recruit.isCancel()
         );
         return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messageInfos);
     }

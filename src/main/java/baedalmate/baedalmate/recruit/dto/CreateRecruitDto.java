@@ -14,42 +14,42 @@ import java.util.List;
 @Data
 @Schema(description = "모집글 생성")
 public class CreateRecruitDto {
-    @Schema(description = "카테고리 id")
+    @Schema(description = "카테고리 id", example = "1")
     @NotNull
     private Long categoryId;
     @Schema(description = "배달지점명")
     @NotNull
     private PlaceDto place;
-    @Schema(description = "배달거점 (BURAM|KB|SUGLIM|NURI)")
+    @Schema(description = "배달거점", example = "BURAM | KB | SUGLIM | NURI")
     @NotNull
     private Dormitory dormitory;
-    @Schema(description = "마감 기준 (NUMBER|PRICE|TIME)")
+    @Schema(description = "마감 기준", example = "NUMBER | PRICE | TIME")
     @NotNull
     private Criteria criteria;
-    @Schema(description = "최소주문금액")
+    @Schema(description = "최소주문금액", example = "20000")
     @NotNull
     private Integer minPrice;
-    @Schema(description = "최소 인원")
+    @Schema(description = "최소 인원", example = "3")
     @NotNull
     private Integer minPeople;
-    @Schema(description = "배달팁")
+    @Schema(description = "배달팁", example = "3000")
     @NotNull
     private List<ShippingFeeDto> shippingFee;
-    @Schema(description = "쿠폰 사용 금액")
+    @Schema(description = "쿠폰 사용 금액", example = "3000")
     @NotNull
     private Integer coupon;
-    @Schema(description = "배달앱 (BAEMIN|YOGIYO|COUPANG|ETC)")
+    @Schema(description = "배달앱", example = "BAEMIN | YOGIYO | COUPANG | ETC")
     @NotNull
     private Platform platform;
-    @Schema(description = "마감 시간 (예시: 2020-12-24T16:28:27)")
+    @Schema(description = "마감 시간", example = "2020-12-24T16:28:27")
     @NotNull
     private LocalDateTime deadlineDate;
-    @Schema(description = "글 제목")
+    @Schema(description = "글 제목", example = "영계백숙")
     @NotNull
     private String title;
-    @Schema(description = "글 설명")
+    @Schema(description = "글 설명", example = "오오오오")
     private String description;
-    @Schema(description = "무료 배달 여부")
+    @Schema(description = "무료 배달 여부", example = "true | false")
     @NotNull
     private Boolean freeShipping;
     @Schema(description = "메뉴")

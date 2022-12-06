@@ -13,17 +13,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Schema
 public class MessageDto {
-    @Schema(description = "메세지 id")
+    @Schema(description = "메세지 id", example = "1")
     private Long id;
-    @Schema(description = "보낸 사람 id")
+    @Schema(description = "보낸 사람 id", example = "1")
     private Long senderId;
-    @Schema(description = "보낸 사람 닉네임")
+    @Schema(description = "보낸 사람 닉네임", example = "허동준")
     private String sender;
-    @Schema(description = "보낸 사람 프로필 이미지")
+    @Schema(description = "보낸 사람 프로필 이미지", example = "/images/123456.jpg")
     private String senderImage;
-    @Schema(description = "메세지 내용")
+    @Schema(description = "메세지 내용", example = "ㅎㅇㅎㅇ")
     private String message;
-    @Schema(description = "보낸 시간")
+    @Schema(description = "보낸 시간", example = "2022-12-25 11:11:11")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime sendDate;
 }

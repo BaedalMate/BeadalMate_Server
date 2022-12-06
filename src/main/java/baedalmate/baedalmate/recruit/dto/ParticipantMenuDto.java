@@ -12,7 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParticipantMenuDto {
+    @Schema(description = "유저 id", example = "1")
     private Long userId;
+    @Schema(description = "메뉴")
     private List<MenuDto> menu;
-    private int total;
+    @Schema(description = "유저 별 총 주문 금액")
+    private int userOrderTotal;
 }

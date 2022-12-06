@@ -24,14 +24,14 @@ public class MainPageRecruitDto {
     @Schema(description = "현재 인원", example = "1")
     private int currentPeople;
 
-    @Schema(description = "최소 금액")
+    @Schema(description = "최소 금액", example = "20000")
     private int minPrice;
 
-    @Schema(description = "글 작성 시간")
+    @Schema(description = "글 작성 시간", example = "2022-12-11 11:11:11")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createDate;
 
-    @Schema(description = "마감 시간")
+    @Schema(description = "마감 시간", example = "2022-12-11 11:11:11")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime deadlineDate;
 
@@ -44,9 +44,9 @@ public class MainPageRecruitDto {
     @Schema(description = "배달 거점", example = "수림학사")
     private String dormitory;
 
-    @Schema(description = "배달비")
+    @Schema(description = "배달비", example = "4000")
     private int shippingFee;
 
-    @Schema(description = "모집글 이미지")
+    @Schema(description = "모집글 이미지", example = "/images/1234567.jpg")
     private String image;
 }
