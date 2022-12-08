@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.user.service;
 
+import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
@@ -47,6 +48,9 @@ public class UserService {
     public UserInfoDto update(Long id, String nickname) {
         User user = userJpaRepository.findById(id).get();
 
+        if(nickname.length() > 5) {
+            throw new InvalidApiRequestException("Length must be less than 6.");
+        }
         if(nickname != null && nickname != "") {
             user.setNickname(nickname);
         }
