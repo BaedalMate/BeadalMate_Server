@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.review.api;
 
+import baedalmate.baedalmate.recruit.dto.ParticipantsDto;
 import baedalmate.baedalmate.review.dto.CreateReviewDto;
 import baedalmate.baedalmate.review.service.ReviewService;
 import baedalmate.baedalmate.security.annotation.AuthUser;
@@ -10,10 +11,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +22,21 @@ import java.util.Map;
 @RequestMapping("/api/v1/review")
 public class ReviewApiController {
     private final ReviewService reviewService;
+
+    @ApiOperation(value = "후기 대상자 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 모집글 참여자가 아닌 경우")
+    })
+    @GetMapping(value = "/{id}/target")
+    public ResponseEntity<ParticipantsDto> getReviewTarget(
+            @AuthUser PrincipalDetails principalDetails,
+            @PathVariable("id") Long recruitId
+    ) {
+        ParticipantsDto response = reviewService.getTarget(principalDetails.getId(), recruitId);
+        return ResponseEntity.ok().body(response);
+    }
 
     @ApiOperation(value = "후기 남기기")
     @ApiResponses({
