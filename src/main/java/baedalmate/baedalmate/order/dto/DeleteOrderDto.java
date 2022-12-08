@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Schema
 public class DeleteOrderDto {
-    @Schema(description = "모집글 id")
+    @Schema(description = "모집글 id", example = "1")
     @NotNull
     private Long recruitId;
 }

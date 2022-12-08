@@ -6,9 +6,7 @@ import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.user.dto.UpdateUserDto;
 import baedalmate.baedalmate.user.service.UserService;
 import baedalmate.baedalmate.user.dto.UserInfoDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +28,10 @@ public class UserApiController {
     private String path;
 
     @ApiOperation(value = "유저 프로필 이미지 수정")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "프로필 이미지 수정 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+    })
     @PutMapping(value = "/user/image")
     public ResponseEntity<Map<String, Object>> updateProfileImage(
             @AuthUser PrincipalDetails principalDetails,
@@ -42,6 +44,11 @@ public class UserApiController {
     }
 
     @ApiOperation(value = "유저 정보 수정")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "프로필 이미지 수정 성공"),
+            @ApiResponse(code = 400, message = "수정 실패: 닉네임 길이 제한"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+    })
     @PatchMapping(value = "/user")
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @AuthUser PrincipalDetails principalDetails,

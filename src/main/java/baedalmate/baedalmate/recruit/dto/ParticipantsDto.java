@@ -14,5 +14,6 @@ import java.util.List;
 public class ParticipantsDto {
     @Schema(description = "모집글 id")
     private Long recruitId;
+    @Schema(description = "참가자")
     private List<ParticipantDto> participants;
 }

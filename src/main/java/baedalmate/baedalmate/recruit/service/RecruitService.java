@@ -85,7 +85,9 @@ public class RecruitService {
                 }
             }
         }
-        return new ParticipantsMenuDto(total.get(), participants.size(), participants, myTotal.get(), shippingFee, recruit.getCoupon());
+        int shippingFeePerParticipant = (int) Math.ceil((double) shippingFee / participants.size());
+        int paymentPrice = myTotal.get() + shippingFeePerParticipant - (int) Math.floor((double) recruit.getCoupon() / participants.size());
+        return new ParticipantsMenuDto(total.get(), participants.size(), participants, myTotal.get(), shippingFee, shippingFeePerParticipant, recruit.getCoupon(), paymentPrice);
     }
 
     public ParticipantsDto getParticipants(Long userId, Long recruitId) {

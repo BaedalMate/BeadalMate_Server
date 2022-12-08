@@ -12,10 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @Schema
 public class ChatRoomDetailDto {
-    @Schema(description = "채팅방 id")
+    @Schema(description = "채팅방 id", example = "1")
     private Long id;
     @Schema(description = "모집글 정보")
-    private RecruitDetailDto recruit;
+    private ChatRoomRecruitDetailDto recruit;
     @Schema(description = "메세지 리스트")
     private List<MessageDto> messages;
 }
