@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +50,26 @@ public class RecruitService {
     private final CategoryImageService categoryImageService;
     private final ChatRoomService chatRoomService;
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
+
+    public List<RecruitDto> findAllByTag(String keyword, Pageable pageable) {
+        List<Recruit> recruits = recruitRepository.findAllByTagUsingJoin(keyword, pageable);
+        return recruits.stream()
+                .map(r -> new RecruitDto(
+                        r.getId(),
+                        r.getPlace().getName(),
+                        r.getMinPeople(),
+                        r.getMinPrice(),
+                        r.getCurrentPeople(),
+                        r.getCurrentPrice(),
+                        r.getCriteria(),
+                        r.getCreateDate(),
+                        r.getDeadlineDate(),
+                        r.getUser().getScore(),
+                        r.getDormitory().getName(),
+                        r.getTitle(),
+                        r.getImage()
+                )).collect(Collectors.toList());
+    }
 
     public ParticipantsMenuDto getMenu(Long userId, Long recruitId) {
         AtomicBoolean participate = new AtomicBoolean(false);
@@ -448,19 +469,25 @@ public class RecruitService {
 
     public List<MainPageRecruitDtoWithTag> findAllWithTag(Dormitory dormitory, Pageable pageable) {
         return recruitRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(dormitory, pageable)
-                .stream().map(r -> new MainPageRecruitDtoWithTag(
-                        r.getId(),
-                        r.getPlace().getName(),
-                        r.getMinPrice(),
-                        r.getCreateDate(),
-                        r.getDeadlineDate(),
-                        r.getUser().getNickname(),
-                        r.getUser().getScore(),
-                        r.getDormitory().getName(),
-                        r.getMinShippingFee(),
-                        r.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
-                        r.getImage()
-                )).collect(Collectors.toList());
+                .stream().map(r -> {
+                            List<Tag> tags = r.getTags();
+                            Collections.shuffle(tags);
+                            int size = tags.size()>=2 ? 2 : tags.size();
+                            List<Tag> subList = new ArrayList<Tag>(tags.subList(0, size));
+                            return new MainPageRecruitDtoWithTag(
+                                    r.getId(),
+                                    r.getPlace().getName(),
+                                    r.getMinPrice(),
+                                    r.getCreateDate(),
+                                    r.getDeadlineDate(),
+                                    r.getUser().getNickname(),
+                                    r.getUser().getScore(),
+                                    r.getDormitory().getName(),
+                                    r.getMinShippingFee(),
+                                    subList.stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
+                                    r.getImage());
+                        }
+                ).collect(Collectors.toList());
     }
 
     public List<RecruitDto> findAllByCategory(Long categoryId, Pageable pageable) {

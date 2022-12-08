@@ -32,6 +32,22 @@ public class RecruitApiController {
     private final UserService userService;
     private final RecruitService recruitService;
 
+    @ApiOperation(value = "태그로 모집글 검색")
+    @GetMapping(value = "/recruit/search")
+
+    public ResponseEntity searchByTag(
+            @ApiParam(value = "태그 검색")
+            @RequestParam(required = true) String keyword,
+            @PageableDefault(size = 10)
+            @ApiParam(value = "예시: {ip}:8080/recruit/search?page=0&size=5&sort=deadlineDate&categoryId=0&keyword=태그")
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
+            })
+                    Pageable pageable) {
+        List<RecruitDto> response = recruitService.findAllByTag(keyword, pageable);
+        return ResponseEntity.ok().body(response);
+    }
+
     @ApiOperation(value = "모집글 메뉴 조회")
     @ApiResponses({
             @ApiResponse(code = 200, message = "조회 성공"),
