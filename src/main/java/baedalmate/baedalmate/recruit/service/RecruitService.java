@@ -50,6 +50,26 @@ public class RecruitService {
     private final ChatRoomService chatRoomService;
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
 
+    public List<RecruitDto> findAllByTag(String keyword, Pageable pageable) {
+        List<Recruit> recruits = recruitRepository.findAllByTagUsingJoin(keyword, pageable);
+        return recruits.stream()
+                .map(r -> new RecruitDto(
+                        r.getId(),
+                        r.getPlace().getName(),
+                        r.getMinPeople(),
+                        r.getMinPrice(),
+                        r.getCurrentPeople(),
+                        r.getCurrentPrice(),
+                        r.getCriteria(),
+                        r.getCreateDate(),
+                        r.getDeadlineDate(),
+                        r.getUser().getScore(),
+                        r.getDormitory().getName(),
+                        r.getTitle(),
+                        r.getImage()
+                )).collect(Collectors.toList());
+    }
+
     public ParticipantsMenuDto getMenu(Long userId, Long recruitId) {
         AtomicBoolean participate = new AtomicBoolean(false);
         AtomicInteger total = new AtomicInteger(0);

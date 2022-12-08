@@ -14,6 +14,17 @@ import java.util.List;
 public class RecruitRepository {
     private final EntityManager em;
 
+    public List<Recruit> findAllByTagUsingJoin(String keyword, Pageable pageable) {
+        return em.createQuery("select r from Recruit r join fetch r.user join fetch r.tags t " +
+                        "where r.active = true and r.cancel = false " +
+                        "and t.name like CONCAT('%',:keyword,'%') " +
+                        "order by r.deadlineDate ASC", Recruit.class)
+                .setParameter("keyword", keyword)
+                .setFirstResult(pageable.getPageNumber())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+    }
+
     public List<Recruit> findAllUsingJoinOrderByScore(Pageable pageable) {
         return em.createQuery("select r from Recruit r join fetch r.user " +
                         "where r.active = true and r.cancel = false " +
