@@ -7,9 +7,7 @@ import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.user.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import lombok.*;
 import org.hibernate.sql.Update;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +33,11 @@ public class RecruitApiController {
     private final RecruitService recruitService;
 
     @ApiOperation(value = "모집글 메뉴 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 모집글 참여자가 아닌 경우")
+    })
     @GetMapping(value = "/recruit/{id}/menu")
     public ResponseEntity<ParticipantsMenuDto> getMenu(
             @AuthUser PrincipalDetails principalDetails,
@@ -46,6 +49,11 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "모집글 참여자 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 모집글 참여자가 아닌 경우")
+    })
     @GetMapping(value = "/recruit/{id}/participants")
     public ResponseEntity<ParticipantsDto> getParticipants(
             @AuthUser PrincipalDetails principalDetails,
@@ -56,6 +64,11 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "모집글 수정")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 호스트가 아닌 경우")
+    })
     @PatchMapping(value = "/recruit/{id}")
     public ResponseEntity<Map<String, Object>> updateRecruit(
             @AuthUser PrincipalDetails principalDetails,
@@ -72,6 +85,12 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "모집글 생성")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "생성 성공"),
+            @ApiResponse(code = 400, message = "생성 실패: 필수 정보 누락"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 권한이 GUEST인 경우")
+    })
     @PostMapping(value = "/recruit/new")
     public ResponseEntity<RecruitIdDto> createRecruit(
             @AuthUser PrincipalDetails principalDetails,
@@ -85,12 +104,17 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "모집글 리스트 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 권한이 GUEST인 경우")
+    })
     @GetMapping(value = "/recruit/list")
     public ResponseEntity<RecruitListDto> getRecruitList(
             @ApiParam(value = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
-            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate&categoryId=1")
+            @ApiParam(value = "예시: {ip}:8080/recruit/list?page=0&size=5&sort=deadlineDate&categoryId=0")
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
@@ -109,6 +133,11 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "메인페이지 모집글 리스트 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 권한이 GUEST인 경우")
+    })
     @GetMapping(value = "/recruit/main/list")
     public ResponseEntity<RecruitListDto> getMainRecruitList(
             @PageableDefault(size = 5)
@@ -124,6 +153,11 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "메인페이지 태그 포함된 모집글 리스트 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 권한이 GUEST인 경우")
+    })
     @GetMapping(value = "/recruit/tag/list")
     public ResponseEntity<RecruitListDto> getTagRecruitList(
             @AuthUser PrincipalDetails principalDetails,
@@ -145,6 +179,11 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "모집글 상세 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 권한이 GUEST인 경우")
+    })
     @GetMapping(value = "/recruit/{id}")
     public ResponseEntity<RecruitDetailDto> getRecruit(
             @AuthUser PrincipalDetails principalDetails,
@@ -161,6 +200,11 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "모집글 마감")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "모집글 마감 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 호스트가 아닌 경우")
+    })
     @GetMapping(value = "/recruit/close/{id}")
     public ResponseEntity<Map<String, Object>> closeRecruit(
             @AuthUser PrincipalDetails principalDetails,
@@ -177,6 +221,11 @@ public class RecruitApiController {
     }
 
     @ApiOperation(value = "모집글 취소")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "모집글 취소 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 호스트가 아닌 경우")
+    })
     @GetMapping(value = "/recruit/cancel/{id}")
     public ResponseEntity<Map<String, Object>> cancelRecruit(
             @AuthUser PrincipalDetails principalDetails,
