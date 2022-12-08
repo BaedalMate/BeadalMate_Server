@@ -60,12 +60,12 @@ public class OrderService {
 
         menuJpaRepository.deleteByOrderId(order.getId());
 
-        menus = orderDto.getMenu().stream()
-                .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
-                .collect(Collectors.toList());
+        for (MenuDto m : orderDto.getMenu()) {
+            Menu menu = Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity());
+            menu.setOrder(order);
+            menuJpaRepository.save(menu);
+        }
         recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() - previousPrice + currentPrice, recruit.getId());
-        order.setMenus(menus);
-        orderJpaRepository.save(order);
         // 마감 기준 체크
         if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
             recruitJpaRepository.setActiveFalse(recruit.getId());
