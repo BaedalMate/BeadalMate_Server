@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -468,19 +469,23 @@ public class RecruitService {
 
     public List<MainPageRecruitDtoWithTag> findAllWithTag(Dormitory dormitory, Pageable pageable) {
         return recruitRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(dormitory, pageable)
-                .stream().map(r -> new MainPageRecruitDtoWithTag(
-                        r.getId(),
-                        r.getPlace().getName(),
-                        r.getMinPrice(),
-                        r.getCreateDate(),
-                        r.getDeadlineDate(),
-                        r.getUser().getNickname(),
-                        r.getUser().getScore(),
-                        r.getDormitory().getName(),
-                        r.getMinShippingFee(),
-                        r.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
-                        r.getImage()
-                )).collect(Collectors.toList());
+                .stream().map(r -> {
+                            List<Tag> tags = r.getTags();
+                            Collections.shuffle(tags);
+                            return new MainPageRecruitDtoWithTag(
+                                    r.getId(),
+                                    r.getPlace().getName(),
+                                    r.getMinPrice(),
+                                    r.getCreateDate(),
+                                    r.getDeadlineDate(),
+                                    r.getUser().getNickname(),
+                                    r.getUser().getScore(),
+                                    r.getDormitory().getName(),
+                                    r.getMinShippingFee(),
+                                    r.getTags().subList(0,1).stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
+                                    r.getImage());
+                        }
+                ).collect(Collectors.toList());
     }
 
     public List<RecruitDto> findAllByCategory(Long categoryId, Pageable pageable) {
