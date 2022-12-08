@@ -472,6 +472,8 @@ public class RecruitService {
                 .stream().map(r -> {
                             List<Tag> tags = r.getTags();
                             Collections.shuffle(tags);
+                            int size = tags.size()>=2 ? 2 : tags.size();
+                            List<Tag> subList = new ArrayList<Tag>(tags.subList(0, size));
                             return new MainPageRecruitDtoWithTag(
                                     r.getId(),
                                     r.getPlace().getName(),
@@ -482,7 +484,7 @@ public class RecruitService {
                                     r.getUser().getScore(),
                                     r.getDormitory().getName(),
                                     r.getMinShippingFee(),
-                                    r.getTags().subList(0,1).stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
+                                    subList.stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
                                     r.getImage());
                         }
                 ).collect(Collectors.toList());
