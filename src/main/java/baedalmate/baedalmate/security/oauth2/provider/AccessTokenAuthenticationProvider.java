@@ -51,6 +51,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
         if (userBySocial.isPresent())
             return userBySocial.get();
         else {
+            String nickname = oAuth2User.getUsername().length()>5? oAuth2User.getUsername().substring(0, 5) : oAuth2User.getUsername();
             User user = User.builder()
                     .socialType(oAuth2User.getSocialType())
                     .socialId(oAuth2User.getSocialId())
