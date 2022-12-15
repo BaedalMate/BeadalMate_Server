@@ -6,10 +6,7 @@ import baedalmate.baedalmate.category.domain.CategoryImage;
 import baedalmate.baedalmate.category.service.CategoryImageService;
 import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
-import baedalmate.baedalmate.errors.exceptions.AccessDeniedException;
-import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
-import baedalmate.baedalmate.errors.exceptions.InvalidPageException;
-import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
+import baedalmate.baedalmate.errors.exceptions.*;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
@@ -69,6 +66,22 @@ public class RecruitService {
                         r.getTitle(),
                         r.getImage()
                 )).collect(Collectors.toList());
+    }
+
+    public ParticipantMenuDto getMyMenu(Long userId, Long recruitId) {
+        Order order;
+        try {
+            order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
+        } catch (ResourceNotFoundException e) {
+            throw new AccessDeniedException("User is not participant");
+        }
+        AtomicInteger price = new AtomicInteger();
+        List<MenuDto> menus = order.getMenus().stream().map(m -> {
+                    price.addAndGet(m.getPrice() * m.getQuantity());
+                    return new MenuDto(m.getName(), m.getPrice(), m.getQuantity());
+                })
+                .collect(Collectors.toList());
+        return new ParticipantMenuDto(userId, menus, price.get());
     }
 
     public ParticipantsMenuDto getMenu(Long userId, Long recruitId) {
@@ -472,7 +485,7 @@ public class RecruitService {
                 .stream().map(r -> {
                             List<Tag> tags = r.getTags();
                             Collections.shuffle(tags);
-                            int size = tags.size()>=2 ? 2 : tags.size();
+                            int size = tags.size() >= 2 ? 2 : tags.size();
                             List<Tag> subList = new ArrayList<Tag>(tags.subList(0, size));
                             return new MainPageRecruitDtoWithTag(
                                     r.getId(),
