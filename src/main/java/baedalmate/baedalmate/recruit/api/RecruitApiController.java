@@ -32,10 +32,30 @@ public class RecruitApiController {
     private final UserService userService;
     private final RecruitService recruitService;
 
-    @ApiOperation(value = "태그로 모집글 검색")
-    @GetMapping(value = "/recruit/search")
+    @ApiOperation(value = "유저 메뉴 조회")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 모집글 참여자가 아닌 경우")
+    })
+    @GetMapping(value = "/recruit/{id}/my-menu")
+    public ResponseEntity<ParticipantMenuDto> getMyMenu(
+            @AuthUser PrincipalDetails principalDetails,
+            @PathVariable("id") Long recruitId
 
-    public ResponseEntity searchByTag(
+    ) {
+        ParticipantMenuDto response = recruitService.getMyMenu(principalDetails.getId(), recruitId);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @ApiOperation(value = "태그로 모집글 검색")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "조회 성공"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: Guest인 경우")
+    })
+    @GetMapping(value = "/recruit/search")
+    public ResponseEntity<RecruitListDto> searchByTag(
             @ApiParam(value = "태그 검색")
             @RequestParam(required = true) String keyword,
             @PageableDefault(size = 10)
@@ -44,7 +64,8 @@ public class RecruitApiController {
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
                     Pageable pageable) {
-        List<RecruitDto> response = recruitService.findAllByTag(keyword, pageable);
+        List<RecruitDto> list = recruitService.findAllByTag(keyword, pageable);
+        RecruitListDto response = new RecruitListDto(list);
         return ResponseEntity.ok().body(response);
     }
 
