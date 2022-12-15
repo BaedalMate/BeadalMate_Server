@@ -103,7 +103,7 @@ public class OrderService {
         if (recruit.isCancel()) {
             throw new InvalidApiRequestException("Already canceled recruit");
         }
-        if (recruit.isActive()) {
+        if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
         // 중복 검사
@@ -128,7 +128,7 @@ public class OrderService {
         // current price 갱신
         int price = 0;
         for (MenuDto menuDto : orderDto.getMenu()) {
-            price += menuDto.getPrice();
+            price += menuDto.getPrice() * menuDto.getQuantity();
         }
         recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() + price, recruit.getId());
 

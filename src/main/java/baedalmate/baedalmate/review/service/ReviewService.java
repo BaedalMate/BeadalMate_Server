@@ -2,6 +2,7 @@ package baedalmate.baedalmate.review.service;
 
 import baedalmate.baedalmate.errors.exceptions.AccessDeniedException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
+import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.dao.RecruitRepository;
@@ -57,11 +58,26 @@ public class ReviewService {
         User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
         Recruit recruit = recruitRepository.findByIdUsingJoin(createReviewDto.getRecruitId());
+        // Order 조회 및 참여자 조사
+        try {
+            Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, createReviewDto.getRecruitId());
+        } catch (ResourceNotFoundException e) {
+            throw new AccessDeniedException("User is not participant");
+        }
         // Recruit 마감 검사
         if (recruit.isActive()) {
             throw new InvalidApiRequestException("Not closed recruit");
         }
-
+        // 이미 후기를 남겼는지 검사
+        List<Review> reviews = reviewJpaRepository.findAllByRecruitIdUsingJoin(createReviewDto.getRecruitId());
+        boolean reviewed = false;
+        for(Review r : reviews) {
+            if(r.getUser().getId() == userId)
+                reviewed = true;
+        }
+        if(reviewed){
+            throw new InvalidApiRequestException("Already reviewed.");
+        }
         //== 리뷰 생성 ==//
         for (UserDto userDto : createReviewDto.getUsers()) {
             User target = userJpaRepository.findById(userDto.getUserId()).get();

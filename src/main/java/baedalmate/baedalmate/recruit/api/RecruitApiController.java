@@ -239,6 +239,7 @@ public class RecruitApiController {
     @ApiOperation(value = "모집글 마감")
     @ApiResponses({
             @ApiResponse(code = 200, message = "모집글 마감 성공"),
+            @ApiResponse(code = 400, message = "이미 마감된 모집글"),
             @ApiResponse(code = 401, message = "잘못된 토큰"),
             @ApiResponse(code = 403, message = "잘못된 권한: 호스트가 아닌 경우")
     })
@@ -260,6 +261,7 @@ public class RecruitApiController {
     @ApiOperation(value = "모집글 취소")
     @ApiResponses({
             @ApiResponse(code = 200, message = "모집글 취소 성공"),
+            @ApiResponse(code = 400, message = "이미 취소된 모집글"),
             @ApiResponse(code = 401, message = "잘못된 토큰"),
             @ApiResponse(code = 403, message = "잘못된 권한: 호스트가 아닌 경우")
     })

@@ -55,4 +55,9 @@ public class Review {
     public void setTarget(User target) {
         this.target = target;
     }
+
+    //== getter ==//
+    public User getUser() {
+        return user;
+    }
 }
