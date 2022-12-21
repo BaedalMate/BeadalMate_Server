@@ -70,7 +70,10 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
             return userBySocial.get();
         else {
             String nickname = oAuth2User.getUsername().length() > 5 ? oAuth2User.getUsername().substring(0, 5) : oAuth2User.getUsername();
-            String imageUrl = download(oAuth2User.getImage());
+            String imageUrl = "/images/apple_profile.png";
+            if(oAuth2User.getSocialType().getSocialName()!="apple"){
+                imageUrl = download(oAuth2User.getImage());
+            }
             User user = User.builder()
                     .socialType(oAuth2User.getSocialType())
                     .socialId(oAuth2User.getSocialId())
