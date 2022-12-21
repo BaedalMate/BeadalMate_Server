@@ -8,12 +8,27 @@ import baedalmate.baedalmate.security.repository.AuthRepository;
 import baedalmate.baedalmate.security.user.OAuth2UserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -23,6 +38,9 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 
     private final LoadUserService loadUserService;  //restTemplate를 통해서 AccessToken을 가지고 회원의 정보를 가져오는 역할을 한다.
     private final AuthRepository authRepository;    //받아온 정보를 통해 DB에서 회원을 조회하는 역할을 한다.
+
+    @Value("${spring.servlet.multipart.location}")
+    private String path;
 
     @SneakyThrows
     @Override
@@ -45,17 +63,18 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
     }
 
     @Transactional
-    private User saveOrGet(OAuth2UserDetails oAuth2User) {
+    private User saveOrGet(OAuth2UserDetails oAuth2User) throws Exception {
         //socailID(식별값)과 어떤 소셜 로그인 유형인지를 통해 DB에서 조회
         Optional<User> userBySocial = authRepository.findBySocialTypeAndSocialId(oAuth2User.getSocialType(), oAuth2User.getSocialId());
         if (userBySocial.isPresent())
             return userBySocial.get();
         else {
-            String nickname = oAuth2User.getUsername().length()>5? oAuth2User.getUsername().substring(0, 5) : oAuth2User.getUsername();
+            String nickname = oAuth2User.getUsername().length() > 5 ? oAuth2User.getUsername().substring(0, 5) : oAuth2User.getUsername();
+            String imageUrl = download(oAuth2User.getImage());
             User user = User.builder()
                     .socialType(oAuth2User.getSocialType())
                     .socialId(oAuth2User.getSocialId())
-                    .profileImage(oAuth2User.getImage())
+                    .profileImage(imageUrl)
                     .nickname(oAuth2User.getUsername())
                     .role("GUEST").build();
             return authRepository.save(user);
@@ -65,5 +84,27 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
     @Override
     public boolean supports(Class<?> authentication) {
         return AccessTokenSocialTypeToken.class.isAssignableFrom(authentication); //AccessTokenSocialTypeToken타입의  authentication 객체이면 해당 Provider가 처리한다.
+    }
+
+    private String download(String fileUrl) throws Exception {
+        URI url = URI.create(fileUrl);
+        // 원격 파일 다운로드
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<byte[]> res = rt.getForEntity(url, byte[].class);
+        byte[] buffer = res.getBody();
+
+        // 로컬 서버에 저장
+        Date date = new Date();
+        String fileName = date.getTime() + "_profile"; // 파일명 (랜덤생성)
+        String ext = "." + StringUtils.getFilenameExtension(fileUrl); // 확장자 추출
+        Path target = Paths.get(path, fileName + ext); // 파일 저장 경로
+
+        try {
+            FileCopyUtils.copy(buffer, target.toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "/images/" + fileName + ext;
     }
 }
