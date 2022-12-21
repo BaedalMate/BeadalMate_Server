@@ -59,19 +59,31 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 
         SocialAccessToken socialAccessToken = objectMapper.readValue(messageBody, SocialAccessToken.class);
+        AppleAccessToken appleAccessToken = objectMapper.readValue(messageBody, AppleAccessToken.class);
 
         String accessToken = "";  //헤더의 AccessToken에 해당하는 값을 가져온다.
+        String appleIdentityToken = "";
+        String appleAuthorizationCode = "";
+        String username = "";
+        String email = "";
+
         switch (socialType.getSocialName()) {
             case ("kakao"):
                 accessToken = socialAccessToken.getKakaoAccessToken();
                 break;
+            case ("apple"):
+                appleIdentityToken = appleAccessToken.getAppleIdentityToken();
+                appleAuthorizationCode = appleAccessToken.getAppleAuthorizationCode();
+                username = appleAccessToken.getUserName();
+                email = appleAccessToken.getEmail();
             default:
         }
-
+        if(socialType.getSocialName() == "apple") {
+            return this.getAuthenticationManager().authenticate(new AccessTokenSocialTypeToken(appleIdentityToken, appleAuthorizationCode, email, username, socialType));
+        }
         return this.getAuthenticationManager().authenticate(new AccessTokenSocialTypeToken(accessToken, socialType));
         //AuthenticationManager에게 인증 요청을 보낸다. 이때 Authentication 객체로는 AccessTokenSocialTypeToken을(직접 커스텀 함) 사용한다.
     }
-
 
     private SocialType extractSocialType(HttpServletRequest request) {//요청을 처리하는 코드이다
         return Arrays.stream(SocialType.values())//SocialType.values() -> GOOGLE, KAKAO, NAVER 가 있다.
@@ -86,5 +98,13 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
     @Data
     static class SocialAccessToken {
         private String kakaoAccessToken;
+    }
+
+    @Data
+    static class AppleAccessToken {
+        private String appleIdentityToken;
+        private String appleAuthorizationCode;
+        private String userName;
+        private String email;
     }
 }
