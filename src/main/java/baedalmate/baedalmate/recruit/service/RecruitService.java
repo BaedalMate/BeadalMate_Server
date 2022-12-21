@@ -152,6 +152,11 @@ public class RecruitService {
         if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
+
+        if (recruit.getCurrentPeople() > 1) {
+            throw new InvalidApiRequestException("Someone is participating");
+        }
+
         if (updateRecruitDto.getCategoryId() != null) {
             Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
             recruit.setCategory(category);
