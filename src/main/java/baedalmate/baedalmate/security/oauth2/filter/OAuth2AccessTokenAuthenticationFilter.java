@@ -76,6 +76,7 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
                 appleAuthorizationCode = appleAccessToken.getAppleAuthorizationCode();
                 username = appleAccessToken.getUserName();
                 email = appleAccessToken.getEmail();
+                break;
             default:
         }
         if (socialType.getSocialName() == "apple") {
