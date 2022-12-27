@@ -6,10 +6,7 @@ import baedalmate.baedalmate.category.domain.CategoryImage;
 import baedalmate.baedalmate.category.service.CategoryImageService;
 import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
-import baedalmate.baedalmate.errors.exceptions.AccessDeniedException;
-import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
-import baedalmate.baedalmate.errors.exceptions.InvalidPageException;
-import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
+import baedalmate.baedalmate.errors.exceptions.*;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
@@ -71,6 +68,22 @@ public class RecruitService {
                 )).collect(Collectors.toList());
     }
 
+    public MyMenuDto getMyMenu(Long userId, Long recruitId) {
+        Order order;
+        try {
+            order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
+        } catch (ResourceNotFoundException e) {
+            throw new AccessDeniedException("User is not participant");
+        }
+        AtomicInteger price = new AtomicInteger();
+        List<MenuDto> menus = order.getMenus().stream().map(m -> {
+                    price.addAndGet(m.getPrice() * m.getQuantity());
+                    return new MenuDto(m.getName(), m.getPrice(), m.getQuantity());
+                })
+                .collect(Collectors.toList());
+        return new MyMenuDto(userId, menus, price.get());
+    }
+
     public ParticipantsMenuDto getMenu(Long userId, Long recruitId) {
         AtomicBoolean participate = new AtomicBoolean(false);
         AtomicInteger total = new AtomicInteger(0);
@@ -91,7 +104,12 @@ public class RecruitService {
                         participate.set(true);
                         myTotal.set(t.get());
                     }
-                    return new ParticipantMenuDto(o.getUser().getId(), menu, t.get());
+                    return new ParticipantMenuDto(
+                            o.getUser().getId(),
+                            o.getUser().getNickname(),
+                            o.getUser().getProfileImage(),
+                            menu,
+                            t.get());
                 })
                 .collect(Collectors.toList());
         if (participate.get() == false) {
@@ -139,6 +157,11 @@ public class RecruitService {
         if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
+
+        if (recruit.getCurrentPeople() > 1) {
+            throw new InvalidApiRequestException("Someone is participating");
+        }
+
         if (updateRecruitDto.getCategoryId() != null) {
             Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
             recruit.setCategory(category);
@@ -208,6 +231,7 @@ public class RecruitService {
     @Transactional
     public void closeBySchedule() {
         recruitJpaRepository.setCancelTrueFromRecruitExceedTime(LocalDateTime.now());
+        recruitJpaRepository.setActiveFalseFromRecruitExceedTime(LocalDateTime.now());
     }
 
     @Transactional
@@ -472,7 +496,7 @@ public class RecruitService {
                 .stream().map(r -> {
                             List<Tag> tags = r.getTags();
                             Collections.shuffle(tags);
-                            int size = tags.size()>=2 ? 2 : tags.size();
+                            int size = tags.size() >= 2 ? 2 : tags.size();
                             List<Tag> subList = new ArrayList<Tag>(tags.subList(0, size));
                             return new MainPageRecruitDtoWithTag(
                                     r.getId(),

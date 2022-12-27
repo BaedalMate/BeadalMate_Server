@@ -3,7 +3,6 @@ package baedalmate.baedalmate.security.oauth2.soical;
 import org.springframework.http.HttpMethod;
 
 public enum SocialType {
-
     KAKAO(
             "kakao",
             "https://kapi.kakao.com/v2/user/me",

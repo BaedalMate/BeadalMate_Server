@@ -20,18 +20,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(ResourceNotFoundException.class)
-//    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e) {
-//        ErrorCode errorCode = e.getErrorCode();
-//        return handleExceptionInternal(errorCode);
-//    }
-//
-//    @ExceptionHandler(ExistOrderException.class)
-//    public ResponseEntity<Object> handleExistOrderException(ExistOrderException e) {
-//        ErrorCode errorCode = e.getErrorCode();
-//        return handleExceptionInternal(errorCode);
-//    }
-
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
         ErrorCode errorCode = e.getErrorCode();
@@ -56,12 +44,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
         return handleExceptionInternal(e, errorCode);
     }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllException(Exception ex) {
-        ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
-        return handleExceptionInternal(errorCode);
-    }
+//
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Object> handleAllException(Exception ex) {
+//        ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
+//        return handleExceptionInternal(errorCode);
+//    }
 
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
         return ResponseEntity.status(errorCode.getHttpStatus().value())
