@@ -27,6 +27,7 @@ public abstract class SocialLoadStrategy {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
+
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
         return sendRequestToSocialSite(request);//구체 클래스가 구현

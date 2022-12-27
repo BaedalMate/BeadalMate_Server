@@ -65,13 +65,6 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
             case ("kakao"):
                 accessToken = socialAccessToken.getKakaoAccessToken();
                 break;
-            case ("apple"):
-                AppleAccessToken appleAccessToken = objectMapper.readValue(messageBody, AppleAccessToken.class);
-                appleIdentityToken = appleAccessToken.getAppleIdentityToken();
-                appleAuthorizationCode = appleAccessToken.getAppleAuthorizationCode();
-                username = appleAccessToken.getUserName();
-                email = appleAccessToken.getEmail();
-                break;
             default:
         }
 
