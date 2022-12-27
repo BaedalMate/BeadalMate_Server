@@ -22,7 +22,6 @@ public class AppleJwtUtils {
     private final AppleClient appleClient;
 
     public Claims getClaimsBy(String identityToken) {
-
         try {
             ApplePublicKeyResponse response = appleClient.getAppleAuthPublicKey();
 
@@ -42,16 +41,15 @@ public class AppleJwtUtils {
             PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
             return Jwts.parser().setSigningKey(publicKey).parseClaimsJws(identityToken).getBody();
-
         } catch (NoSuchAlgorithmException e) {
         } catch (InvalidKeySpecException e) {
-        } catch (SignatureException e ){
+        } catch (SignatureException e) {
             //토큰 서명 검증
-        } catch(MalformedJwtException e) {
+        } catch (MalformedJwtException e) {
             // 구조 문제 (Invalid token)
-        } catch(ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             //토큰이 만료됐기 때문에 클라이언트는 토큰을 refresh 해야함.
-        } catch(Exception e){
+        } catch (Exception e) {
         }
         return Jwts.parser().setSigningKey("").parseClaimsJws(identityToken).getBody();
     }
