@@ -68,7 +68,7 @@ public class RecruitService {
                 )).collect(Collectors.toList());
     }
 
-    public ParticipantMenuDto getMyMenu(Long userId, Long recruitId) {
+    public MyMenuDto getMyMenu(Long userId, Long recruitId) {
         Order order;
         try {
             order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
@@ -81,7 +81,7 @@ public class RecruitService {
                     return new MenuDto(m.getName(), m.getPrice(), m.getQuantity());
                 })
                 .collect(Collectors.toList());
-        return new ParticipantMenuDto(userId, menus, price.get());
+        return new MyMenuDto(userId, menus, price.get());
     }
 
     public ParticipantsMenuDto getMenu(Long userId, Long recruitId) {
@@ -104,7 +104,12 @@ public class RecruitService {
                         participate.set(true);
                         myTotal.set(t.get());
                     }
-                    return new ParticipantMenuDto(o.getUser().getId(), menu, t.get());
+                    return new ParticipantMenuDto(
+                            o.getUser().getId(),
+                            o.getUser().getNickname(),
+                            o.getUser().getProfileImage(),
+                            menu,
+                            t.get());
                 })
                 .collect(Collectors.toList());
         if (participate.get() == false) {
