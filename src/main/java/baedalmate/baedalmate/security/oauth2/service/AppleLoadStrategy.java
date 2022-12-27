@@ -68,7 +68,7 @@ public class AppleLoadStrategy {
 
     private final AppleJwtUtils appleJwtUtils;
 
-    public OAuth2UserInfo getUserInfo(String identityToken, String authorizationCode, String username, String email)  {
+    public OAuth2UserInfo getUserInfo(String identityToken, String authorizationCode, String email, String username)  {
         try {
             Claims userInfo = appleJwtUtils.getClaimsBy(identityToken);
             String clientSecret = makeClientSecret();
