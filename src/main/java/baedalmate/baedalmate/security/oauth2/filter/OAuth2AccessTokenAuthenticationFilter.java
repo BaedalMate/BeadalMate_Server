@@ -58,8 +58,6 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
         ServletInputStream inputStream = request.getInputStream();
         String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
 
-        SocialAccessToken socialAccessToken = objectMapper.readValue(messageBody, SocialAccessToken.class);
-        AppleAccessToken appleAccessToken = objectMapper.readValue(messageBody, AppleAccessToken.class);
 
         String accessToken = "";  //헤더의 AccessToken에 해당하는 값을 가져온다.
         String appleIdentityToken = "";
@@ -69,16 +67,18 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
         switch (socialType.getSocialName()) {
             case ("kakao"):
+                SocialAccessToken socialAccessToken = objectMapper.readValue(messageBody, SocialAccessToken.class);
                 accessToken = socialAccessToken.getKakaoAccessToken();
                 break;
             case ("apple"):
+                AppleAccessToken appleAccessToken = objectMapper.readValue(messageBody, AppleAccessToken.class);
                 appleIdentityToken = appleAccessToken.getAppleIdentityToken();
                 appleAuthorizationCode = appleAccessToken.getAppleAuthorizationCode();
                 username = appleAccessToken.getUserName();
                 email = appleAccessToken.getEmail();
             default:
         }
-        if(socialType.getSocialName() == "apple") {
+        if (socialType.getSocialName() == "apple") {
             return this.getAuthenticationManager().authenticate(new AccessTokenSocialTypeToken(appleIdentityToken, appleAuthorizationCode, email, username, socialType));
         }
         return this.getAuthenticationManager().authenticate(new AccessTokenSocialTypeToken(accessToken, socialType));
