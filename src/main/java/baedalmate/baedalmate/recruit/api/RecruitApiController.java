@@ -39,12 +39,12 @@ public class RecruitApiController {
             @ApiResponse(code = 403, message = "잘못된 권한: 모집글 참여자가 아닌 경우")
     })
     @GetMapping(value = "/recruit/{id}/my-menu")
-    public ResponseEntity<ParticipantMenuDto> getMyMenu(
+    public ResponseEntity<MyMenuDto> getMyMenu(
             @AuthUser PrincipalDetails principalDetails,
             @PathVariable("id") Long recruitId
 
     ) {
-        ParticipantMenuDto response = recruitService.getMyMenu(principalDetails.getId(), recruitId);
+        MyMenuDto response = recruitService.getMyMenu(principalDetails.getId(), recruitId);
         return ResponseEntity.ok().body(response);
     }
 
