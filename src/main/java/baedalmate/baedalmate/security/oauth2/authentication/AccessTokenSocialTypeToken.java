@@ -15,10 +15,7 @@ public class AccessTokenSocialTypeToken extends AbstractAuthenticationToken {
 
     private String accessToken;
     private SocialType socialType;
-    private String identityToken;
-    private String authorizationCode;
-    private String username;
-    private String email;
+
 
     public AccessTokenSocialTypeToken(String accessToken, SocialType socialType) {
         super(null);
@@ -27,15 +24,6 @@ public class AccessTokenSocialTypeToken extends AbstractAuthenticationToken {
         setAuthenticated(false);
     }
 
-    public AccessTokenSocialTypeToken(String identityToken, String authorizationCode, String username, String email, SocialType socialType) {
-        super(null);
-        this.identityToken = identityToken;
-        this.authorizationCode = authorizationCode;
-        this.username = username;
-        this.email = email;
-        this.socialType = socialType;
-        setAuthenticated(false);
-    }
 
     @Builder
     public AccessTokenSocialTypeToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
@@ -47,22 +35,6 @@ public class AccessTokenSocialTypeToken extends AbstractAuthenticationToken {
 
     public String getAccessToken() {
         return accessToken;
-    }
-
-    public String getIdentityToken() {
-        return identityToken;
-    }
-
-    public String getAuthorizationCode() {
-        return authorizationCode;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public SocialType getSocialType() {

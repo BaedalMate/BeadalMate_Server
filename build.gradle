@@ -36,7 +36,6 @@ dependencies {
     implementation 'mysql:mysql-connector-java'
     runtimeOnly 'com.h2database:h2'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.1'
 
     //websocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -51,10 +50,6 @@ dependencies {
     implementation 'org.webjars.bower:vue:2.5.16'
     implementation 'org.webjars.bower:axios:0.17.1'
     implementation 'com.google.code.gson:gson:2.8.0'
-
-    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.48'
-
 }
 
 tasks.named('test') {

@@ -4,14 +4,12 @@ import baedalmate.baedalmate.config.AppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @EnableConfigurationProperties(AppProperties.class)
 @SpringBootApplication
-@EnableFeignClients
 public class BaedalmateApplication {
 
     @PostConstruct
