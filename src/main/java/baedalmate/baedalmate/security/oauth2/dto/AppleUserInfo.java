@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.security.oauth2.dto;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ public class AppleUserInfo implements OAuth2UserInfo {
     }
 
     public AppleUserInfo(String name, String email, String socialId) {
+        this.attributes = new HashMap<>();
         attributes.put("name", name);
         attributes.put("email", email);
         attributes.put("id", socialId);
