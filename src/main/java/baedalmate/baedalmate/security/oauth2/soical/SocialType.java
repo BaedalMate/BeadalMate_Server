@@ -3,6 +3,11 @@ package baedalmate.baedalmate.security.oauth2.soical;
 import org.springframework.http.HttpMethod;
 
 public enum SocialType {
+    APPLE(
+            "apple",
+            "https://appleid.apple.com/auth/keys",
+            HttpMethod.GET
+    ),
     KAKAO(
             "kakao",
             "https://kapi.kakao.com/v2/user/me",
