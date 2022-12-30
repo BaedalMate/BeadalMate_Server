@@ -8,16 +8,10 @@ import baedalmate.baedalmate.order.dto.OrderAndChatIdDto;
 import baedalmate.baedalmate.order.service.OrderService;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
-import baedalmate.baedalmate.swagger.AccessDeniedErrorResponseDto;
-import baedalmate.baedalmate.swagger.ExpiredJwtErrorResponseDto;
-import baedalmate.baedalmate.swagger.ResultSuccessResponseDto;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,40 +20,27 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-@Tag(name = "모집글 참여 api")
+@Api(tags = {"모집글 참여 api"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@ApiResponses({
-        @ApiResponse(description = "토큰 만료", responseCode = "401", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExpiredJwtErrorResponseDto.class))),
-        @ApiResponse(description = "권한 부족", responseCode = "403", content = @Content(mediaType = "application/json", schema = @Schema(implementation = AccessDeniedErrorResponseDto.class)))
-})
 public class OrderApiController {
 
     private final OrderService orderService;
     private final MessageService messageService;
     private final ChatRoomService chatRoomService;
 
-    @Operation(summary = "메뉴 수정")
+    @ApiOperation(value = "메뉴 수정")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "참여 취소 성공",
-                    content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "400",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(name = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
-                                    @ExampleObject(name = "참여자가 아닐 경우",
-                                    value = "{\"code\": 400, \"message\": \"User is not participant\"}")
-                            }
-                    )),
+            @ApiResponse(code = 200, message = "수정 성공"),
+            @ApiResponse(code = 400, message = "생성 실패: 필수 정보 누락"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 참여자가 아닌 경우")
     })
     @PutMapping(value = "/order")
     public ResponseEntity<Map<String, Object>> updateMenu(
             @AuthUser PrincipalDetails principalDetails,
-            @RequestBody @Valid OrderDto createOrderDto
+            @RequestBody OrderDto createOrderDto
     ) {
         orderService.updateOrder(principalDetails.getId(), createOrderDto);
         Map<String, Object> response = new HashMap<>();
@@ -67,22 +48,12 @@ public class OrderApiController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "모집글 참여")
+    @ApiOperation(value = "모집글 참여")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "참여 성공"),
-            @ApiResponse(
-                    responseCode = "400",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(name = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
-                                    @ExampleObject(name = "취소된 모집글",
-                                            value = "{\"code\": 400, \"message\": \"Already canceled recruit\"}"),
-                                    @ExampleObject(name = "마감된 모집글",
-                                            value = "{\"code\": 400, \"message\": \"Already closed recruit\"}")
-                            }
-                    )),
+            @ApiResponse(code = 200, message = "참여 성공"),
+            @ApiResponse(code = 400, message = "생성 실패: 필수 정보 누락"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 권한이 GUEST인 경우")
     })
     @PostMapping(value = "/order")
     public ResponseEntity<OrderAndChatIdDto> participate(
@@ -95,23 +66,12 @@ public class OrderApiController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "모집글 참여 취소")
+    @ApiOperation(value = "모집글 참여 취소")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "참여 취소 성공",
-            content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
-            @ApiResponse(
-                    responseCode = "400",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(name = "필수 정보 누락", description = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
-                                    @ExampleObject(name = "참여자가 아닐 경우", description = "취소된 모집글",
-                                            value = "{\"code\": 400, \"message\": \"Already canceled recruit\"}"),
-                                    @ExampleObject(name = "참여자가 아닐 경우", description = "마감된 모집글",
-                                            value = "{\"code\": 400, \"message\": \"Already closed recruit\"}")
-                            }
-                    )),
+            @ApiResponse(code = 200, message = "참여 취소 성공"),
+            @ApiResponse(code = 400, message = "생성 실패: 필수 정보 누락"),
+            @ApiResponse(code = 401, message = "잘못된 토큰"),
+            @ApiResponse(code = 403, message = "잘못된 권한: 참여자가 아닌 경우")
     })
     @DeleteMapping(value = "/order")
     public ResponseEntity<Map<String, Object>> cancelParticipate(

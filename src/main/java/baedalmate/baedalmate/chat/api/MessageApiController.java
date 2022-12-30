@@ -8,7 +8,7 @@ import baedalmate.baedalmate.category.dto.MessageDto;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
 import baedalmate.baedalmate.chat.service.MessageService;
 import baedalmate.baedalmate.user.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@Tag(name = "메시지 api")
+@Api(tags = {"메시지 api"})
 @RestController
 @RequiredArgsConstructor
 public class MessageApiController {
