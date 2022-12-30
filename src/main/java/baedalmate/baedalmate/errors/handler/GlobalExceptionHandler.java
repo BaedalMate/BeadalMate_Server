@@ -20,18 +20,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(ResourceNotFoundException.class)
-//    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e) {
-//        ErrorCode errorCode = e.getErrorCode();
-//        return handleExceptionInternal(errorCode);
-//    }
-//
-//    @ExceptionHandler(ExistOrderException.class)
-//    public ResponseEntity<Object> handleExistOrderException(ExistOrderException e) {
-//        ErrorCode errorCode = e.getErrorCode();
-//        return handleExceptionInternal(errorCode);
-//    }
-
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
         ErrorCode errorCode = e.getErrorCode();

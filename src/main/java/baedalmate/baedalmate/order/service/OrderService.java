@@ -140,9 +140,9 @@ public class OrderService {
         recruitJpaRepository.updateCurrentPeople(recruit.getId());
 
         // 마감 기준 체크
-        if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() == recruit.getMinPeople()) {
+        if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() + 1 == recruit.getMinPeople()) {
             recruitJpaRepository.setActiveFalse(recruit.getId());
-        } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
+        } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() + price >= recruit.getMinPrice()) {
             recruitJpaRepository.setActiveFalse(recruit.getId());
         }
         // 입장 메세지 생성
