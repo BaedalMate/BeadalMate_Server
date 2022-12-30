@@ -7,6 +7,7 @@ import baedalmate.baedalmate.chat.domain.Message;
 import baedalmate.baedalmate.chat.domain.MessageType;
 import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
+import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.order.dto.OrderDto;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dto.MenuDto;
@@ -45,6 +46,9 @@ public class OrderService {
     @Transactional
     public void updateOrder(Long userId, OrderDto orderDto) {
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, orderDto.getRecruitId());
+        if(order == null) {
+            throw new InvalidApiRequestException("User is not participant");
+        }
         Recruit recruit = order.getRecruit();
 
         // current price 갱신
