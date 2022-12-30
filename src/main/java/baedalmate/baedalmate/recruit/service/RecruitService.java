@@ -73,7 +73,7 @@ public class RecruitService {
         try {
             order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
         } catch (ResourceNotFoundException e) {
-            throw new AccessDeniedException("User is not participant");
+            throw new InvalidApiRequestException("User is not participant");
         }
         AtomicInteger price = new AtomicInteger();
         List<MenuDto> menus = order.getMenus().stream().map(m -> {
@@ -108,7 +108,7 @@ public class RecruitService {
                 })
                 .collect(Collectors.toList());
         if (participate.get() == false) {
-            throw new AccessDeniedException("User is not participant");
+            throw new InvalidApiRequestException("User is not participant");
         }
 
         int shippingFee = 0;
@@ -135,7 +135,7 @@ public class RecruitService {
                 })
                 .collect(Collectors.toList());
         if (participate.get() == false) {
-            throw new AccessDeniedException("User is not participant");
+            throw new InvalidApiRequestException("User is not participant");
         }
         return new ParticipantsDto(recruitId, participants);
     }
@@ -241,9 +241,11 @@ public class RecruitService {
         if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
-
         if (recruit.isCancel()) {
             throw new InvalidApiRequestException("Already canceled recruit");
+        }
+        if(!recruit.isActive()) {
+            throw new InvalidApiRequestException("Already closed recruit");
         }
         recruitJpaRepository.setActiveFalse(recruitId);
         recruitJpaRepository.setCancelTrue(recruitId);
@@ -261,7 +263,9 @@ public class RecruitService {
         if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
-
+        if(recruit.isCancel()){
+            throw new InvalidApiRequestException("Already canceled recruit");
+        }
         if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
