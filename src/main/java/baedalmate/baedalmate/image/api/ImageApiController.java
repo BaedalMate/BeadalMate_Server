@@ -1,8 +1,8 @@
 package baedalmate.baedalmate.image.api;
 
 import baedalmate.baedalmate.errors.exceptions.ImageNotFoundException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -17,14 +17,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Api(tags = "이미지 api")
+@Tag(name = "이미지 api")
 @RestController
 public class ImageApiController {
 
     @Value("${spring.servlet.multipart.location}")
     private String path;
 
-    @ApiOperation(value = "이미지 요청")
+    @Operation(summary = "이미지 요청")
     @GetMapping(value = "/images/{fileOriginName}")
     public ResponseEntity<Resource> getImageByName(@PathVariable("fileOriginName") String fileName) {
         try {

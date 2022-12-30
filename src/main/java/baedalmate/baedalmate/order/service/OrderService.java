@@ -7,6 +7,7 @@ import baedalmate.baedalmate.chat.domain.Message;
 import baedalmate.baedalmate.chat.domain.MessageType;
 import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
+import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.order.dto.OrderDto;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dto.MenuDto;
@@ -45,6 +46,9 @@ public class OrderService {
     @Transactional
     public void updateOrder(Long userId, OrderDto orderDto) {
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, orderDto.getRecruitId());
+        if(order == null) {
+            throw new InvalidApiRequestException("User is not participant");
+        }
         Recruit recruit = order.getRecruit();
 
         // current price 갱신
@@ -136,9 +140,9 @@ public class OrderService {
         recruitJpaRepository.updateCurrentPeople(recruit.getId());
 
         // 마감 기준 체크
-        if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() + 1 == recruit.getMinPeople()) {
+        if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() == recruit.getMinPeople()) {
             recruitJpaRepository.setActiveFalse(recruit.getId());
-        } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() + price >= recruit.getMinPrice()) {
+        } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
             recruitJpaRepository.setActiveFalse(recruit.getId());
         }
         // 입장 메세지 생성

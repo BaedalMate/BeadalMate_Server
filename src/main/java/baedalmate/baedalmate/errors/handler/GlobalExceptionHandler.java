@@ -20,6 +20,18 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+//    @ExceptionHandler(ResourceNotFoundException.class)
+//    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException e) {
+//        ErrorCode errorCode = e.getErrorCode();
+//        return handleExceptionInternal(errorCode);
+//    }
+//
+//    @ExceptionHandler(ExistOrderException.class)
+//    public ResponseEntity<Object> handleExistOrderException(ExistOrderException e) {
+//        ErrorCode errorCode = e.getErrorCode();
+//        return handleExceptionInternal(errorCode);
+//    }
+
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
         ErrorCode errorCode = e.getErrorCode();
@@ -30,9 +42,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException e) {
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException e) {
         ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
-        return handleExceptionInternal(errorCode, e.getMessage());
+        return handleExceptionInternal(errorCode);
     }
 
     @Override
@@ -41,10 +53,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpHeaders headers,
             HttpStatus status,
             WebRequest request) {
-        ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
+        ErrorCode errorCode = CommonErrorCode.API_ARGUMENT_NOT_VALID;
         return handleExceptionInternal(e, errorCode);
     }
-//
+
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<Object> handleAllException(Exception ex) {
 //        ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
@@ -77,20 +89,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleExceptionInternal(BindException e, ErrorCode errorCode) {
         return ResponseEntity.status(errorCode.getHttpStatus().value())
-                .body(makeErrorResponse(e, errorCode));
+                .body(makeErrorResponse(errorCode));
     }
 
-    private ErrorResponse makeErrorResponse(BindException e, ErrorCode errorCode) {
-        List<ErrorResponse.ValidationError> validationErrorList = e.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(ErrorResponse.ValidationError::of)
-                .collect(Collectors.toList());
-
-        return ErrorResponse.builder()
-                .code(errorCode.getHttpStatus().value())
-                .message(errorCode.getMessage())
-                .errors(validationErrorList)
-                .build();
-    }
+//    private ErrorResponse makeErrorResponse(BindException e, ErrorCode errorCode) {
+//        List<ErrorResponse.ValidationError> validationErrorList = e.getBindingResult()
+//                .getFieldErrors()
+//                .stream()
+//                .map(ErrorResponse.ValidationError::of)
+//                .collect(Collectors.toList());
+//
+//        return ErrorResponse.builder()
+//                .code(errorCode.getHttpStatus().value())
+//                .message(errorCode.getMessage())
+//                .errors(validationErrorList)
+//                .build();
+//    }
 }

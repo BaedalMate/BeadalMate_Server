@@ -26,8 +26,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
-    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -52,9 +50,14 @@ dependencies {
     implementation 'org.webjars.bower:axios:0.17.1'
     implementation 'com.google.code.gson:gson:2.8.0'
 
+    //swagger
+//    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
+//    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+    implementation 'org.springdoc:springdoc-openapi-data-rest:1.5.11'
+
     // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.48'
-}
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.48'}
 
 tasks.named('test') {
     useJUnitPlatform()
