@@ -76,12 +76,12 @@ public class RecruitApiController {
                     )),
     })
     @GetMapping(value = "/recruit/{id}/my-menu")
-    public ResponseEntity<ParticipantMenuDto> getMyMenu(
+    public ResponseEntity<MyMenuDto> getMyMenu(
             @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "모집글 id")@PathVariable("id") Long recruitId
 
     ) {
-        ParticipantMenuDto response = recruitService.getMyMenu(principalDetails.getId(), recruitId);
+        MyMenuDto response = recruitService.getMyMenu(principalDetails.getId(), recruitId);
         return ResponseEntity.ok().body(response);
     }
 
