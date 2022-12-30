@@ -47,7 +47,7 @@ public class ReviewService {
             );
         }
         if (participate.get() == false) {
-            throw new InvalidApiRequestException("User is not participant");
+            throw new AccessDeniedException("User is not participant");
         }
         return new ParticipantsDto(recruitId, participants);
     }
@@ -62,7 +62,7 @@ public class ReviewService {
         try {
             Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, createReviewDto.getRecruitId());
         } catch (ResourceNotFoundException e) {
-            throw new InvalidApiRequestException("User is not participant");
+            throw new AccessDeniedException("User is not participant");
         }
         // Recruit 마감 검사
         if (recruit.isActive()) {
