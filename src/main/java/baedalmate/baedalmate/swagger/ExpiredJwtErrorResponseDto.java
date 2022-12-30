@@ -1,7 +1,6 @@
 package baedalmate.baedalmate.swagger;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,10 +10,10 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
-@ApiModel(description = "Jwt 만료 상태")
+@Schema(description = "Jwt 만료 상태")
 public class ExpiredJwtErrorResponseDto {
-    @ApiModelProperty(example = "401")
+    @Schema(example = "401")
     private String code;
-    @ApiModelProperty(example = "Expired access token")
+    @Schema(example = "Token expired")
     private String message;
 }

@@ -1,15 +1,11 @@
 package baedalmate.baedalmate.swagger;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
-@Setter
-@ToString
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class ErrorDto {
-    private String code;
-    private String message;
+    public static String getExpiredJwt(){
+        return "{\"code\": \"400\"}";
+    }
 }

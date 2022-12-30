@@ -1,6 +1,6 @@
 package baedalmate.baedalmate.swagger;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,9 +10,10 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor
+@Schema(description = "권한 부족")
 public class AccessDeniedErrorResponseDto {
-    @ApiModelProperty(example = "401")
+    @Schema(example = "403")
     private String code;
-    @ApiModelProperty(example = "Expired access token")
+    @Schema(example = "Access denied")
     private String message;
 }
