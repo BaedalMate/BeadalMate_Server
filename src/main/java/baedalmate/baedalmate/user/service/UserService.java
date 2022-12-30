@@ -49,7 +49,7 @@ public class UserService {
         User user = userJpaRepository.findById(id).get();
 
         if(nickname.length() > 5) {
-            throw new InvalidApiRequestException("Length must be less than 6.");
+            throw new InvalidApiRequestException("Length must be less than 6");
         }
         if(nickname != null && nickname != "") {
             user.setNickname(nickname);
