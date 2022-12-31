@@ -107,7 +107,7 @@ public class UserApiController {
                     content = @Content(
                             mediaType = "application/json",
                             examples = {
-                                    @ExampleObject(name = "참여자가 아닐 경우",
+                                    @ExampleObject(name = "잘못된 기숙사 이름",
                                             value = "{\"code\": 400, \"message\": \"Wrong dormitory name\"}"),
                             }
                     )),
