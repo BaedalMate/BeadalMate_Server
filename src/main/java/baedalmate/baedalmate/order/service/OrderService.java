@@ -134,10 +134,12 @@ public class OrderService {
         for (MenuDto menuDto : orderDto.getMenu()) {
             price += menuDto.getPrice() * menuDto.getQuantity();
         }
-        recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() + price, recruit.getId());
+        recruit.setCurrentPrice(recruit.getCurrentPrice() + price);
 
         // current people 갱신
-        recruitJpaRepository.updateCurrentPeople(recruit.getId());
+        recruit.setCurrentPeople(recruit.getCurrentPeople() + 1);
+
+        recruitJpaRepository.save(recruit);
 
         // 마감 기준 체크
         if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() == recruit.getMinPeople()) {
