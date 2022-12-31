@@ -185,6 +185,14 @@ public class Recruit {
         this.category = category;
     }
 
+    public void setCurrentPrice(int currentPrice) {
+        this.currentPrice = currentPrice;
+    }
+
+    public void setCurrentPeople(int currentPeople) {
+        this.currentPeople = currentPeople;
+    }
+
     //== 연관관계 편의 메서드 ==//
     public void addOrder(Order order) {
         orders.add(order);

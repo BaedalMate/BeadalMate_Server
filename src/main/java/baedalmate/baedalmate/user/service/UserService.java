@@ -70,7 +70,7 @@ public class UserService {
     @Transactional
     public User updateDormitory(Long id, String dormitory) {
         User user = userJpaRepository.findById(id).get();
-        if(user.getDormitory() == null) {
+        if(user.getRole() != "USER") {
             user.setRole("USER");
         }
         switch (dormitory) {

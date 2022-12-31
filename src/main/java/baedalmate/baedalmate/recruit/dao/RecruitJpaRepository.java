@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 
 public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
 
+    @Query("select r from Recruit r join fetch r.orders where r.id = :id")
+    Recruit findByIdUsingJoinWithOrder(@Param("id") Long id);
+
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.view = r.view + 1 where r.id = :id")
     int updateView(@Param("id") Long recruitId);

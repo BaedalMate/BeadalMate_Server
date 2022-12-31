@@ -1,10 +1,9 @@
 package baedalmate.baedalmate.review.service;
 
-import baedalmate.baedalmate.errors.exceptions.AccessDeniedException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
-import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.domain.Order;
+import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.dao.RecruitRepository;
 import baedalmate.baedalmate.recruit.domain.Recruit;
 import baedalmate.baedalmate.recruit.dto.ParticipantDto;
@@ -22,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,6 +28,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
     private final ReviewJpaRepository reviewJpaRepository;
     private final UserJpaRepository userJpaRepository;
+    private final RecruitJpaRepository recruitJpaRepository;
     private final RecruitRepository recruitRepository;
     private final OrderJpaRepository orderJpaRepository;
 
@@ -57,11 +56,29 @@ public class ReviewService {
         // 유저조회
         User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
-        Recruit recruit = recruitRepository.findByIdUsingJoin(createReviewDto.getRecruitId());
+        Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(createReviewDto.getRecruitId());
+
+        // 참여자 외 인원 후기를 남길 경우예외
+        boolean flag = false;
+        for(UserDto u : createReviewDto.getUsers()) {
+            if(!recruit.getOrders().stream().anyMatch(o -> o.getUser().getId() == u.getUserId())) {
+                flag = true;
+            }
+        }
+        if(flag) {
+            throw new InvalidApiRequestException("Target is not participant");
+        }
         // Order 조회 및 참여자 조사
-        try {
-            Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, createReviewDto.getRecruitId());
-        } catch (ResourceNotFoundException e) {
+        for (Order o : recruit.getOrders()) {
+            if (o.getUser().getId() == userId) continue;
+            boolean reviewed = createReviewDto.getUsers()
+                    .stream().anyMatch(u -> u.getUserId() == o.getUser().getId());
+            if (!reviewed) {
+                throw new InvalidApiRequestException("Review all users");
+            }
+        }
+        // 유저가 참여자인지 확인
+        if (!recruit.getOrders().stream().anyMatch(o -> o.getUser().getId() == userId)) {
             throw new InvalidApiRequestException("User is not participant");
         }
         // Recruit 마감 검사
@@ -71,12 +88,12 @@ public class ReviewService {
         // 이미 후기를 남겼는지 검사
         List<Review> reviews = reviewJpaRepository.findAllByRecruitIdUsingJoin(createReviewDto.getRecruitId());
         boolean reviewed = false;
-        for(Review r : reviews) {
-            if(r.getUser().getId() == userId)
+        for (Review r : reviews) {
+            if (r.getUser().getId() == userId)
                 reviewed = true;
         }
-        if(reviewed){
-            throw new InvalidApiRequestException("Already reviewed.");
+        if (reviewed) {
+            throw new InvalidApiRequestException("Already reviewed");
         }
         //== 리뷰 생성 ==//
         for (UserDto userDto : createReviewDto.getUsers()) {

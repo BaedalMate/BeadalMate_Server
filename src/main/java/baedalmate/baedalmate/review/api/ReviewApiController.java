@@ -43,7 +43,13 @@ public class ReviewApiController {
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(name = "참여자가 아닐 경우",
+                                            value = "{\"code\": 400, \"message\": \"Review all users\"}"),
+                                    @ExampleObject(name = "모집글이 마감되지 않은 경우",
+                                            value = "{\"code\": 400, \"message\": \"Not closed recruit\"}"),
+                                    @ExampleObject(name = "참여자가 아닐 경우",
                                             value = "{\"code\": 400, \"message\": \"User is not participant\"}"),
+                                    @ExampleObject(name = "이미 리뷰를 남긴 경우",
+                                            value = "{\"code\": 400, \"message\": \"Already reviewed\"}"),
                             }
                     )),
     })
