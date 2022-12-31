@@ -38,7 +38,7 @@ public class UserService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            user.setProfileImage("/images/" + sb.toString());
+            user.setProfileImage(sb.toString());
             userJpaRepository.save(user);
             return user.getProfileImage();
         }
