@@ -57,7 +57,17 @@ public class ReviewService {
         User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
         Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(createReviewDto.getRecruitId());
-        int rId = Math.toIntExact(recruit.getId());
+
+        // 참여자 외 인원 후기를 남길 경우예외
+        boolean flag = false;
+        for(UserDto u : createReviewDto.getUsers()) {
+            if(!recruit.getOrders().stream().anyMatch(o -> o.getUser().getId() == u.getUserId())) {
+                flag = true;
+            }
+        }
+        if(flag) {
+            throw new InvalidApiRequestException("Target is not participant");
+        }
         // Order 조회 및 참여자 조사
         for (Order o : recruit.getOrders()) {
             if (o.getUser().getId() == userId) continue;
@@ -67,6 +77,7 @@ public class ReviewService {
                 throw new InvalidApiRequestException("Review all users");
             }
         }
+        // 유저가 참여자인지 확인
         if (!recruit.getOrders().stream().anyMatch(o -> o.getUser().getId() == userId)) {
             throw new InvalidApiRequestException("User is not participant");
         }
