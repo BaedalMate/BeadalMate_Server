@@ -98,4 +98,11 @@ public class RecruitRepository {
                 .setParameter("id", id)
                 .getSingleResult();
     }
+
+    public Recruit findByIdUsingJoinWithOrder(Long id) {
+        return em.createQuery("select r from Recruit r join fetch r.orders " +
+                        "where r.id = :id", Recruit.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
 }
