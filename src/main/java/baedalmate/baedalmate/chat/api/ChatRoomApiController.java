@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-//@Tag(name = "채팅방 조회 api"})
+@Tag(name = "채팅방 조회 api")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -64,8 +65,11 @@ public class ChatRoomApiController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
     })
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<ChatRoomDetailDto> getChatRoomDetail(@PathVariable Long roomId) {
-        ChatRoomDetailDto chatRoomDetailDto = chatRoomService.getChatRoomDetail(roomId);
+    public ResponseEntity<ChatRoomDetailDto> getChatRoomDetail(
+            @AuthUser PrincipalDetails principalDetails,
+            @PathVariable Long roomId
+    ) {
+        ChatRoomDetailDto chatRoomDetailDto = chatRoomService.getChatRoomDetail(principalDetails.getId(), roomId);
         return ResponseEntity.ok().body(chatRoomDetailDto);
     }
 }
