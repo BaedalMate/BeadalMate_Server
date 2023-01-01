@@ -34,8 +34,8 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     void setActiveFalse(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.cancel = true where r.id = :id")
-    void setCancelTrue(@Param("id") Long recruitId);
+    @Query("update Recruit r set r.cancel = true, r.active = false where r.id = :id")
+    void setCancelTrueAndActiveFalse(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.active = false, r.cancel = true where r.active = true and r.cancel = false and r.criteria <> baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
@@ -44,4 +44,8 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.active = false where r.active = true and r.cancel = false and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
     void setActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Recruit r set r.active = false, r.fail = true where r.active = true and r.cancel = false and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
+    void setFailTrueAndActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 }

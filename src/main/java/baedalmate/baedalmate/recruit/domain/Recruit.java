@@ -95,6 +95,8 @@ public class Recruit {
 
     private boolean cancel = false;
 
+    private boolean fail = false;
+
     //== constructor ==//
 //    private Recruit() { }
 
