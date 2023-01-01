@@ -8,6 +8,7 @@ import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
 import baedalmate.baedalmate.errors.exceptions.*;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
+import baedalmate.baedalmate.order.dao.OrderRepository;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.dao.RecruitRepository;
@@ -47,6 +48,23 @@ public class RecruitService {
     private final CategoryImageService categoryImageService;
     private final ChatRoomService chatRoomService;
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
+    private final OrderRepository orderRepository;
+
+    public List<ParticipatedRecruitDto> findParticipatedRecruit(Long userId, Pageable pageable) {
+        List<Order> orders = orderRepository.findAllByUserIdUsingJoin(userId, pageable);
+        List<ParticipatedRecruitDto> participatedRecruits = orders.stream()
+                .map(o -> new ParticipatedRecruitDto(
+                        o.getRecruit().getId(),
+                        o.getRecruit().getPlace().getName(),
+                        o.getRecruit().getCriteria(),
+                        o.getRecruit().getCreateDate(),
+                        o.getRecruit().getDeadlineDate(),
+                        o.getRecruit().getDormitory().getName(),
+                        o.getRecruit().getTitle(),
+                        o.getRecruit().getImage()))
+                .collect(Collectors.toList());
+        return participatedRecruits;
+    }
 
     public List<RecruitDto> findAllByTag(String keyword, Pageable pageable) {
         List<Recruit> recruits = recruitRepository.findAllByTagUsingJoin(keyword, pageable);
@@ -230,8 +248,9 @@ public class RecruitService {
 
     @Transactional
     public void closeBySchedule() {
-        recruitJpaRepository.setCancelTrueFromRecruitExceedTime(LocalDateTime.now());
-        recruitJpaRepository.setActiveFalseFromRecruitExceedTime(LocalDateTime.now());
+//        recruitJpaRepository.setCancelTrueFromRecruitExceedTime(LocalDateTime.now());
+//        recruitJpaRepository.setActiveFalseFromRecruitExceedTime(LocalDateTime.now());
+        recruitJpaRepository.setFailTrueAndActiveFalseFromRecruitExceedTime(LocalDateTime.now());
     }
 
     @Transactional
@@ -252,8 +271,8 @@ public class RecruitService {
         if(!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
-        recruitJpaRepository.setActiveFalse(recruitId);
-        recruitJpaRepository.setCancelTrue(recruitId);
+//        recruitJpaRepository.setActiveFalse(recruitId);
+        recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId);
     }
 
     @Transactional

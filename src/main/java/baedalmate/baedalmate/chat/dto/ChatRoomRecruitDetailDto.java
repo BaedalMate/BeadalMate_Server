@@ -36,4 +36,6 @@ public class ChatRoomRecruitDetailDto {
     private boolean active;
     @Schema(description = "모집글 취소 여부", example = "true | false")
     private boolean cancel;
+    @Schema(description = "모집글 취소 여부", example = "true | false")
+    private boolean fail;
 }
