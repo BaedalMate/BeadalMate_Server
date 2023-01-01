@@ -40,16 +40,6 @@ public class ChatRoomApiController {
     @Operation(summary = "채팅방 전체 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(
-                    responseCode = "401",
-//                    description = "1. 테스트1</br>2. 테스트2",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(name = "404-1", description = "Not Found 1 desc", value = "{\"code\": 400, \"message\": \"Token expired\"}"),
-                                    @ExampleObject(name = "404-2", description = "Not Found 2 desc")
-                            }
-                    )),
     })
     @GetMapping("/rooms")
     public ResponseEntity<ChatRoomListDto> getRooms(
