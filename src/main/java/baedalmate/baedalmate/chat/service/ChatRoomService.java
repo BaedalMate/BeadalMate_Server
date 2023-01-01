@@ -8,6 +8,8 @@ import baedalmate.baedalmate.chat.dao.MessageJpaRepository;
 import baedalmate.baedalmate.chat.dto.*;
 import baedalmate.baedalmate.recruit.domain.Recruit;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
+import baedalmate.baedalmate.review.dao.ReviewJpaRepository;
+import baedalmate.baedalmate.review.domain.Review;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class ChatRoomService {
     private final UserJpaRepository userJpaRepository;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
     private final MessageJpaRepository messageJpaRepository;
-
+    private final ReviewJpaRepository reviewJpaRepository;
     @Transactional
     public Long save(User user, ChatRoom chatRoom) {
         chatRoomJpaRepository.save(chatRoom);
@@ -45,12 +47,14 @@ public class ChatRoomService {
         return chatRoomJpaRepository.findByRecruitId(recruitId);
     }
 
-    public ChatRoomDetailDto getChatRoomDetail(Long id) {
+    public ChatRoomDetailDto getChatRoomDetail(Long userId, Long id) {
         ChatRoom chatRoom = chatRoomJpaRepository.findById(id).get();
         List<MessageDto> messageInfos = chatRoom.getMessages().stream()
                 .map(m -> new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate()))
                 .collect(Collectors.toList());
         Recruit recruit = chatRoom.getRecruit();
+        List<Review> reviews = reviewJpaRepository.findAllByRecruitIdUsingJoin(recruit.getId());
+        boolean reviewed = reviews.stream().anyMatch(r -> r.getUser().getId() == userId);
         ChatRoomRecruitDetailDto recruitDetail = new ChatRoomRecruitDetailDto(
                 recruit.getId(),
                 recruit.getImage(),
@@ -63,7 +67,7 @@ public class ChatRoomService {
                 recruit.isActive(),
                 recruit.isCancel()
         );
-        return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messageInfos);
+        return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messageInfos, reviewed);
     }
 
     public ChatRoomListDto getChatRoomList(Long userId) {

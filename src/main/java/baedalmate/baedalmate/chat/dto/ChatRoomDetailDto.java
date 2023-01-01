@@ -18,4 +18,6 @@ public class ChatRoomDetailDto {
     private ChatRoomRecruitDetailDto recruit;
     @Schema(description = "메세지 리스트")
     private List<MessageDto> messages;
+    @Schema(description = "리뷰 여부")
+    private boolean reviewed;
 }
