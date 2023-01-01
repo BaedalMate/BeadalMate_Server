@@ -170,7 +170,7 @@ public class RecruitApiController {
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(name = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
+                                            value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
                             }
                     )),
     })
