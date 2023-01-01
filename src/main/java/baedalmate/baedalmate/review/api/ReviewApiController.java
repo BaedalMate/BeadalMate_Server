@@ -65,7 +65,7 @@ public class ReviewApiController {
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(name = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
+                                            value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
                                     @ExampleObject(name = "참여자가 아닐 경우",
                                             value = "{\"code\": 400, \"message\": \"User is not participant\"}"),
                                     @ExampleObject(name = "모집글이 마감되지 않은 경우",

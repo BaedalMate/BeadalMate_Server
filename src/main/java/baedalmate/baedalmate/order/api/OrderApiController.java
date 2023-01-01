@@ -50,7 +50,7 @@ public class OrderApiController {
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(name = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
+                                            value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
                                     @ExampleObject(name = "참여자가 아닐 경우",
                                     value = "{\"code\": 400, \"message\": \"User is not participant\"}")
                             }
@@ -76,7 +76,7 @@ public class OrderApiController {
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(name = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
+                                            value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
                                     @ExampleObject(name = "취소된 모집글",
                                             value = "{\"code\": 400, \"message\": \"Already canceled recruit\"}"),
                                     @ExampleObject(name = "마감된 모집글",
@@ -105,7 +105,7 @@ public class OrderApiController {
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(name = "필수 정보 누락", description = "필수 정보 누락",
-                                            value = "{\"code\": 400, \"message\": \"Invalid argument\"}"),
+                                            value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
                                     @ExampleObject(name = "참여자가 아닐 경우", description = "취소된 모집글",
                                             value = "{\"code\": 400, \"message\": \"Already canceled recruit\"}"),
                                     @ExampleObject(name = "참여자가 아닐 경우", description = "마감된 모집글",
