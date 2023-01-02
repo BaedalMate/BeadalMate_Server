@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.user.domain;
 
+import baedalmate.baedalmate.block.domain.Block;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
@@ -53,6 +54,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Block> blocks = new ArrayList<>();
+
     @CreationTimestamp
     private Timestamp createDate;
     @UpdateTimestamp
@@ -87,4 +91,8 @@ public class User {
         review.setUser(this);
     }
 
+    public void addBlock(Block block) {
+        blocks.add(block);
+        block.setUser(this);
+    }
 }

@@ -12,5 +12,8 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     void updateScore(@Param("score") float score, @Param("id") Long userId);
 
     @Query("select u from User u join fetch u.recruits where u.id = :id")
-    User findByIdUsingJoin(@Param("id") Long id);
+    User findByIdUsingJoinWithRecruit(@Param("id") Long id);
+
+    @Query("select u from User u left join u.blocks where u.id = :id")
+    User findByIdUsingJoinWithBlock(@Param("id") Long id);
 }
