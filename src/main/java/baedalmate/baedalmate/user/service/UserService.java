@@ -1,6 +1,7 @@
 package baedalmate.baedalmate.user.service;
 
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
+import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
@@ -20,6 +21,17 @@ import java.util.Date;
 public class UserService {
 
     private final UserJpaRepository userJpaRepository;
+    private final RecruitJpaRepository recruitJpaRepository;
+
+    @Transactional
+    public void deactivate(Long id) {
+        User user = userJpaRepository.findById(id).get();
+        user.setRole("deactivate");
+        user.setNickname("");
+        user.setProfileImage("");
+        userJpaRepository.save(user);
+        recruitJpaRepository.setCancelTrueByUserId(id);
+    }
 
     public String updateProfileImage(Long id, MultipartFile profileImage) {
         User user = userJpaRepository.findById(id).get();
