@@ -1,5 +1,9 @@
 package baedalmate.baedalmate.user.api;
 
+import baedalmate.baedalmate.recruit.dto.HostedRecruitDto;
+import baedalmate.baedalmate.recruit.dto.ParticipatedRecruitDto;
+import baedalmate.baedalmate.recruit.dto.RecruitListDto;
+import baedalmate.baedalmate.recruit.service.RecruitService;
 import baedalmate.baedalmate.swagger.AccessDeniedErrorResponseDto;
 import baedalmate.baedalmate.swagger.ExpiredJwtErrorResponseDto;
 import baedalmate.baedalmate.swagger.ResultSuccessResponseDto;
@@ -19,12 +23,16 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Tag(name = "유저 api")
@@ -38,9 +46,60 @@ import java.util.Map;
 public class UserApiController {
 
     private final UserService userService;
+    private final RecruitService recruitService;
 
     @Value("${spring.servlet.multipart.location}")
     private String path;
+
+    @Operation(summary = "참여한 모집글 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+//                                    @ExampleObject(name = "이미지 이름 응답",
+//                                            value = "{\"image\": \"12345678.jpg\"}"),
+                            }
+                    )),
+
+    })
+    @GetMapping(value = "/user/participated-recruit")
+    public ResponseEntity<RecruitListDto> participatedRecruit(
+            @AuthUser PrincipalDetails principalDetails,
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
+            })
+            Pageable pageable
+    ) {
+        List<ParticipatedRecruitDto> participatedRecruitDto = recruitService.findParticipatedRecruit(principalDetails.getId(), pageable);
+        RecruitListDto response = new RecruitListDto(participatedRecruitDto);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "주최한 모집글 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+//                                    @ExampleObject(name = "이미지 이름 응답",
+//                                            value = "{\"image\": \"12345678.jpg\"}"),
+                            }
+                    )),
+
+    })
+    @GetMapping(value = "/user/hosted-recruit")
+    public ResponseEntity<RecruitListDto> hostedRecruit(
+            @AuthUser PrincipalDetails principalDetails,
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
+            })
+                    Pageable pageable
+    ) {
+        List<HostedRecruitDto> hostedRecruitDtos = recruitService.findHostedRecruit(principalDetails.getId(), pageable);
+        RecruitListDto response = new RecruitListDto(hostedRecruitDtos);
+        return ResponseEntity.ok().body(response);
+    }
 
     @Operation(summary = "유저 프로필 이미지 수정")
     @ApiResponses({

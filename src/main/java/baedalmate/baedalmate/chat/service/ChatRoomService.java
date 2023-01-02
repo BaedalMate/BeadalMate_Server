@@ -65,7 +65,8 @@ public class ChatRoomService {
                 recruit.getMinPeople(),
                 recruit.getDeadlineDate(),
                 recruit.isActive(),
-                recruit.isCancel()
+                recruit.isCancel(),
+                recruit.isFail()
         );
         return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messageInfos, reviewed);
     }

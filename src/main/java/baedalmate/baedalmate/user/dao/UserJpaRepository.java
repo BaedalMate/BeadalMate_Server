@@ -10,4 +10,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update User u set u.score = :score where u.id = :id")
     void updateScore(@Param("score") float score, @Param("id") Long userId);
+
+    @Query("select u from User u join fetch u.recruits where u.id = :id")
+    User findByIdUsingJoin(@Param("id") Long id);
 }
