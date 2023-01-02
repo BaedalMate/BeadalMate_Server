@@ -50,6 +50,26 @@ public class RecruitService {
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
     private final OrderRepository orderRepository;
 
+    public List<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
+        List<Recruit> recruits = recruitRepository.findByUserIdUsingJoin(userId, pageable);
+        List<HostedRecruitDto> hostedRecruitDtos = recruits.stream()
+                .map(r -> new HostedRecruitDto(
+                        r.getId(),
+                        r.getPlace().getName(),
+                        r.getCriteria(),
+                        r.getCreateDate(),
+                        r.getDeadlineDate(),
+                        r.getDormitory().getName(),
+                        r.getTitle(),
+                        r.getImage(),
+                        r.isActive(),
+                        r.isCancel(),
+                        r.isFail()
+                ))
+                .collect(Collectors.toList());
+        return hostedRecruitDtos;
+    }
+
     public List<ParticipatedRecruitDto> findParticipatedRecruit(Long userId, Pageable pageable) {
         List<Order> orders = orderRepository.findAllByUserIdUsingJoin(userId, pageable);
         List<ParticipatedRecruitDto> participatedRecruits = orders.stream()

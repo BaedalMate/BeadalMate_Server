@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.user.api;
 
+import baedalmate.baedalmate.recruit.dto.HostedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.ParticipatedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.RecruitListDto;
 import baedalmate.baedalmate.recruit.service.RecruitService;
@@ -70,20 +71,35 @@ public class UserApiController {
             })
             Pageable pageable
     ) {
-//        recruitService.
         List<ParticipatedRecruitDto> participatedRecruitDto = recruitService.findParticipatedRecruit(principalDetails.getId(), pageable);
         RecruitListDto response = new RecruitListDto(participatedRecruitDto);
         return ResponseEntity.ok().body(response);
     }
 
-//    @GetMapping(value = "/user/hosted-recruit")
-//    public ResponseEntity<RecruitListDto> hostedRecruti(
-//            @AuthUser PrincipalDetails principalDetails,
-//            @SortDefault.SortDefaults({
-//                    @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
-//            })
-//                    Pageable pageable
-//    )
+    @Operation(summary = "주최한 모집글 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+//                                    @ExampleObject(name = "이미지 이름 응답",
+//                                            value = "{\"image\": \"12345678.jpg\"}"),
+                            }
+                    )),
+
+    })
+    @GetMapping(value = "/user/hosted-recruit")
+    public ResponseEntity<RecruitListDto> hostedRecruit(
+            @AuthUser PrincipalDetails principalDetails,
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
+            })
+                    Pageable pageable
+    ) {
+        List<HostedRecruitDto> hostedRecruitDtos = recruitService.findHostedRecruit(principalDetails.getId(), pageable);
+        RecruitListDto response = new RecruitListDto(hostedRecruitDtos);
+        return ResponseEntity.ok().body(response);
+    }
 
     @Operation(summary = "유저 프로필 이미지 수정")
     @ApiResponses({

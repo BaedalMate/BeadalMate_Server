@@ -105,4 +105,13 @@ public class RecruitRepository {
                 .setParameter("id", id)
                 .getSingleResult();
     }
+
+    public List<Recruit> findByUserIdUsingJoin(Long userId, Pageable pageable) {
+        return em.createQuery("select r from Recruit r join fetch r.user " +
+                        "where r.user.id = :userId", Recruit.class)
+                .setParameter("userId", userId)
+                .setFirstResult(pageable.getPageNumber())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+    }
 }
