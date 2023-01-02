@@ -1,6 +1,7 @@
 package baedalmate.baedalmate.block.api;
 
 import baedalmate.baedalmate.block.dto.BlockRequestDto;
+import baedalmate.baedalmate.block.dto.BlockedUserListDto;
 import baedalmate.baedalmate.block.service.BlockService;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
@@ -16,10 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -85,6 +83,14 @@ import java.util.Map;
         blockService.unblock(principalDetails.getId(), blockRequestDto.getUserId());
         Map<String, Object> response = new HashMap<>();
         response.put("result", "success");
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/block")
+    public ResponseEntity<BlockedUserListDto> blockList(
+            @AuthUser PrincipalDetails principalDetails
+    ) {
+        BlockedUserListDto response = blockService.getBlockList(principalDetails.getId());
         return ResponseEntity.ok().body(response);
     }
 }

@@ -2,12 +2,17 @@ package baedalmate.baedalmate.block.service;
 
 import baedalmate.baedalmate.block.dao.BlockJpaRepository;
 import baedalmate.baedalmate.block.domain.Block;
+import baedalmate.baedalmate.block.dto.BlockedUserDto;
+import baedalmate.baedalmate.block.dto.BlockedUserListDto;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,5 +40,13 @@ public class BlockService {
             throw new InvalidApiRequestException("Target is not blocked");
         }
         blockJpaRepository.deleteByUserIdAndTargetId(userId, targetId);
+    }
+
+    public BlockedUserListDto getBlockList(Long userId) {
+        List<Block> blockList = blockJpaRepository.findAllByUserIdUsingJoinWithTarget(userId);
+        List<BlockedUserDto> blockedUserDtos = blockList.stream()
+                .map(b -> new BlockedUserDto(b.getTarget().getId(), b.getTarget().getNickname(), b.getTarget().getProfileImage()))
+                .collect(Collectors.toList());
+        return new BlockedUserListDto(blockedUserDtos);
     }
 }
