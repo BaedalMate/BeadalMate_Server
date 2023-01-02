@@ -53,7 +53,7 @@ public class UserApiController {
 
     @Operation(summary = "회원 탈퇴(비활성화")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "참여 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
+            @ApiResponse(responseCode = "200", description = "탈퇴(비활성화) 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
     })
     @GetMapping(value = "/user/deactivate")
     public ResponseEntity<Map> deactivate(
