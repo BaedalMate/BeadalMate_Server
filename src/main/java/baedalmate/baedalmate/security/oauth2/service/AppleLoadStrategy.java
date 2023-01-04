@@ -104,7 +104,16 @@ public class AppleLoadStrategy {
         } catch (Exception e) {
             log.debug(e.getMessage());
         }
-
+        return Jwts.builder()
+                .setHeaderParam("kid", keyId)
+                .setHeaderParam("alg", "ES256")
+                .setIssuer(teamId)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expirationDate)
+                .setAudience("https://appleid.apple.com")
+                .setSubject(clientId)
+                .signWith(SignatureAlgorithm.ES256, getPrivateKey())
+                .compact();
     }
 
     private PrivateKey getPrivateKey() throws IOException {
