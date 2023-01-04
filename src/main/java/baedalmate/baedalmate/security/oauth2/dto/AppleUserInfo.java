@@ -30,7 +30,7 @@ public class AppleUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getEmail() {
-        LinkedHashMap<String, Object> kakaoAccount = (LinkedHashMap<String, Object>) attributes.get("kakao_account");
+        LinkedHashMap<String, Object> kakaoAccount = (LinkedHashMap<String, Object>) attributes.get("email");
         return (String) kakaoAccount.get("email");
     }
 
