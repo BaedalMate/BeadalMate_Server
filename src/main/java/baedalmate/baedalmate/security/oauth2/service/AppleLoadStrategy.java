@@ -90,6 +90,20 @@ public class AppleLoadStrategy {
 
     private String makeClientSecret() throws IOException {
         Date expirationDate = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
+        try {
+            return Jwts.builder()
+                    .setHeaderParam("kid", keyId)
+                    .setHeaderParam("alg", "ES256")
+                    .setIssuer(teamId)
+                    .setIssuedAt(new Date(System.currentTimeMillis()))
+                    .setExpiration(expirationDate)
+                    .setAudience("https://appleid.apple.com")
+                    .setSubject(clientId)
+                    .signWith(SignatureAlgorithm.ES256, getPrivateKey())
+                    .compact();
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+        }
         return Jwts.builder()
                 .setHeaderParam("kid", keyId)
                 .setHeaderParam("alg", "ES256")
