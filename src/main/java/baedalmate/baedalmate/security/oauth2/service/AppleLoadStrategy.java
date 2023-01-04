@@ -16,6 +16,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -50,6 +51,7 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class AppleLoadStrategy {
 
     @Value("${apple.key.id}")
@@ -71,8 +73,11 @@ public class AppleLoadStrategy {
     public OAuth2UserInfo getUserInfo(String identityToken, String authorizationCode, String username, String email)  {
         try {
             Claims userInfo = appleJwtUtils.getClaimsBy(identityToken);
+            log.debug("Get userinfo");
             String clientSecret = makeClientSecret();
+            log.debug("Make clientSecret");
             AppleToken.Response response = appleClient.getToken(AppleToken.Request.of(authorizationCode, clientId, clientSecret, "authorization_code", ""));
+            log.debug("Get token");
             JsonParser parser = new JsonParser();
             JsonObject userInfoObject = (JsonObject) parser.parse(new Gson().toJson(userInfo));
             JsonElement appleAlg = userInfoObject.get("sub");
