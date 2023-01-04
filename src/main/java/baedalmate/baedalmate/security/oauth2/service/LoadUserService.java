@@ -26,7 +26,7 @@ public class LoadUserService {
 
         OAuth2UserInfo userInfo;
         if(authentication.getSocialType().getSocialName() == "apple"){
-            userInfo = appleLoadStrategy.getUserInfo(authentication.getIdentityToken(), authentication.getAuthorizationCode(), authentication.getUsername(), authentication.getEmail());
+            userInfo = appleLoadStrategy.getUserInfo(authentication.getIdentityToken(), authentication.getAuthorizationCode(), authentication.getEmail(), authentication.getUsername());
         } else {
             userInfo = socialLoadStrategy.getUserInfo(authentication.getAccessToken());//PK 가져오기
         }
