@@ -1,6 +1,8 @@
 package baedalmate.baedalmate.user.service;
 
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
+import baedalmate.baedalmate.order.dao.OrderJpaRepository;
+import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.user.domain.User;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +25,14 @@ public class UserService {
 
     private final UserJpaRepository userJpaRepository;
     private final RecruitJpaRepository recruitJpaRepository;
+    private final OrderJpaRepository orderJpaRepository;
 
     @Transactional
     public void deactivate(Long id) {
+        List<Order> orders = orderJpaRepository.findAllByUserIdUsingJoin(id);
+        if (orders.size() > 0) {
+            throw new InvalidApiRequestException("User is participating some recruit.");
+        }
         User user = userJpaRepository.findById(id).get();
         user.setRole("deactivate");
         user.setNickname("");
@@ -35,7 +43,7 @@ public class UserService {
 
     public String updateProfileImage(Long id, MultipartFile profileImage) {
         User user = userJpaRepository.findById(id).get();
-        if(!profileImage.isEmpty()) {
+        if (!profileImage.isEmpty()) {
             Date date = new Date();
             StringBuilder sb = new StringBuilder();
             String fileName = profileImage.getOriginalFilename();
@@ -60,10 +68,10 @@ public class UserService {
     public UserInfoDto update(Long id, String nickname) {
         User user = userJpaRepository.findById(id).get();
 
-        if(nickname.length() > 5) {
+        if (nickname.length() > 5) {
             throw new InvalidApiRequestException("Length must be less than 6");
         }
-        if(nickname != null && nickname != "") {
+        if (nickname != null && nickname != "") {
             user.setNickname(nickname);
         }
         userJpaRepository.save(user);
@@ -82,7 +90,7 @@ public class UserService {
     @Transactional
     public User updateDormitory(Long id, String dormitory) {
         User user = userJpaRepository.findById(id).get();
-        if(user.getRole() != "USER") {
+        if (user.getRole() != "USER") {
             user.setRole("USER");
         }
         switch (dormitory) {

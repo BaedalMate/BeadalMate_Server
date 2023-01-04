@@ -66,12 +66,23 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
     private User saveOrGet(OAuth2UserDetails oAuth2User) throws Exception {
         //socailID(식별값)과 어떤 소셜 로그인 유형인지를 통해 DB에서 조회
         Optional<User> userBySocial = authRepository.findBySocialTypeAndSocialId(oAuth2User.getSocialType(), oAuth2User.getSocialId());
-        if (userBySocial.isPresent())
+        if (userBySocial.isPresent() && userBySocial.get().getRole() == "deactivate") {
+            User user = userBySocial.get();
+            user.setRole("GUEST");
+            String nickname = oAuth2User.getUsername().length() > 5 ? oAuth2User.getUsername().substring(0, 5) : oAuth2User.getUsername();
+            user.setNickname(nickname);
+            String imageUrl = "apple_default_profile.png";
+            if (oAuth2User.getSocialType().getSocialName() != "apple") {
+                imageUrl = download(oAuth2User.getImage());
+            }
+            user.setProfileImage(imageUrl);
+            return authRepository.save(user);
+        } else if (userBySocial.isPresent()) {
             return userBySocial.get();
-        else {
+        } else {
             String nickname = oAuth2User.getUsername().length() > 5 ? oAuth2User.getUsername().substring(0, 5) : oAuth2User.getUsername();
             String imageUrl = "apple_default_profile.png";
-            if(oAuth2User.getSocialType().getSocialName()!="apple"){
+            if (oAuth2User.getSocialType().getSocialName() != "apple") {
                 imageUrl = download(oAuth2User.getImage());
             }
             User user = User.builder()
