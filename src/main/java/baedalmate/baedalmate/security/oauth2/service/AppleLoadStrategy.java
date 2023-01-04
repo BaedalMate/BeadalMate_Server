@@ -118,6 +118,7 @@ public class AppleLoadStrategy {
 
     private PrivateKey getPrivateKey() throws IOException {
         ClassPathResource resource = new ClassPathResource(keyPath);
+        log.debug(resource.toString());
         String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
         Reader pemReader = new StringReader(privateKey);
         PEMParser pemParser = new PEMParser(pemReader);
