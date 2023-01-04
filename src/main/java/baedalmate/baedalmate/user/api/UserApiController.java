@@ -51,6 +51,28 @@ public class UserApiController {
     @Value("${spring.servlet.multipart.location}")
     private String path;
 
+    @Operation(summary = "회원 탈퇴(비활성화")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "탈퇴(비활성화) 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
+            @ApiResponse(responseCode = "400",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "참여 중인 모집글 존재",
+                                            value = "{\"code\": 400, \"message\": \"User is participating some recruit.\"}"),
+                            }
+                    )),
+    })
+    @GetMapping(value = "/user/deactivate")
+    public ResponseEntity<Map> deactivate(
+            @AuthUser PrincipalDetails principalDetails
+    ) {
+        userService.deactivate(principalDetails.getId());
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", "success");
+        return ResponseEntity.ok().body(response);
+    }
+
     @Operation(summary = "참여한 모집글 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
