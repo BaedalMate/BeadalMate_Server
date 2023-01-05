@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ChatRoomDto implements Comparable<ChatRoomDto> {
 
     @Schema(description = "채팅방 id")
-    private Long id;
+    private Long chatRoomId;
     @Schema(description = "모집글 이미지")
     private String image;
     @Schema(description = "모집글 제목")

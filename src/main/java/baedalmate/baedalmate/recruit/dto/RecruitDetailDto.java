@@ -45,14 +45,6 @@ public class RecruitDetailDto {
     private int minPrice;
     @Schema(description = "거점", example = "BURAM | KB | SUGLIM | NURI")
     private String dormitory;
-    @Schema(description = "유저 이름", example = "유상")
-    private String username;
-    @Schema(description = "유저 평점: (0~5 사이 실수값)", example = "4.5")
-    private float score;
-    @Schema(description = "유저 프로필 이미지", example = "/images/12345.jpg")
-    private String profileImage;
-    @Schema(description = "유저 거점", example = "BURAM | KB | SUGLIM | NURI")
-    private String userDormitory;
     @Schema(description = "마감 여부", example = "true | false")
     private boolean active;
     @Schema(description = "취소 여부", example = "true | false")
@@ -61,4 +53,21 @@ public class RecruitDetailDto {
     private boolean host;
     @Schema(description = "참석 여부", example = "true | false")
     private boolean participate;
+    @Schema(description = "유저 정보")
+    private UserInfo userInfo;
+
+    @Data
+    @AllArgsConstructor
+    public static class UserInfo {
+        @Schema(description = "유저 id", example = "1")
+        private Long userId;
+        @Schema(description = "유저 닉네임", example = "유상")
+        private String nickname;
+        @Schema(description = "유저 평점: (0~5 사이 실수값)", example = "4.5")
+        private float score;
+        @Schema(description = "유저 프로필 이미지", example = "/images/12345.jpg")
+        private String profileImage;
+        @Schema(description = "유저 거점", example = "BURAM | KB | SUNGLIM | NURI")
+        private String userDormitory;
+    }
 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ParticipatedRecruitDto {
     @Schema(description = "해당 모집글 id", example = "1")
-    private Long id;
+    private Long recruitId;
 
     @Schema(description = "식당 이름", example = "도미노피자")
     private String place;

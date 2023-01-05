@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema
-public class OrderAndChatIdDto {
+public class OrderAndChatRoomIdDto {
     @Schema(description = "주문 id", example = "1")
-    private Long id;
+    private Long orderId;
     @Schema(description = "채팅방 id", example = "1")
     private Long chatRoomId;
 }
