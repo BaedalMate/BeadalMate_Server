@@ -4,7 +4,7 @@ import baedalmate.baedalmate.chat.service.ChatRoomService;
 import baedalmate.baedalmate.chat.service.MessageService;
 import baedalmate.baedalmate.order.dto.OrderDto;
 import baedalmate.baedalmate.order.dto.DeleteOrderDto;
-import baedalmate.baedalmate.order.dto.OrderAndChatIdDto;
+import baedalmate.baedalmate.order.dto.OrderAndChatRoomIdDto;
 import baedalmate.baedalmate.order.service.OrderService;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
@@ -85,12 +85,12 @@ public class OrderApiController {
                     )),
     })
     @PostMapping(value = "/order")
-    public ResponseEntity<OrderAndChatIdDto> participate(
+    public ResponseEntity<OrderAndChatRoomIdDto> participate(
             @AuthUser PrincipalDetails principalDetails,
             @RequestBody @Valid OrderDto orderDto
     ) {
 
-        OrderAndChatIdDto response = orderService.createOrder(principalDetails.getId(), orderDto);
+        OrderAndChatRoomIdDto response = orderService.createOrder(principalDetails.getId(), orderDto);
 
         return ResponseEntity.ok().body(response);
     }

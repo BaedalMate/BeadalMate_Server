@@ -11,7 +11,7 @@ import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.order.dto.OrderDto;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dto.MenuDto;
-import baedalmate.baedalmate.order.dto.OrderAndChatIdDto;
+import baedalmate.baedalmate.order.dto.OrderAndChatRoomIdDto;
 import baedalmate.baedalmate.recruit.dao.MenuJpaRepository;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.domain.Criteria;
@@ -95,7 +95,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderAndChatIdDto createOrder(Long userId, OrderDto orderDto) {
+    public OrderAndChatRoomIdDto createOrder(Long userId, OrderDto orderDto) {
 
         // User 조회
         User user = userJpaRepository.findById(userId).get();
@@ -154,6 +154,6 @@ public class OrderService {
 
         messageJpaRepository.save(message);
 
-        return new OrderAndChatIdDto(order.getId(), chatRoom.getId());
+        return new OrderAndChatRoomIdDto(order.getId(), chatRoom.getId());
     }
 }

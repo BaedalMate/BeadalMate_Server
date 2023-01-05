@@ -13,7 +13,7 @@ import java.util.List;
 @Schema
 public class ChatRoomDetailDto {
     @Schema(description = "채팅방 id", example = "1")
-    private Long id;
+    private Long chatRoomId;
     @Schema(description = "모집글 정보")
     private ChatRoomRecruitDetailDto recruit;
     @Schema(description = "메세지 리스트")
