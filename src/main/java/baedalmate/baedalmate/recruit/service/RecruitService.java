@@ -288,7 +288,7 @@ public class RecruitService {
         if (recruit.isCancel()) {
             throw new InvalidApiRequestException("Already canceled recruit");
         }
-        if(!recruit.isActive()) {
+        if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
 //        recruitJpaRepository.setActiveFalse(recruitId);
@@ -307,7 +307,7 @@ public class RecruitService {
         if (!host) {
             throw new InvalidApiRequestException("Not host");
         }
-        if(recruit.isCancel()){
+        if (recruit.isCancel()) {
             throw new InvalidApiRequestException("Already canceled recruit");
         }
         if (!recruit.isActive()) {
@@ -443,6 +443,13 @@ public class RecruitService {
         }
 
         User hostUser = recruit.getUser();
+        RecruitDetailDto.UserInfo userInfo = new RecruitDetailDto.UserInfo(
+                hostUser.getId(),
+                hostUser.getNickname(),
+                hostUser.getScore(),
+                hostUser.getProfileImage(),
+                hostUser.getDormitoryName());
+
         return new RecruitDetailDto(
                 recruit.getId(),
                 recruit.getImage(),
@@ -459,14 +466,11 @@ public class RecruitService {
                 recruit.getCurrentPrice(),
                 recruit.getMinPrice(),
                 recruit.getDormitory().getName(),
-                hostUser.getNickname(),
-                hostUser.getScore(),
-                hostUser.getProfileImage(),
-                hostUser.getDormitoryName(),
                 recruit.isActive(),
                 recruit.isCancel(),
                 host,
-                participate
+                participate,
+                userInfo
         );
     }
 
