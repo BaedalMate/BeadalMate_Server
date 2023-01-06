@@ -49,4 +49,7 @@ public class MainPageRecruitDto {
 
     @Schema(description = "모집글 이미지", example = "/images/1234567.jpg")
     private String image;
+
+    @Schema(description = "모집글 활성 여부", example = "true")
+    private boolean active;
 }

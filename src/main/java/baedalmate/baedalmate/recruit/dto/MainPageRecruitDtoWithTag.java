@@ -46,4 +46,7 @@ public class MainPageRecruitDtoWithTag {
 
     @Schema(description = "모집글 이미지")
     private String image;
+
+    @Schema(description = "모집글 활성 여부", example = "true")
+    private boolean active;
 }

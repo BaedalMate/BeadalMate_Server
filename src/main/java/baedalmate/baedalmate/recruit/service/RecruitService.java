@@ -102,7 +102,8 @@ public class RecruitService {
                         r.getUser().getScore(),
                         r.getDormitory().getName(),
                         r.getTitle(),
-                        r.getImage()
+                        r.getImage(),
+                        r.isActive()
                 )).collect(Collectors.toList());
     }
 
@@ -505,7 +506,8 @@ public class RecruitService {
                 r.getUser().getScore(),
                 r.getDormitory().getName(),
                 r.getTitle(),
-                r.getImage()
+                r.getImage(),
+                r.isActive()
         )).collect(Collectors.toList());
     }
 
@@ -534,7 +536,8 @@ public class RecruitService {
                 r.getUser().getScore(),
                 r.getDormitory().getName(),
                 r.getMinShippingFee(),
-                r.getImage()
+                r.getImage(),
+                r.isActive()
         )).collect(Collectors.toList());
     }
 
@@ -556,7 +559,8 @@ public class RecruitService {
                                     r.getDormitory().getName(),
                                     r.getMinShippingFee(),
                                     subList.stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
-                                    r.getImage());
+                                    r.getImage(),
+                                    r.isActive());
                         }
                 ).collect(Collectors.toList());
     }
@@ -587,7 +591,8 @@ public class RecruitService {
                         r.getUser().getScore(),
                         r.getDormitory().getName(),
                         r.getTitle(),
-                        r.getImage()
+                        r.getImage(),
+                        r.isActive()
                 )).collect(Collectors.toList());
     }
 }
