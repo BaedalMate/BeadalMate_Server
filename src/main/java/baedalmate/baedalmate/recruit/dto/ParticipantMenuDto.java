@@ -16,7 +16,7 @@ public class ParticipantMenuDto {
     private Long userId;
     @Schema(description = "유저 닉네임", example = "허동준")
     private String nickname;
-    @Schema(description = "유저 프로필 이미지", example = "/images/1234124124")
+    @Schema(description = "유저 프로필 이미지", example = "1234124124")
     private String profileImage;
     @Schema(description = "메뉴")
     private List<MenuDto> menu;

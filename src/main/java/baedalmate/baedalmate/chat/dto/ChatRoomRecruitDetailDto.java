@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ChatRoomRecruitDetailDto {
     @Schema(description = "모집글 id", example = "1")
     private Long recruitId;
-    @Schema(description = "모집글 이미지", example = "/images/12345678.jpg")
+    @Schema(description = "모집글 이미지", example = "12345678.jpg")
     private String recruitImage;
     @Schema(description = "모집글 생성 시간", example = "2022-12-5 11:11:11")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")

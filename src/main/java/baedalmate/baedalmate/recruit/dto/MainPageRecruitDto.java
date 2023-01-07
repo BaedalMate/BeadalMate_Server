@@ -47,7 +47,7 @@ public class MainPageRecruitDto {
     @Schema(description = "배달비", example = "4000")
     private int shippingFee;
 
-    @Schema(description = "모집글 이미지", example = "/images/1234567.jpg")
+    @Schema(description = "모집글 이미지", example = "1234567.jpg")
     private String image;
 
     @Schema(description = "모집글 활성 여부", example = "true")

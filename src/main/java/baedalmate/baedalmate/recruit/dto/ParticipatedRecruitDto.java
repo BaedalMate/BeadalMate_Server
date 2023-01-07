@@ -37,6 +37,6 @@ public class ParticipatedRecruitDto {
     @Schema(description = "모집글 제목", example = "영계백숙")
     private String title;
 
-    @Schema(description = "모집글 이미지", example = "/images/123456.jpg")
+    @Schema(description = "모집글 이미지", example = "123456.jpg")
     private String image;
 }
