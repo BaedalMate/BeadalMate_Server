@@ -49,6 +49,7 @@ public class RecruitApiController {
     @GetMapping(value = "/recruit/search")
     @CustomPageableAsQueryParam
     public ResponseEntity<RecruitListDto> searchByTag(
+            @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "태그 검색 키워드")
             @RequestParam(required = true) String keyword,
             @Parameter(hidden = true)
@@ -57,7 +58,7 @@ public class RecruitApiController {
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
                     Pageable pageable) {
-        List<RecruitDto> list = recruitService.findAllByTag(keyword, pageable);
+        List<RecruitDto> list = recruitService.findAllByTag(principalDetails.getId(), keyword, pageable);
         RecruitListDto response = new RecruitListDto(list);
         return ResponseEntity.ok().body(response);
     }
@@ -78,7 +79,7 @@ public class RecruitApiController {
     @GetMapping(value = "/recruit/{id}/my-menu")
     public ResponseEntity<MyMenuDto> getMyMenu(
             @AuthUser PrincipalDetails principalDetails,
-            @Parameter(description = "모집글 id")@PathVariable("id") Long recruitId
+            @Parameter(description = "모집글 id") @PathVariable("id") Long recruitId
 
     ) {
         MyMenuDto response = recruitService.getMyMenu(principalDetails.getId(), recruitId);
@@ -101,7 +102,7 @@ public class RecruitApiController {
     @GetMapping(value = "/recruit/{id}/menu")
     public ResponseEntity<ParticipantsMenuDto> getMenu(
             @AuthUser PrincipalDetails principalDetails,
-            @Parameter(description = "모집글 id")@PathVariable("id") Long recruitId
+            @Parameter(description = "모집글 id") @PathVariable("id") Long recruitId
 
     ) {
         ParticipantsMenuDto response = recruitService.getMenu(principalDetails.getId(), recruitId);
@@ -193,6 +194,7 @@ public class RecruitApiController {
     @CustomPageableAsQueryParam
     @GetMapping(value = "/recruit/list")
     public ResponseEntity<RecruitListDto> getRecruitList(
+            @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
             @PageableDefault(size = 10)
@@ -204,9 +206,9 @@ public class RecruitApiController {
 
         List<RecruitDto> recruits;
         if (categoryId == null) {
-            recruits = recruitService.findAllRecruitDto(pageable);
+            recruits = recruitService.findAllRecruitDto(principalDetails.getId(), pageable);
         } else {
-            recruits = recruitService.findAllByCategory(categoryId, pageable);
+            recruits = recruitService.findAllByCategory(principalDetails.getId(), categoryId, pageable);
         }
 
         RecruitListDto response = new RecruitListDto(recruits);
@@ -221,13 +223,14 @@ public class RecruitApiController {
     @CustomPageableAsQueryParam
     @GetMapping(value = "/recruit/main/list")
     public ResponseEntity<RecruitListDto> getMainRecruitList(
+            @AuthUser PrincipalDetails principalDetails,
             @PageableDefault(size = 5)
             @Parameter(hidden = true)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
 
-        List<MainPageRecruitDto> recruitList = recruitService.findAllMainPageRecruitDto(pageable);
+        List<MainPageRecruitDto> recruitList = recruitService.findAllMainPageRecruitDto(principalDetails.getId(), pageable);
         RecruitListDto response = new RecruitListDto(recruitList);
 
         return ResponseEntity.ok().body(response);
@@ -246,13 +249,9 @@ public class RecruitApiController {
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
-        // 유저 정보 조회
-        User user = userService.findOne(principalDetails.getId());
-        if (user.getDormitory() == null) {
-            throw new ResourceNotFoundException();
-        }
-
-        List<MainPageRecruitDtoWithTag> recruitList = recruitService.findAllWithTag(user.getDormitory(), pageable);
+        List<MainPageRecruitDtoWithTag> recruitList = recruitService.findAllWithTag(
+                principalDetails.getId(),
+                pageable);
         RecruitListDto response = new RecruitListDto(recruitList);
 
         return ResponseEntity.ok().body(response);
