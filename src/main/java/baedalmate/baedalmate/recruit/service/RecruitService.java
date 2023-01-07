@@ -86,8 +86,8 @@ public class RecruitService {
         return participatedRecruits;
     }
 
-    public List<RecruitDto> findAllByTag(String keyword, Pageable pageable) {
-        List<Recruit> recruits = recruitRepository.findAllByTagUsingJoin(keyword, pageable);
+    public List<RecruitDto> findAllByTag(Long userId, String keyword, Pageable pageable) {
+        List<Recruit> recruits = recruitRepository.findAllByTagUsingJoin(keyword, pageable, userId);
         return recruits.stream()
                 .map(r -> new RecruitDto(
                         r.getId(),
@@ -480,16 +480,16 @@ public class RecruitService {
         return recruitJpaRepository.updateView(recruitId);
     }
 
-    public List<RecruitDto> findAllRecruitDto(Pageable pageable) {
+    public List<RecruitDto> findAllRecruitDto(Long userId, Pageable pageable) {
         String sort = pageable.getSort().toString();
         Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Recruit> recruitList;
         if (sort.contains("score")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByScore(p);
+            recruitList = recruitRepository.findAllUsingJoinOrderByScore(p, userId);
         } else if (sort.contains("deadlineDate")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p);
+            recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p, userId);
         } else if (sort.contains("view")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByView(p);
+            recruitList = recruitRepository.findAllUsingJoinOrderByView(p, userId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
@@ -511,16 +511,16 @@ public class RecruitService {
         )).collect(Collectors.toList());
     }
 
-    public List<MainPageRecruitDto> findAllMainPageRecruitDto(Pageable pageable) {
+    public List<MainPageRecruitDto> findAllMainPageRecruitDto(Long userId, Pageable pageable) {
         String sort = pageable.getSort().toString();
         Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Recruit> recruitList;
         if (sort.contains("score")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByScore(p);
+            recruitList = recruitRepository.findAllUsingJoinOrderByScore(p, userId);
         } else if (sort.contains("deadlineDate")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p);
+            recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p, userId);
         } else if (sort.contains("view")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByView(p);
+            recruitList = recruitRepository.findAllUsingJoinOrderByView(p, userId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
@@ -541,8 +541,12 @@ public class RecruitService {
         )).collect(Collectors.toList());
     }
 
-    public List<MainPageRecruitDtoWithTag> findAllWithTag(Dormitory dormitory, Pageable pageable) {
-        return recruitRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(dormitory, pageable)
+    public List<MainPageRecruitDtoWithTag> findAllWithTag(Long userId, Pageable pageable) {
+        User user = userJpaRepository.findById(userId).get();
+        if (user.getDormitory() == null) {
+            throw new ResourceNotFoundException();
+        }
+        return recruitRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(user.getDormitory(), pageable, userId)
                 .stream().map(r -> {
                             List<Tag> tags = r.getTags();
                             Collections.shuffle(tags);
@@ -565,15 +569,15 @@ public class RecruitService {
                 ).collect(Collectors.toList());
     }
 
-    public List<RecruitDto> findAllByCategory(Long categoryId, Pageable pageable) {
+    public List<RecruitDto> findAllByCategory(Long userId, Long categoryId, Pageable pageable) {
         String sort = pageable.getSort().toString();
         List<Recruit> recruitList;
         if (sort.contains("score")) {
-            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByScore(categoryId, pageable);
+            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByScore(categoryId, pageable, userId);
         } else if (sort.contains("deadlineDate")) {
-            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByDeadlineDate(categoryId, pageable);
+            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByDeadlineDate(categoryId, pageable, userId);
         } else if (sort.contains("view")) {
-            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByView(categoryId, pageable);
+            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByView(categoryId, pageable, userId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }

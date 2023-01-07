@@ -57,6 +57,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Block> blocks = new ArrayList<>();
 
+    @OneToMany(mappedBy = "target")
+    private List<Block> blocked = new ArrayList<>();
+
     @CreationTimestamp
     private Timestamp createDate;
     @UpdateTimestamp
