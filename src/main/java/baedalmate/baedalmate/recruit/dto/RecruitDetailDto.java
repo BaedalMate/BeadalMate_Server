@@ -16,7 +16,7 @@ import java.util.List;
 public class RecruitDetailDto {
     @Schema(description = "모집글 id", example = "1")
     private Long recruitId;
-    @Schema(description = "모집글 이미지", example = "/images/12341421.jpg")
+    @Schema(description = "모집글 이미지", example = "12341421.jpg")
     private String image;
     @Schema(description = "모집글 제목", example = "영계백숙")
     private String title;
@@ -24,7 +24,7 @@ public class RecruitDetailDto {
     private String description;
     @Schema(description = "배달 가게 정보")
     private PlaceDto place;
-    @Schema(description = "배달 플랫폼", example = "BAEMIN | YOGIYO | COUPANG | ETC")
+    @Schema(description = "배달 플랫폼(BAEMIN | YOGIYO | COUPANG | ETC)", example = "BAEMIN")
     private String platform;
     @Schema(description = "마감 시간", example = "2020-12-24T16:28:27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
@@ -43,15 +43,15 @@ public class RecruitDetailDto {
     private int currentPrice;
     @Schema(description = "모집 최소 금액", example = "30000")
     private int minPrice;
-    @Schema(description = "거점", example = "BURAM | KB | SUGLIM | NURI")
+    @Schema(description = "거점(BURAM | KB | SUGLIM | NURI)", example = "NURI")
     private String dormitory;
-    @Schema(description = "마감 여부", example = "true | false")
+    @Schema(description = "마감 여부(true | false)", example = "true")
     private boolean active;
-    @Schema(description = "취소 여부", example = "true | false")
+    @Schema(description = "취소 여부(true | false)", example = "true")
     private boolean cancel;
-    @Schema(description = "호스트 여부", example = "true | false")
+    @Schema(description = "호스트 여부(true | false)", example = "true")
     private boolean host;
-    @Schema(description = "참석 여부", example = "true | false")
+    @Schema(description = "참석 여부(true | false)", example = "true")
     private boolean participate;
     @Schema(description = "유저 정보")
     private UserInfo userInfo;
@@ -65,9 +65,9 @@ public class RecruitDetailDto {
         private String nickname;
         @Schema(description = "유저 평점: (0~5 사이 실수값)", example = "4.5")
         private float score;
-        @Schema(description = "유저 프로필 이미지", example = "/images/12345.jpg")
+        @Schema(description = "유저 프로필 이미지", example = "12345.jpg")
         private String profileImage;
-        @Schema(description = "유저 거점", example = "BURAM | KB | SUNGLIM | NURI")
+        @Schema(description = "유저거점(BURAM | KB | SUGLIM | NURI)", example = "NURI")
         private String userDormitory;
     }
 }
