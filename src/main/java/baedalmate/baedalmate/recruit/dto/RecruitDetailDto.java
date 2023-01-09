@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.recruit.dto;
 
+import baedalmate.baedalmate.user.dto.UserInfoDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -54,20 +55,20 @@ public class RecruitDetailDto {
     @Schema(description = "참석 여부(true | false)", example = "true")
     private boolean participate;
     @Schema(description = "유저 정보")
-    private UserInfo userInfo;
+    private UserInfoDto userInfo;
 
-    @Data
-    @AllArgsConstructor
-    public static class UserInfo {
-        @Schema(description = "유저 id", example = "1")
-        private Long userId;
-        @Schema(description = "유저 닉네임", example = "유상")
-        private String nickname;
-        @Schema(description = "유저 평점: (0~5 사이 실수값)", example = "4.5")
-        private float score;
-        @Schema(description = "유저 프로필 이미지", example = "12345.jpg")
-        private String profileImage;
-        @Schema(description = "유저거점(BURAM | KB | SUGLIM | NURI)", example = "NURI")
-        private String userDormitory;
-    }
+//    @Data
+//    @AllArgsConstructor
+//    public static class UserInfo {
+//        @Schema(description = "유저 id", example = "1")
+//        private Long userId;
+//        @Schema(description = "유저 닉네임", example = "유상")
+//        private String nickname;
+//        @Schema(description = "유저 평점: (0~5 사이 실수값)", example = "4.5")
+//        private float score;
+//        @Schema(description = "유저 프로필 이미지", example = "12345.jpg")
+//        private String profileImage;
+//        @Schema(description = "유저거점(BURAM | KB | SUGLIM | NURI)", example = "NURI")
+//        private String userDormitory;
+//    }
 }
