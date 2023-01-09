@@ -86,6 +86,10 @@ import java.util.Map;
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(description = "차단하기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "참여 성공"),
+    })
     @GetMapping("/block")
     public ResponseEntity<BlockedUserListDto> blockList(
             @AuthUser PrincipalDetails principalDetails
