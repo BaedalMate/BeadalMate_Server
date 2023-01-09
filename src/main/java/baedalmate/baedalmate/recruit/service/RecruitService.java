@@ -20,6 +20,7 @@ import baedalmate.baedalmate.recruit.domain.embed.Place;
 import baedalmate.baedalmate.recruit.dto.*;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.User;
+import baedalmate.baedalmate.user.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -444,12 +445,13 @@ public class RecruitService {
         }
 
         User hostUser = recruit.getUser();
-        RecruitDetailDto.UserInfo userInfo = new RecruitDetailDto.UserInfo(
+        UserInfoDto userInfo = new UserInfoDto(
                 hostUser.getId(),
                 hostUser.getNickname(),
-                hostUser.getScore(),
                 hostUser.getProfileImage(),
-                hostUser.getDormitoryName());
+                hostUser.getDormitoryName(),
+                hostUser.getScore()
+                );
 
         return new RecruitDetailDto(
                 recruit.getId(),
