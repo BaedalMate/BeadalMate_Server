@@ -1,7 +1,9 @@
 package baedalmate.baedalmate.recruit.dao;
 
 import baedalmate.baedalmate.recruit.domain.Recruit;
+import baedalmate.baedalmate.recruit.dto.HostedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.MainPageRecruitDto;
+import baedalmate.baedalmate.recruit.dto.ParticipatedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.RecruitDto;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
@@ -305,7 +307,7 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .join(recruit.tags)
                 .leftJoin(recruit.user.blocks)
                 .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false), recruit.active.eq(true))
                 .where(recruit.tags.any().name.like(Expressions.stringTemplate("'%'")
                                 .concat(keyword)
                                 .concat(Expressions.stringTemplate("'%'"))))
@@ -326,6 +328,81 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                         .concat(Expressions.stringTemplate("'%'"))))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .fetchCount();
+
+        return new PageImpl<>(results, pageable, total);
+    }
+
+    public Page<ParticipatedRecruitDto> findAllParticipatedRecruitDtoByUserIdUsingJoin(Pageable pageable, Long userId) {
+        List<ParticipatedRecruitDto> results = jpaQueryFactory
+                .select(Projections.constructor(ParticipatedRecruitDto.class,
+                        recruit.id,
+                        recruit.place.name,
+                        recruit.criteria,
+                        recruit.createDate,
+                        recruit.deadlineDate,
+                        recruit.dormitory,
+                        recruit.title,
+                        recruit.image,
+                        recruit.active,
+                        recruit.cancel,
+                        recruit.fail))
+                .from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.orders)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.id.ne(userId))
+                .where(recruit.orders.any().user.id.eq(userId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.user.blocks)
+                .leftJoin(recruit.user.blocked)
+                .from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.orders)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.id.eq(userId))
+                .fetchCount();
+
+        return new PageImpl<>(results, pageable, total);
+    }
+
+    public Page<HostedRecruitDto> findAllHostedRecruitDtoByUserIdUsingJoin(Pageable pageable, Long userId) {
+        List<HostedRecruitDto> results = jpaQueryFactory
+                .select(Projections.constructor(HostedRecruitDto.class,
+                        recruit.id,
+                        recruit.place.name,
+                        recruit.criteria,
+                        recruit.createDate,
+                        recruit.deadlineDate,
+                        recruit.dormitory,
+                        recruit.title,
+                        recruit.image,
+                        recruit.active,
+                        recruit.cancel,
+                        recruit.fail))
+                .from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.orders)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.id.eq(userId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.user.blocks)
+                .leftJoin(recruit.user.blocked)
+                .from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.orders)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.id.eq(userId))
                 .fetchCount();
 
         return new PageImpl<>(results, pageable, total);

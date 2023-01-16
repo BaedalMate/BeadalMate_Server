@@ -47,7 +47,7 @@ public class RecruitApiController {
     })
     @GetMapping(value = "/recruit/search")
     @CustomPageableAsQueryParam
-    public ResponseEntity<RecruitListDto> searchByTag(
+    public ResponseEntity<RecruitListWithLastDto> searchByTag(
             @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "태그 검색 키워드")
             @RequestParam(required = true) String keyword,
@@ -58,7 +58,7 @@ public class RecruitApiController {
             })
                     Pageable pageable) {
         Page<RecruitDto> recruits = recruitService.findAllByTag(principalDetails.getId(), keyword, pageable);
-        RecruitListDto response = new RecruitListDto(recruits.getContent(), recruits.isLast());
+        RecruitListWithLastDto response = new RecruitListWithLastDto(recruits.getContent(), recruits.isLast());
 
         return ResponseEntity.ok().body(response);
     }
@@ -193,7 +193,7 @@ public class RecruitApiController {
     })
     @CustomPageableAsQueryParam
     @GetMapping(value = "/recruit/list")
-    public ResponseEntity<RecruitListDto> getRecruitList(
+    public ResponseEntity<RecruitListWithLastDto> getRecruitList(
             @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
@@ -212,7 +212,7 @@ public class RecruitApiController {
             recruits = recruitService.findAllByCategory(principalDetails.getId(), categoryId, pageable);
         }
 
-        RecruitListDto response = new RecruitListDto(recruits.getContent(), recruits.isLast());
+        RecruitListWithLastDto response = new RecruitListWithLastDto(recruits.getContent(), recruits.isLast());
 
         return ResponseEntity.ok().body(response);
     }

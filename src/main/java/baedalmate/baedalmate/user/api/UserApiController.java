@@ -3,6 +3,7 @@ package baedalmate.baedalmate.user.api;
 import baedalmate.baedalmate.recruit.dto.HostedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.ParticipatedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.RecruitListDto;
+import baedalmate.baedalmate.recruit.dto.RecruitListWithLastDto;
 import baedalmate.baedalmate.recruit.service.RecruitService;
 import baedalmate.baedalmate.swagger.AccessDeniedErrorResponseDto;
 import baedalmate.baedalmate.swagger.ExpiredJwtErrorResponseDto;
@@ -23,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -86,15 +88,15 @@ public class UserApiController {
 
     })
     @GetMapping(value = "/user/participated-recruit")
-    public ResponseEntity<RecruitListDto> participatedRecruit(
+    public ResponseEntity<RecruitListWithLastDto> participatedRecruit(
             @AuthUser PrincipalDetails principalDetails,
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
             })
             Pageable pageable
     ) {
-        List<ParticipatedRecruitDto> participatedRecruitDto = recruitService.findParticipatedRecruit(principalDetails.getId(), pageable);
-        RecruitListDto response = new RecruitListDto(participatedRecruitDto);
+        Page<ParticipatedRecruitDto> participatedRecruitDto = recruitService.findParticipatedRecruit(principalDetails.getId(), pageable);
+        RecruitListWithLastDto response = new RecruitListWithLastDto(participatedRecruitDto.getContent(), participatedRecruitDto.isLast());
         return ResponseEntity.ok().body(response);
     }
 
@@ -111,15 +113,15 @@ public class UserApiController {
 
     })
     @GetMapping(value = "/user/hosted-recruit")
-    public ResponseEntity<RecruitListDto> hostedRecruit(
+    public ResponseEntity<RecruitListWithLastDto> hostedRecruit(
             @AuthUser PrincipalDetails principalDetails,
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
             })
                     Pageable pageable
     ) {
-        List<HostedRecruitDto> hostedRecruitDtos = recruitService.findHostedRecruit(principalDetails.getId(), pageable);
-        RecruitListDto response = new RecruitListDto(hostedRecruitDtos);
+        Page<HostedRecruitDto> hostedRecruitDtos = recruitService.findHostedRecruit(principalDetails.getId(), pageable);
+        RecruitListWithLastDto response = new RecruitListWithLastDto(hostedRecruitDtos.getContent(), hostedRecruitDtos.isLast());
         return ResponseEntity.ok().body(response);
     }
 

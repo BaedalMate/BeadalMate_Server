@@ -54,39 +54,13 @@ public class RecruitService {
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
     private final OrderRepository orderRepository;
 
-    public List<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
-        List<Recruit> recruits = recruitRepository.findByUserIdUsingJoin(userId, pageable);
-        List<HostedRecruitDto> hostedRecruitDtos = recruits.stream()
-                .map(r -> new HostedRecruitDto(
-                        r.getId(),
-                        r.getPlace().getName(),
-                        r.getCriteria(),
-                        r.getCreateDate(),
-                        r.getDeadlineDate(),
-                        r.getDormitory().getName(),
-                        r.getTitle(),
-                        r.getImage(),
-                        r.isActive(),
-                        r.isCancel(),
-                        r.isFail()
-                ))
-                .collect(Collectors.toList());
+    public Page<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
+        Page<HostedRecruitDto> hostedRecruitDtos = recruitJpaRepository.findAllHostedRecruitDtoByUserIdUsingJoin(pageable, userId);
         return hostedRecruitDtos;
     }
 
-    public List<ParticipatedRecruitDto> findParticipatedRecruit(Long userId, Pageable pageable) {
-        List<Order> orders = orderRepository.findAllByUserIdUsingJoin(userId, pageable);
-        List<ParticipatedRecruitDto> participatedRecruits = orders.stream()
-                .map(o -> new ParticipatedRecruitDto(
-                        o.getRecruit().getId(),
-                        o.getRecruit().getPlace().getName(),
-                        o.getRecruit().getCriteria(),
-                        o.getRecruit().getCreateDate(),
-                        o.getRecruit().getDeadlineDate(),
-                        o.getRecruit().getDormitory().getName(),
-                        o.getRecruit().getTitle(),
-                        o.getRecruit().getImage()))
-                .collect(Collectors.toList());
+    public Page<ParticipatedRecruitDto> findParticipatedRecruit(Long userId, Pageable pageable) {
+        Page<ParticipatedRecruitDto> participatedRecruits = recruitJpaRepository.findAllParticipatedRecruitDtoByUserIdUsingJoin(pageable, userId);
         return participatedRecruits;
     }
 
