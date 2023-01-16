@@ -1,6 +1,7 @@
 package baedalmate.baedalmate.recruit.dto;
 
 import baedalmate.baedalmate.recruit.domain.Criteria;
+import baedalmate.baedalmate.recruit.domain.Dormitory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 @Data
 @Schema
 @NoArgsConstructor
-@AllArgsConstructor
 public class ParticipatedRecruitDto {
     @Schema(description = "해당 모집글 id", example = "1")
     private Long recruitId;
@@ -39,4 +39,28 @@ public class ParticipatedRecruitDto {
 
     @Schema(description = "모집글 이미지", example = "123456.jpg")
     private String image;
+
+    @Schema(description = "모집글 활성화 여부", example = "true | false")
+    private boolean active;
+
+    @Schema(description = "모집글 취소 여부", example = "true | false")
+    private boolean cancel;
+
+    @Schema(description = "모집글 취소 여부", example = "true | false")
+    private boolean fail;
+
+    public ParticipatedRecruitDto(Long recruitId, String place, Criteria criteria, LocalDateTime createDate, LocalDateTime deadlineDate,
+                                  Dormitory dormitory, String title, String image, boolean active, boolean cancel, boolean fail) {
+        this.recruitId = recruitId;
+        this.place = place;
+        this.criteria = criteria;
+        this.createDate = createDate;
+        this.deadlineDate = deadlineDate;
+        this.dormitory = dormitory.getName();
+        this.title = title;
+        this.image = image;
+        this.active = active;
+        this.cancel = cancel;
+        this.fail = fail;
+    }
 }
