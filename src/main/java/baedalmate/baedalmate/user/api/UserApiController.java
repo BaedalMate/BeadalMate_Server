@@ -138,20 +138,20 @@ public class UserApiController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "유저 정보 수정")
+    @Operation(summary = "유저 닉네임 수정")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "프로필 이미지 수정 성공"),
+            @ApiResponse(responseCode = "200", description = "유저 닉네임 수정 성공"),
             @ApiResponse(
                     responseCode = "400",
                     content = @Content(
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(name = "닉네임 길이 제한",
-                                            value = "{\"code\": 400, \"message\": \"Length must be less than 6                      \"}"),
+                                            value = "{\"code\": 400, \"message\": \"Length must be less than 6\"}"),
                             }
                     )),
     })
-    @PatchMapping(value = "/user")
+    @PutMapping(value = "/user/nickname")
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @AuthUser PrincipalDetails principalDetails,
             @RequestBody UpdateUserDto updateUserDto
@@ -172,7 +172,7 @@ public class UserApiController {
     }
 
     @Operation(summary = "유저 거점 변경")
-    @PutMapping(value = "/user")
+    @PutMapping(value = "/user/dormitory")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "거점 변경 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
             @ApiResponse(
