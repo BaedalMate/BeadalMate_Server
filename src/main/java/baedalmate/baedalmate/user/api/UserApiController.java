@@ -9,6 +9,7 @@ import baedalmate.baedalmate.swagger.*;
 import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
+import baedalmate.baedalmate.user.dto.UpdateDormitoryDto;
 import baedalmate.baedalmate.user.dto.UpdateUserDto;
 import baedalmate.baedalmate.user.service.UserService;
 import baedalmate.baedalmate.user.dto.UserInfoDto;
@@ -187,10 +188,9 @@ public class UserApiController {
     })
     public ResponseEntity<Map<String, Object>> setDormitory(
             @AuthUser PrincipalDetails principalDetails,
-            @Parameter(description = "유저 거점 (KB | SUNGLIM | SULIM | BULAM | NURI)")
-            @RequestParam("dormitory") String dormitoryName
+            @RequestBody UpdateDormitoryDto updateDormitoryDto
     ) {
-        User user = userService.updateDormitory(principalDetails.getId(), dormitoryName);
+        User user = userService.updateDormitory(principalDetails.getId(), updateDormitoryDto.getDormitory());
         Map<String, Object> response = new HashMap<>();
         response.put("result", "success");
 
