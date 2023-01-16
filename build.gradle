@@ -1,7 +1,14 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'baedalmate'
@@ -57,7 +64,35 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-data-rest:1.5.11'
 
     // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.48'}
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.48'
+
+    // querydsl 이놈
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+}
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
 
 tasks.named('test') {
     useJUnitPlatform()

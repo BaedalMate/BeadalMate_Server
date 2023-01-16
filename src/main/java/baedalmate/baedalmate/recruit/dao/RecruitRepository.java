@@ -14,6 +14,20 @@ import java.util.List;
 public class RecruitRepository {
     private final EntityManager em;
 
+    public Long getSizeOfRecruitList(Long userId) {
+        return em.createQuery("select count(r) from Recruit r " +
+                "join r.user ru " +
+                "left join ru.blocks rubs " +
+                "left join rubs.target rubst " +
+                "left join ru.blocked rubd " +
+                "left join rubd.user rubdu " +
+                "where r.cancel = false and r.fail = false " +
+                "and (rubdu.id != :userId or rubdu.id is null) " +
+                "and (rubst.id != :userId or rubst.id is null) ", Long.class)
+                .setParameter("userId", userId)
+                .getSingleResult();
+    }
+
     public List<Recruit> findAllByTagUsingJoin(String keyword, Pageable pageable, Long userId) {
         return em.createQuery("select r from Recruit r " +
                         "join r.user ru " +

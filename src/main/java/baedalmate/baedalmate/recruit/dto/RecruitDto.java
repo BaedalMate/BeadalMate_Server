@@ -1,6 +1,7 @@
 package baedalmate.baedalmate.recruit.dto;
 
 import baedalmate.baedalmate.recruit.domain.Criteria;
+import baedalmate.baedalmate.recruit.domain.Dormitory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -57,4 +58,23 @@ public class RecruitDto {
 
     @Schema(description = "모집글 활성 여부", example = "true")
     private boolean active;
+
+    public RecruitDto(Long recruitId, String place, int minPeople, int minPrice, int currentPeople, int currentPrice,
+                      Criteria criteria, LocalDateTime createDate, LocalDateTime deadlineDate, float userScore, Dormitory dormitory,
+                      String title, String image, boolean active) {
+        this.recruitId = recruitId;
+        this.place = place;
+        this.minPeople = minPeople;
+        this.minPrice = minPrice;
+        this.currentPeople = currentPeople;
+        this.currentPrice = currentPrice;
+        this.criteria = criteria;
+        this.createDate = createDate;
+        this.deadlineDate = deadlineDate;
+        this.userScore = userScore;
+        this.dormitory = dormitory.getName();
+        this.title = title;
+        this.image = image;
+        this.active = active;
+    }
 }

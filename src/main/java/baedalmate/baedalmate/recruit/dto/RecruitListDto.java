@@ -14,4 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 public class RecruitListDto {
     private List<?> recruitList;
+    private boolean isLast;
+
+    public RecruitListDto (List<?> recruitList) {
+        this.recruitList = recruitList;
+        isLast = false;
+    }
 }

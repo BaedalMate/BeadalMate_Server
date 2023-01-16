@@ -21,6 +21,9 @@ import baedalmate.baedalmate.recruit.dto.*;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class RecruitService {
 
     private final RecruitJpaRepository recruitJpaRepository;
@@ -86,25 +90,9 @@ public class RecruitService {
         return participatedRecruits;
     }
 
-    public List<RecruitDto> findAllByTag(Long userId, String keyword, Pageable pageable) {
-        List<Recruit> recruits = recruitRepository.findAllByTagUsingJoin(keyword, pageable, userId);
-        return recruits.stream()
-                .map(r -> new RecruitDto(
-                        r.getId(),
-                        r.getPlace().getName(),
-                        r.getMinPeople(),
-                        r.getMinPrice(),
-                        r.getCurrentPeople(),
-                        r.getCurrentPrice(),
-                        r.getCriteria(),
-                        r.getCreateDate(),
-                        r.getDeadlineDate(),
-                        r.getUser().getScore(),
-                        r.getDormitory().getName(),
-                        r.getTitle(),
-                        r.getImage(),
-                        r.isActive()
-                )).collect(Collectors.toList());
+    public Page<RecruitDto> findAllByTag(Long userId, String keyword, Pageable pageable) {
+        Page<RecruitDto> recruits = recruitJpaRepository.findAllByTagUsingJoin(keyword, pageable, userId);
+        return recruits;
     }
 
     public MyMenuDto getMyMenu(Long userId, Long recruitId) {
@@ -480,35 +468,23 @@ public class RecruitService {
         return recruitJpaRepository.updateView(recruitId);
     }
 
-    public List<RecruitDto> findAllRecruitDto(Long userId, Pageable pageable) {
+    public Page<RecruitDto> findAllRecruitDto(Long userId, Pageable pageable) {
         String sort = pageable.getSort().toString();
         Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         List<Recruit> recruitList;
+        log.debug("get using queryDsl");
+        Page<RecruitDto> recruits;
         if (sort.contains("score")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByScore(p, userId);
+            recruits = recruitJpaRepository.findAllUsingJoinOrderByScore(pageable, userId);
         } else if (sort.contains("deadlineDate")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p, userId);
+            log.debug("get using JpaRepository");
+            recruits = recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(pageable, userId);
         } else if (sort.contains("view")) {
-            recruitList = recruitRepository.findAllUsingJoinOrderByView(p, userId);
+            recruits = recruitJpaRepository.findAllUsingJoinOrderByView(pageable, userId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
-        return recruitList.stream().map(r -> new RecruitDto(
-                r.getId(),
-                r.getPlace().getName(),
-                r.getMinPeople(),
-                r.getMinPrice(),
-                r.getCurrentPeople(),
-                r.getCurrentPrice(),
-                r.getCriteria(),
-                r.getCreateDate(),
-                r.getDeadlineDate(),
-                r.getUser().getScore(),
-                r.getDormitory().getName(),
-                r.getTitle(),
-                r.getImage(),
-                r.isActive()
-        )).collect(Collectors.toList());
+        return recruits;
     }
 
     public List<MainPageRecruitDto> findAllMainPageRecruitDto(Long userId, Pageable pageable) {
@@ -569,34 +545,18 @@ public class RecruitService {
                 ).collect(Collectors.toList());
     }
 
-    public List<RecruitDto> findAllByCategory(Long userId, Long categoryId, Pageable pageable) {
+    public Page<RecruitDto> findAllByCategory(Long userId, Long categoryId, Pageable pageable) {
         String sort = pageable.getSort().toString();
-        List<Recruit> recruitList;
+        Page<RecruitDto> recruitList;
         if (sort.contains("score")) {
-            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByScore(categoryId, pageable, userId);
+            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByScore(pageable, userId, categoryId);
         } else if (sort.contains("deadlineDate")) {
-            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByDeadlineDate(categoryId, pageable, userId);
+            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByDeadlineDate(pageable, userId, categoryId);
         } else if (sort.contains("view")) {
-            recruitList = recruitRepository.findAllByCategoryUsingJoinOrderByView(categoryId, pageable, userId);
+            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByView(pageable, userId, categoryId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
-        return recruitList.stream()
-                .map(r -> new RecruitDto(
-                        r.getId(),
-                        r.getPlace().getName(),
-                        r.getMinPeople(),
-                        r.getMinPrice(),
-                        r.getCurrentPeople(),
-                        r.getCurrentPrice(),
-                        r.getCriteria(),
-                        r.getCreateDate(),
-                        r.getDeadlineDate(),
-                        r.getUser().getScore(),
-                        r.getDormitory().getName(),
-                        r.getTitle(),
-                        r.getImage(),
-                        r.isActive()
-                )).collect(Collectors.toList());
+        return recruitList;
     }
 }

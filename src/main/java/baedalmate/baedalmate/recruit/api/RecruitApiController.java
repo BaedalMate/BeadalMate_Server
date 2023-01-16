@@ -1,12 +1,10 @@
 package baedalmate.baedalmate.recruit.api;
 
-import baedalmate.baedalmate.errors.exceptions.ResourceNotFoundException;
 import baedalmate.baedalmate.recruit.dto.*;
 import baedalmate.baedalmate.recruit.service.RecruitService;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.swagger.*;
-import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -58,8 +57,9 @@ public class RecruitApiController {
                     @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
             })
                     Pageable pageable) {
-        List<RecruitDto> list = recruitService.findAllByTag(principalDetails.getId(), keyword, pageable);
-        RecruitListDto response = new RecruitListDto(list);
+        Page<RecruitDto> recruits = recruitService.findAllByTag(principalDetails.getId(), keyword, pageable);
+        RecruitListDto response = new RecruitListDto(recruits.getContent(), recruits.isLast());
+
         return ResponseEntity.ok().body(response);
     }
 
@@ -204,14 +204,15 @@ public class RecruitApiController {
             })
                     Pageable pageable) {
 
-        List<RecruitDto> recruits;
+        Page<RecruitDto> recruits;
+
         if (categoryId == null) {
             recruits = recruitService.findAllRecruitDto(principalDetails.getId(), pageable);
         } else {
             recruits = recruitService.findAllByCategory(principalDetails.getId(), categoryId, pageable);
         }
 
-        RecruitListDto response = new RecruitListDto(recruits);
+        RecruitListDto response = new RecruitListDto(recruits.getContent(), recruits.isLast());
 
         return ResponseEntity.ok().body(response);
     }
