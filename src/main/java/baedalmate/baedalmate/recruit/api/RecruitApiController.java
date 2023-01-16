@@ -43,7 +43,7 @@ public class RecruitApiController {
 
     @Operation(summary = "태그로 모집글 검색")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListResponseDto.class))),
     })
     @GetMapping(value = "/recruit/search")
     @CustomPageableAsQueryParam
@@ -189,7 +189,7 @@ public class RecruitApiController {
 
     @Operation(summary = "모집글 리스트 조회")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListResponseDto.class))),
     })
     @CustomPageableAsQueryParam
     @GetMapping(value = "/recruit/list")
@@ -219,7 +219,7 @@ public class RecruitApiController {
 
     @Operation(summary = "메인페이지 모집글 리스트 조회")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = MainPageRecruitListResponseDto.class))),
     })
     @CustomPageableAsQueryParam
     @GetMapping(value = "/recruit/main/list")
@@ -239,7 +239,7 @@ public class RecruitApiController {
 
     @Operation(summary = "메인페이지 태그 포함된 모집글 리스트 조회")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = MainPageRecruitWithTagListResponseDto.class))),
     })
     @CustomPageableAsQueryParam
     @GetMapping(value = "/recruit/tag/list")

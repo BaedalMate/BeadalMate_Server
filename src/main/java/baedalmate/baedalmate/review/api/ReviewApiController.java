@@ -2,6 +2,7 @@ package baedalmate.baedalmate.review.api;
 
 import baedalmate.baedalmate.recruit.dto.ParticipantsDto;
 import baedalmate.baedalmate.review.dto.CreateReviewDto;
+import baedalmate.baedalmate.review.dto.ReviewTargetListDto;
 import baedalmate.baedalmate.review.service.ReviewService;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
@@ -48,11 +49,11 @@ public class ReviewApiController {
                     )),
     })
     @GetMapping(value = "/{id}/target")
-    public ResponseEntity<ParticipantsDto> getReviewTarget(
+    public ResponseEntity<ReviewTargetListDto> getReviewTarget(
             @AuthUser PrincipalDetails principalDetails,
             @PathVariable("id") Long recruitId
     ) {
-        ParticipantsDto response = reviewService.getTarget(principalDetails.getId(), recruitId);
+        ReviewTargetListDto response = reviewService.getTarget(principalDetails.getId(), recruitId);
         return ResponseEntity.ok().body(response);
     }
 

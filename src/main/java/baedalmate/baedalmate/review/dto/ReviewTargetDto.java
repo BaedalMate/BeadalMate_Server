@@ -1,4 +1,4 @@
-package baedalmate.baedalmate.block.dto;
+package baedalmate.baedalmate.review.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Schema
 @NoArgsConstructor
 @AllArgsConstructor
-public class BlockedUserDto {
+public class ReviewTargetDto {
     @Schema(description = "유저 id", example = "1")
     private Long userId;
     @Schema(description = "유저 닉네임", example = "유상")

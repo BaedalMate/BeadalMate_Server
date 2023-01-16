@@ -32,7 +32,7 @@ public class AuthService {
         redisService.delValues(refreshToken);
         Long userIdFromAccessToken;
         try {
-            jwtTokenProvider.getUserIdFromExpiredToken(token.substring(7, token.length()));
+            jwtTokenProvider.getUserIdFromExpiredToken(token);
         } catch (ExpiredJwtException e) {
             userIdFromAccessToken = Long.parseLong(e.getClaims().getSubject());
         }

@@ -1,0 +1,672 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>위치기반 서비스 이용약관</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="f3fe0434-aa0f-410f-b1e2-173ffb8554d6" class="page sans"><header><h1 class="page-title">위치기반 서비스 이용약관</h1></header><div class="page-body"><h3 id="5b5292a4-c2ec-482b-9016-5cf0aafc6b11" class=""><strong>제1조 (목적)</strong></h3><p id="e645e907-4b11-41a7-952c-c1581931e61f" class="">이 약관은 ‘BaedalMate&#x27;(이하 &quot;회사&quot;라 함)과 BaedalMate 위치기반서비스(이하 &quot;서비스&quot;라 함)를 이용하는 고객 사이의 서비스 이용에 관한 제반사항을 정함을 목적으로 합니다.</p><h3 id="d7079274-2066-406b-a8ea-e2f9fa8c20bf" class=""><strong>제2조 (용어의 정의)</strong></h3><ol type="1" id="103ba47a-6abd-47e2-bf06-eba83796f99c" class="numbered-list" start="1"><li>이 약관에서 사용하는 용어의 의미는 다음 각 호와 같습니다. 아래 각 호에서 정의되지 않은 이 약관상의 용어의 의미는 BaedalMate 이용약관 및 일반적인 거래관행에 의합니다.<ol type="a" id="3d314fce-6b57-4aa3-aa2c-6f2ba19cd2c6" class="numbered-list" start="1"><li>BaedalMate란 회사가 제공하는 위치기반서비스입니다.</li></ol><ol type="a" id="ed60078f-4a85-4cf5-ac6c-bbbe2f85e5e4" class="numbered-list" start="2"><li>회사가 제공하는 서비스는 다음과 같습니다.<ol type="i" id="175fa67e-5044-44e1-a86d-ec4d996a3a83" class="numbered-list" start="1"><li>음식점 정보 등에 관한 정보제공 서비스</li></ol><ol type="i" id="bad2fdea-dd86-4bc3-8b73-26ad86745d51" class="numbered-list" start="2"><li>모집글 등록 서비스</li></ol><ol type="i" id="2039529a-bfa1-4207-95ed-630576f9dd50" class="numbered-list" start="3"><li>모집글 추천 등 기타 관련 서비스</li></ol></li></ol><ol type="a" id="787d5f62-67b4-4c21-a787-8dae0ca0e25c" class="numbered-list" start="3"><li>고객이라 함은 BaedalMate을 이용하는 이용자를 말합니다.</li></ol><ol type="a" id="642d3053-f513-4194-a5a2-0086e3e343c0" class="numbered-list" start="4"><li>회원이라 함은 회사에 개인정보를 제공하고 회원등록을 한 자로서, BaedalMate의 정보를 지속적으로 제공받으며, 회사가 제공하는 BaedalMate의 서비스를 계속적으로 이용할 수 있는 자를 말합니다. 회사는 서비스의 원활한 제공을 위해 회원의 등급을 회사 내부의 규정에 따라 나눌 수 있습니다.</li></ol><ol type="a" id="d0c693b4-bd07-41ec-b17d-fa449a2619a4" class="numbered-list" start="5"><li>비회원이라 함은 회원으로 가입하지 않고 회사가 제공하는 서비스를 이용하는 자를 말합니다.</li></ol></li></ol><ol type="1" id="98cf5d03-0e40-4837-83fb-57466c6225b4" class="numbered-list" start="2"><li>이 약관은 「위치정보의 보호 및 이용 등에 관한 법률」 및 관계 법령 등에서 정하는 바에 따릅니다.</li></ol><h3 id="9bbfec7c-aa3a-4ffb-9332-048d9a5dcc6e" class=""><strong>제3조 (계약의 체결 및 해지)</strong></h3><ol type="1" id="49db9954-c068-4c85-b133-208e5fd3e0b8" class="numbered-list" start="1"><li>고객은 회사의 서비스를 이용하고자 하는 경우, 약관의 고지 내용에 따라 개인위치정보 서비스에 가입하게 됩니다. 회원의 경우 회원가입 시 동의절차를 밟으며, 비회원인 경우 서비스를 이용하는 동안 이 약관에 동의한 것으로 간주합니다.</li></ol><ol type="1" id="d4a91176-d941-4d9e-b812-0d60f1dea5c7" class="numbered-list" start="2"><li>고객은 계약을 해지하고자 할 때에는 가입 회원탈퇴를 하거나, 회사의 개인정보보호 담당자에게 이메일을 통해 해지신청을 하여야 합니다.</li></ol><h3 id="5151cb44-526a-486f-be5e-0cb459ebe5b3" class=""><strong>제4조 (서비스의 내용)</strong></h3><ol type="1" id="eeb76e72-7d9d-4643-9310-07b4fa8a156d" class="numbered-list" start="1"><li>회사는 고객이 등록한 모집글의 위치정보만을 고객에게 제공하며, 해당 위치정보를 다른 정보와 결합하여 개인위치정보로 이용하지 않습니다.</li></ol><ol type="1" id="ccd18aa0-4a1a-4b36-ae4a-fc56e838bc79" class="numbered-list" start="2"><li>제공되는 고객의 위치정보는 해당 스마트폰 등에서 제공합니다.</li></ol><ol type="1" id="9f5ffbd1-1b1d-4ae6-bec8-4fa6dc5f6e16" class="numbered-list" start="3"><li>회사는 위치정보사업자인 이동통신사로부터 위치정보를 전달받아 BaedalMate의 모바일 단말기 전용 어플리케이션(이하 &quot;어플리케이션&quot;)을 통해 아래와 같은 위치기반서비스를 제공합니다.<ol type="a" id="f18c2da8-1289-41c6-b7f3-fcc348502a38" class="numbered-list" start="1"><li>접속 위치 제공 서비스: 위치 정보 사용을 승인한 고객들의 서비스 최종 접속 위치를 기반으로 서비스 내의 정보를 지도 위에 혹은 리스트를 통해 제공합니다.</li></ol><ol type="a" id="b144b15c-32b2-44fb-9d2c-b474a055cd10" class="numbered-list" start="2"><li>위치 정보: 모바일 단말기 등의 WPS(Wifi Positioning System), GPS 기반으로 추출된 좌표를 이용하여 고객이 생성하는 지점을 말합니다.</li></ol><ol type="a" id="ad0f2730-85a9-4b98-a5b9-efa1a4e11e1d" class="numbered-list" start="3"><li>최종 접속 위치를 활용한 검색 결과 제공 서비스: 정보 검색 요청 시 개인위치정보주체의 현위치를 이용한 서비스 내의 기능에 따라 제공되는 정보에 대하여 검색 결과를 제시합니다.</li></ol><ol type="a" id="fdb0a0a8-d225-4a10-add9-6aeae75a22fb" class="numbered-list" start="4"><li>고객의 위치 정보의 갱신은 BaedalMate 실행 시 또는 실행 후, 위치 관련 메뉴 이용 시 이루어지며, 고객이 갱신한 사용자의 위치정보를 기준으로 최종 위치를 반영합니다.</li></ol></li></ol><h3 id="568816cb-5856-4b4d-9743-f926d802dfee" class=""><strong>제5조 (서비스 이용요금)</strong></h3><ol type="1" id="cd9c164a-1d05-4573-8a25-c477ef7ae178" class="numbered-list" start="1"><li>회사가 제공하는 서비스는 기본적으로 무료 서비스 입니다. 어떠한 형태의 유료 기능도 존재하지 않습니다.</li></ol><ol type="1" id="310fa6be-204b-4b93-a07b-8fa4a6f4985c" class="numbered-list" start="2"><li>무선 서비스 이용 시 발생하는 데이터 통신료는 별도이며 가입한 각 이동통신사의 정책에 따릅니다.</li></ol><h3 id="915eaa65-1af7-455e-8eb2-4891af4914b3" class=""><strong>제6조 (이용시간)</strong></h3><p id="8ead4df9-1483-4959-8cbe-3510416217af" class="">BaedalMate의 이용은 24시간 가능하며, 다만, 시스템 장애, 프로그램 오류 보수, 외부요인 등 불가피한 경우에는 해당 공지를 통해 사전에 통지합니다.</p><h3 id="ade6f2b6-dab4-4e39-bf9c-5cb774a6f2af" class=""><strong>제7조 (접속자의 위치정보 이용)</strong></h3><p id="0028242e-3edf-48dc-9222-cecc1d84b857" class="">회사는 회원이 약관 등에 동의하는 경우 또는 비회원이 위치관련 메뉴 이용시에 한해 단말기를 통해 수집된 위치정보를 활용하여 정보 및 회원의 게시물을 제공할 수 있습니다.</p><ol type="1" id="0051421c-0446-4a7c-9a19-b4a8d1ede2e9" class="numbered-list" start="1"><li>약관 등에 동의를 한 회원 또는 비회원이 위치관련 메뉴 사용시 서비스 이용을 위해 본인의 위치를 자의적으로 노출하였다고 간주하며 회사는 고객의 실시간 위치정보를 바탕으로 컨텐츠를 제공합니다.</li></ol><ol type="1" id="ab6bb2e6-ebad-483e-9fb5-ed4e3919c813" class="numbered-list" start="2"><li>장소정보 및 컨텐츠 입력 등 서비스 이용 시 회원이 생성한 컨텐츠에 대해 회사는 회원의 위치에 대한 정보를 저장, 보존하지 않습니다. 회사는 장소정보 또는 회원이 등록한 게시물을 고객의 현재위치를 기반으로 추천하기 위해 위치정보를 이용합니다.</li></ol><h3 id="a72b9e3d-c22a-4a9a-81ef-465b9e1a075a" class=""><strong>제8조 (개인위치정보의 이용 또는 제공에 관한 동의)</strong></h3><ol type="1" id="76b33907-2642-4613-b40d-fde6094ee6dd" class="numbered-list" start="1"><li>회사는 개인위치정보주체의 동의 없이 당해 개인위치정보주체의 개인위치정보를 제3자에게 제공하지 아니하며, 제3자 제공 &quot;서비스&quot;를 제공하는 경우에는 제공 받는 자 및 제공목적을 사전에 개인위치정보주체에게 고지하고 동의를 받습니다.</li></ol><ol type="1" id="f835a6f8-2696-48e1-a172-ea8986e3dc00" class="numbered-list" start="2"><li>회사는 개인위치정보를 개인위치정보주체가 지정하는 제3자에게 제공하는 경우에는 개인위치정보를 수집한 당해 통신단말장치로 매회 개인위치정보주체에게 제공받는 자, 제공 일시 및 제공목적을 즉시 통보합니다. 다만, 아래에 해당하는 경우에는 개인위치정보주체가 미리 특정하여 지정한 통신단말장치 또는 전자우편주소 등으로 통보합니다.<ol type="a" id="c75f90e5-98af-4d1e-a3d5-35384fcc1b3f" class="numbered-list" start="1"><li>개인위치정보를 수집한 당해 통신단말장치가 문자, 음성 또는 영상의 수신기능을 갖추지 아니한 경우</li></ol><ol type="a" id="87eaa037-b855-49f7-95fd-05848e1e9b1d" class="numbered-list" start="2"><li>개인위치정보주체가 개인위치정보를 수집한 당해 통신단말장치 외의 통신단말장치 또는 전자우편주소 등으로 통보할 것을 미리 요청한 경우</li></ol></li></ol><ol type="1" id="a78f1709-80f7-4153-a3d7-8121830eb5fc" class="numbered-list" start="3"><li>회사는 본 약관의 목적 외 다른 용도로 개인위치정보의 이용 또는 제공사실 확인자료를 기록하거나 보존하지 아니합니다.</li></ol><ol type="1" id="341ef91c-3e39-459f-90c8-083e575b66b8" class="numbered-list" start="4"><li>회사는 위치정보의 보호 및 이용 등에 관한 법률 제16조 제2항에 근거하여 개인위치정보주체에 대한 위치정보 수집ㆍ이용ㆍ제공사실 확인자료를 위치정보시스템에 자동으로 기록하며, 6개월 이상 보관합니다.</li></ol><h3 id="b2aa7313-2585-435d-8e76-2e8b2046a95d" class=""><strong>제9조 (개인위치정보주체의 권리)</strong></h3><ol type="1" id="f422033f-c088-490d-912b-1ccff2ea982e" class="numbered-list" start="1"><li>개인위치정보주체는 개인위치정보의 이용•제공에 대한 동의의 전부 또는 일부를 철회할 수 있습니다.</li></ol><ol type="1" id="0a3cbec9-0b0a-4d2d-bcfe-93f5e78b953a" class="numbered-list" start="2"><li>개인위치정보주체는 언제든지 개인위치정보의 이용 또는 제공의 일시적인 중지를 요구할 수 있습니다. 이 경우 회사는 요구를 거절하지 아니하며, 이를 위한 기술적 수단을 갖추고 있습니다.</li></ol><ol type="1" id="f6380879-da28-43d6-92aa-98264bf22e27" class="numbered-list" start="3"><li>개인위치정보주체는 회사에 대하여 아래 자료의 열람 또는 고지를 요구할 수 있고, 당해 자료에 오류가 있는 경우에는 그 정정을 요구할 수 있습니다. 이 경우 회사는 정당한 이유 없이 요구를 거절하지 아니합니다.<ol type="a" id="bf59dd1a-a0e3-4580-9585-dfe39e3bd01b" class="numbered-list" start="1"><li>개인위치정보주체에 대한 위치정보 이용, 제공사실 확인자료</li></ol><ol type="a" id="fcb16c43-7897-4154-a899-f7b32bbcd9ce" class="numbered-list" start="2"><li>개인위치정보주체의 개인위치정보가 위치정보의 보호 및 이용 등에 관한 법률 또는 다른 법령의 규정에 의하여 제3자에게 제공된 이유 및 내용</li></ol></li></ol><ol type="1" id="dc596402-44b5-4ca6-95d5-9c49338f5a44" class="numbered-list" start="4"><li>회사는 개인위치정보주체가 동의의 전부 또는 일부를 철회한 경우에는 지체 없이 수집된 개인위치정보 및 위치정보 이용제공사실 확인자료(동의의 일부를 철회하는 경우에는 철회하는 부분의 개인위치정보 및 위치정보 이용제공사실 확인자료에 한합니다)를 파기합니다.</li></ol><ol type="1" id="cdb63584-5c7a-4ec1-b9e4-2996310f92ee" class="numbered-list" start="5"><li>개인위치정보주체는 제1항 내지 제3항의 권리행사를 위하여 이 약관 제15조의 연락처를 이용하여 회사에 요구할 수 있습니다.</li></ol><h3 id="7e412959-9b9a-4da7-8e52-02b71349d4c0" class=""><strong>제10조 (&quot;서비스&quot;의 변경 및 중지)</strong></h3><ol type="1" id="43010a49-5c5d-43e6-b46e-9a57a34e4cf9" class="numbered-list" start="1"><li>회사는 위치정보사업자의 정책변경 등과 같이 회사의 제반 사정 또는 법률상의 장애 등으로 서비스를 유지할 수 없는 경우, 서비스의 전부 또는 일부를 제한, 변경하거나 중지할 수 있습니다.</li></ol><ol type="1" id="b5673ff5-62c0-47c6-ae5b-d1ac93c0eac9" class="numbered-list" start="2"><li>제1항에 의한 서비스 중단의 경우에는 회사는 사전에 인터넷 및 서비스 화면 등에 공지하거나 개인위치정보주체에게 통지합니다.</li></ol><h3 id="e5745670-e9ec-4bc4-ab01-25ea5ca5a219" class=""><strong>제11조 (위치정보관리책임자의 지정)</strong></h3><ol type="1" id="8f5b4746-1123-4ce3-9738-28fa7950e1c4" class="numbered-list" start="1"><li>회사는 위치정보를 관리, 보호하고, 거래 시 고객의 개인위치정보로 인한 불만을 원활히 처리할 수 있는 위치정보관리책임자를 지정해 운영합니다.</li></ol><h3 id="038a51a9-6823-4163-b2fa-20e276dc9acc" class=""><strong>제12조 (손해배상 및 면책)</strong></h3><ol type="1" id="35db287a-24c4-40fc-9eae-9cc081f08887" class="numbered-list" start="1"><li>개인위치정보주체는 회사의 다음 각 호에 해당하는 행위로 손해를 입은 경우에 회사에 대해 손해배상을 청구할 수 있습니다. 이 경우 개인위치정보주체는 회사의 고의 또는 과실이 있음을 직접 입증하여야 합니다.<ol type="a" id="558ba9ba-0ffe-4908-9532-90ad7c947b17" class="numbered-list" start="1"><li>법령에서 허용하는 경우를 제외하고 이용자 또는 개인위치정보주체의 동의 없이 위치정보를 수집, 이용하는 행위</li></ol><ol type="a" id="b5ff05a3-13e6-4998-8730-e946113ee5cf" class="numbered-list" start="2"><li>개인위치정보의 누출, 변조, 훼손 등의 행위</li></ol></li></ol><ol type="1" id="7874fa80-b171-433f-be18-22a0d21fddbc" class="numbered-list" start="2"><li>회사는 천재지변 등 불가항력적인 사유나 이용자의 고의 또는 과실로 인하여 발생한 때에는 손해를 배상하지 아니합니다.</li></ol><ol type="1" id="6c8c212b-0f1b-4a59-8383-02c71ec4c46f" class="numbered-list" start="3"><li>회사는 이용자가 망사업자의 통신환경에 따라 발생할 수 있는 오차 있는 위치정보를 이용함으로써 이용자 및 제3자가 입은 손해에 대하여는 배상하지 아니합니다.</li></ol><h3 id="8fda3611-5e2c-42e4-96ca-67677a2f9519" class=""><strong>제13조 (약관의 변경)</strong></h3><ol type="1" id="9cc763f5-41e3-486f-b172-8abbd6651026" class="numbered-list" start="1"><li>회사가 약관을 변경하고자 할 때는 사전에 공지사항을 통해 변경내용을 게시합니다. 이에 관해 가입회원이 이의를 제기할 경우 회사는 이용자에게 적절한 방법으로 약관 변경내용을 통지하였음을 확인해 주어야 합니다. 다만, 법령의 개정이나 제도의 개선 등으로 인하여 긴급히 약관을 변경 할 때는 해당 서비스를 이용하는 통신단말장치에 즉시 이를 게시하고 가입 시 등록된 회원의 전자우편 주소로 통지하여야 합니다.</li></ol><ol type="1" id="385c417c-4708-4f9b-876f-3c7efe65532c" class="numbered-list" start="2"><li>회원은 제1항의 규정에 따른 약관의 변경내용이 게시되거나 통지된 후부터 변경되는 약관의 시행일 전 영업일까지 계약을 해지할 수 있습니다. 단 전단의 기간 안에 회원의 이의가 회사에 도달하지 않으면 회원이 이를 승인한 것으로 봅니다.</li></ol><h3 id="9698f905-ffa9-4a1b-a748-4154fd732e14" class=""><strong>제14조 (분쟁의 조정)</strong></h3><p id="710d2019-ebcd-4029-a69f-1051e631b196" class="">회사는 위치정보와 관련된 분쟁의 당사자간 협의가 이루어지지 아니하거나 협의를 할 수 없는 경우에는 전기통신기본법의 규정에 따라 방송통신위원회에 재정을 신청하거나 정보통신망이용촉진및정보보호등에 관한 법률의 규정에 의한 개인정보분쟁조정위원회에 조정을 신청할 수 있습니다.<strong></strong></p><h3 id="e666086c-da31-4eb5-8138-ad49eff64565" class=""><strong>제15조 (사업자 정보 및 위치정보관리책임자 지정)</strong></h3><ol type="1" id="8e9f3030-669b-423c-a6d7-0a7f698e793a" class="numbered-list" start="1"><li>회사의 상호, 이메일, 그 밖의 연락처는 다음과 같습니다.
+상호 : BaedalMate
+이메일 주소: baedalmate.official@gmail.com</li></ol><p id="6f59c3ef-9926-4322-9921-97efb9fc70a5" class="">[부칙]제 1 조 (시행일)이 약관은 2023년 01월 09일부터 시행한다.</p><p id="19b44c11-245b-41b3-958d-cace6fec3736" class="">
+</p></div></article></body></html>

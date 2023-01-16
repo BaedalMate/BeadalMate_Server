@@ -19,7 +19,7 @@ public class MessageDto {
     private Long senderId;
     @Schema(description = "보낸 사람 닉네임", example = "허동준")
     private String sender;
-    @Schema(description = "보낸 사람 프로필 이미지", example = "/images/123456.jpg")
+    @Schema(description = "보낸 사람 프로필 이미지", example = "123456.jpg")
     private String senderImage;
     @Schema(description = "메세지 내용", example = "ㅎㅇㅎㅇ")
     private String message;

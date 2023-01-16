@@ -1,5 +1,7 @@
 package baedalmate.baedalmate.recruit.service;
 
+import baedalmate.baedalmate.block.dao.BlockJpaRepository;
+import baedalmate.baedalmate.block.domain.Block;
 import baedalmate.baedalmate.category.dao.CategoryJpaRepository;
 import baedalmate.baedalmate.category.domain.Category;
 import baedalmate.baedalmate.category.domain.CategoryImage;
@@ -20,6 +22,7 @@ import baedalmate.baedalmate.recruit.domain.embed.Place;
 import baedalmate.baedalmate.recruit.dto.*;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.User;
+import baedalmate.baedalmate.user.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -53,6 +56,7 @@ public class RecruitService {
     private final ChatRoomService chatRoomService;
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
     private final OrderRepository orderRepository;
+    private final BlockJpaRepository blockJpaRepository;
 
     public Page<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
         Page<HostedRecruitDto> hostedRecruitDtos = recruitJpaRepository.findAllHostedRecruitDtoByUserIdUsingJoin(pageable, userId);
@@ -132,12 +136,17 @@ public class RecruitService {
 
     public ParticipantsDto getParticipants(Long userId, Long recruitId) {
         AtomicBoolean participate = new AtomicBoolean(false);
+        List<Block> blocks = blockJpaRepository.findAllByUserIdUsingJoinWithTarget(userId);
         List<ParticipantDto> participants = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId)
                 .stream().map(o -> {
                     if (o.getUser().getId() == userId) {
                         participate.set(true);
                     }
-                    return new ParticipantDto(o.getUser().getId(), o.getUser().getNickname(), o.getUser().getProfileImage());
+                    boolean block = false;
+                    if (blocks.stream().anyMatch(b -> b.getTarget().getId() == o.getUser().getId())) {
+                        block = true;
+                    }
+                    return new ParticipantDto(o.getUser().getId(), o.getUser().getNickname(), o.getUser().getProfileImage(), block);
                 })
                 .collect(Collectors.toList());
         if (participate.get() == false) {
@@ -406,12 +415,13 @@ public class RecruitService {
         }
 
         User hostUser = recruit.getUser();
-        RecruitDetailDto.UserInfo userInfo = new RecruitDetailDto.UserInfo(
+        UserInfoDto userInfo = new UserInfoDto(
                 hostUser.getId(),
                 hostUser.getNickname(),
-                hostUser.getScore(),
                 hostUser.getProfileImage(),
-                hostUser.getDormitoryName());
+                hostUser.getDormitoryName(),
+                hostUser.getScore()
+        );
 
         return new RecruitDetailDto(
                 recruit.getId(),

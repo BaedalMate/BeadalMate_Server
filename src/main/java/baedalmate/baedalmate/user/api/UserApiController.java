@@ -5,9 +5,7 @@ import baedalmate.baedalmate.recruit.dto.ParticipatedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.RecruitListDto;
 import baedalmate.baedalmate.recruit.dto.RecruitListWithLastDto;
 import baedalmate.baedalmate.recruit.service.RecruitService;
-import baedalmate.baedalmate.swagger.AccessDeniedErrorResponseDto;
-import baedalmate.baedalmate.swagger.ExpiredJwtErrorResponseDto;
-import baedalmate.baedalmate.swagger.ResultSuccessResponseDto;
+import baedalmate.baedalmate.swagger.*;
 import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
@@ -53,7 +51,7 @@ public class UserApiController {
     @Value("${spring.servlet.multipart.location}")
     private String path;
 
-    @Operation(summary = "회원 탈퇴(비활성화")
+    @Operation(summary = "회원 탈퇴(비활성화)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "탈퇴(비활성화) 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
             @ApiResponse(responseCode = "400",
@@ -78,18 +76,14 @@ public class UserApiController {
     @Operation(summary = "참여한 모집글 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-//                                    @ExampleObject(name = "이미지 이름 응답",
-//                                            value = "{\"image\": \"12345678.jpg\"}"),
-                            }
-                    )),
+                    content = @Content(schema = @Schema(implementation = ParticipatedRecruitListResponseDto.class))),
 
     })
     @GetMapping(value = "/user/participated-recruit")
+    @CustomPageableAsQueryParam
     public ResponseEntity<RecruitListWithLastDto> participatedRecruit(
             @AuthUser PrincipalDetails principalDetails,
+            @Parameter(hidden = true)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
             })
@@ -103,18 +97,14 @@ public class UserApiController {
     @Operation(summary = "주최한 모집글 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = {
-//                                    @ExampleObject(name = "이미지 이름 응답",
-//                                            value = "{\"image\": \"12345678.jpg\"}"),
-                            }
-                    )),
+                    content = @Content(schema = @Schema(implementation = HostedRecruitListResponseDto.class))),
 
     })
+    @CustomPageableAsQueryParam
     @GetMapping(value = "/user/hosted-recruit")
     public ResponseEntity<RecruitListWithLastDto> hostedRecruit(
             @AuthUser PrincipalDetails principalDetails,
+            @Parameter(hidden = true)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
             })

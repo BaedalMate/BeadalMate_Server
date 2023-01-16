@@ -48,7 +48,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
         , description = "Sorting criteria in the format: <b>(deadlineDate | score | view),(asc|desc)</b>. "
         + "Default sort order is ascending. " + "Multiple sort criteria are supported."
         , name = "sort"
-        , array = @ArraySchema(schema = @Schema(type = "string")))
+        , array = @ArraySchema(schema = @Schema(type = "string", example = "deadlineDate, ASC")))
 public @interface CustomPageableAsQueryParam {
 
 }
