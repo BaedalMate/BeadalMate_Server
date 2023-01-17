@@ -483,6 +483,8 @@ public class RecruitService {
             recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p, userId);
         } else if (sort.contains("view")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByView(p, userId);
+        } else if (sort.contains("createDate")) {
+            recruitList = recruitRepository.findAllUsingJoinOrderByCreateDate(p, userId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
