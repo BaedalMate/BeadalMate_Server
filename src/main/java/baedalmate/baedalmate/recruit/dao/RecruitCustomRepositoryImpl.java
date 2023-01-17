@@ -27,6 +27,48 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    public Page<RecruitDto> findAllUsingJoinOrderByCreateDate(Pageable pageable, Long userId) {
+        List<RecruitDto> results = jpaQueryFactory
+                .select(Projections.constructor(RecruitDto.class,
+                        recruit.id,
+                        recruit.place.name,
+                        recruit.minPeople,
+                        recruit.minPrice,
+                        recruit.currentPeople,
+                        recruit.currentPrice,
+                        recruit.criteria,
+                        recruit.createDate,
+                        recruit.deadlineDate,
+                        recruit.user.score,
+                        recruit.dormitory,
+                        recruit.title,
+                        recruit.image,
+                        recruit.active))
+                .from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.user.blocks)
+                .leftJoin(recruit.user.blocked)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
+                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .orderBy(recruit.createDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.user.blocks)
+                .leftJoin(recruit.user.blocked)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
+                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .fetchCount();
+
+        return new PageImpl<>(results, pageable, total);
+    }
+
+    @Override
     public Page<RecruitDto> findAllUsingJoinOrderByDeadlineDate(Pageable pageable, Long userId) {
         List<RecruitDto> results = jpaQueryFactory
                 .select(Projections.constructor(RecruitDto.class,
@@ -180,6 +222,50 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
                 .where(recruit.category.id.eq(categoryId))
                 .orderBy(recruit.view.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
+                .join(recruit.user)
+                .leftJoin(recruit.user.blocks)
+                .leftJoin(recruit.user.blocked)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
+                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .fetchCount();
+
+        return new PageImpl<>(results, pageable, total);
+    }
+
+    @Override
+    public Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByCreateDate(Pageable pageable, Long userId, Long categoryId) {
+        List<RecruitDto> results = jpaQueryFactory
+                .select(Projections.constructor(RecruitDto.class,
+                        recruit.id,
+                        recruit.place.name,
+                        recruit.minPeople,
+                        recruit.minPrice,
+                        recruit.currentPeople,
+                        recruit.currentPrice,
+                        recruit.criteria,
+                        recruit.createDate,
+                        recruit.deadlineDate,
+                        recruit.user.score,
+                        recruit.dormitory,
+                        recruit.title,
+                        recruit.image,
+                        recruit.active))
+                .from(recruit).distinct()
+                .join(recruit.user)
+                .join(recruit.category)
+                .leftJoin(recruit.user.blocks)
+                .leftJoin(recruit.user.blocked)
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
+                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .where(recruit.category.id.eq(categoryId))
+                .orderBy(recruit.createDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
