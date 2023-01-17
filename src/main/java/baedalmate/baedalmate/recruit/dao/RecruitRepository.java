@@ -82,6 +82,23 @@ public class RecruitRepository {
                 .getResultList();
     }
 
+    public List<Recruit> findAllUsingJoinOrderByCreateDate(Pageable pageable, Long userId) {
+        return em.createQuery("select r from Recruit r " +
+                        "join fetch r.user ru " +
+                        "left join ru.blocks rubs " +
+                        "left join rubs.target rubst " +
+                        "left join ru.blocked rubd " +
+                        "left join rubd.user rubdu " +
+                        "where r.cancel = false and r.fail = false " +
+                        "and (rubdu.id != :userId or rubdu.id is null) " +
+                        "and (rubst.id != :userId or rubst.id is null) " +
+                        "order by r.createDate DESC", Recruit.class)
+                .setParameter("userId", userId)
+                .setFirstResult(pageable.getPageNumber())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+    }
+
     public List<Recruit> findAllUsingJoinOrderByView(Pageable pageable, Long userId) {
         return em.createQuery("select r from Recruit r " +
                         "join r.user ru " +
@@ -93,64 +110,6 @@ public class RecruitRepository {
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
                         "order by r.deadlineDate ASC", Recruit.class)
-                .setParameter("userId", userId)
-                .setFirstResult(pageable.getPageNumber())
-                .setMaxResults(pageable.getPageSize())
-                .getResultList();
-    }
-
-    public List<Recruit> findAllByCategoryUsingJoinOrderByScore(Long categoryId, Pageable pageable, Long userId) {
-        return em.createQuery("select r from Recruit r " +
-                        "join r.user ru " +
-                        "left join ru.blocks rubs " +
-                        "left join rubs.target rubst " +
-                        "left join ru.blocked rubd " +
-                        "left join rubd.user rubdu " +
-                        "where r.category.id = :categoryId " +
-                        "and r.cancel = false and r.fail = false " +
-                        "and (rubdu.id != :userId or rubdu.id is null) " +
-                        "and (rubst.id != :userId or rubst.id is null) " +
-                        "order by r.user.score DESC", Recruit.class)
-                .setParameter("categoryId", categoryId)
-                .setParameter("userId", userId)
-                .setFirstResult(pageable.getPageNumber())
-                .setMaxResults(pageable.getPageSize())
-                .getResultList();
-    }
-
-    public List<Recruit> findAllByCategoryUsingJoinOrderByDeadlineDate(Long categoryId, Pageable pageable, Long userId) {
-        return em.createQuery(
-                "select r from Recruit r " +
-                        "join r.user ru " +
-                        "left join ru.blocks rubs " +
-                        "left join rubs.target rubst " +
-                        "left join ru.blocked rubd " +
-                        "left join rubd.user rubdu " +
-                        "where r.category.id = :categoryId " +
-                        "and r.cancel = false and r.fail = false " +
-                        "and (rubdu.id != :userId or rubdu.id is null) " +
-                        "and (rubst.id != :userId or rubst.id is null) " +
-                        "order by r.deadlineDate ASC", Recruit.class)
-                .setParameter("categoryId", categoryId)
-                .setParameter("userId", userId)
-                .setFirstResult(pageable.getPageNumber())
-                .setMaxResults(pageable.getPageSize())
-                .getResultList();
-    }
-
-    public List<Recruit> findAllByCategoryUsingJoinOrderByView(Long categoryId, Pageable pageable, Long userId) {
-        return em.createQuery("select r from Recruit r " +
-                        "join r.user ru " +
-                        "left join ru.blocks rubs " +
-                        "left join rubs.target rubst " +
-                        "left join ru.blocked rubd " +
-                        "left join rubd.user rubdu " +
-                        "where r.category.id = :categoryId " +
-                        "and r.cancel = false and r.fail = false " +
-                        "and (rubdu.id != :userId or rubdu.id is null) " +
-                        "and (rubst.id != :userId or rubst.id is null) " +
-                        "order by r.view DESC", Recruit.class)
-                .setParameter("categoryId", categoryId)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -170,6 +129,26 @@ public class RecruitRepository {
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
                         "order by r.deadlineDate ASC", Recruit.class)
+                .setParameter("dormitory", dormitory)
+                .setParameter("userId", userId)
+                .setFirstResult(pageable.getPageNumber())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+    }
+
+    public List<Recruit> findAllWithTagsUsingJoinOrderByCreateDate(Dormitory dormitory, Pageable pageable, Long userId) {
+        return em.createQuery("select r from Recruit r " +
+                        "join r.user ru " +
+                        "left join ru.blocks rubs " +
+                        "left join rubs.target rubst " +
+                        "left join ru.blocked rubd " +
+                        "left join rubd.user rubdu " +
+                        "join fetch r.tags " +
+                        "where r.dormitory = :dormitory " +
+                        "and r.cancel = false and r.fail = false " +
+                        "and (rubdu.id != :userId or rubdu.id is null) " +
+                        "and (rubst.id != :userId or rubst.id is null) " +
+                        "order by r.createDate DESC", Recruit.class)
                 .setParameter("dormitory", dormitory)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())

@@ -465,6 +465,8 @@ public class RecruitService {
             recruits = recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(pageable, userId);
         } else if (sort.contains("view")) {
             recruits = recruitJpaRepository.findAllUsingJoinOrderByView(pageable, userId);
+        } else if (sort.contains("createDate")) {
+            recruits = recruitJpaRepository.findAllUsingJoinOrderByCreateDate(pageable, userId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
@@ -481,6 +483,8 @@ public class RecruitService {
             recruitList = recruitRepository.findAllUsingJoinOrderByDeadlineDate(p, userId);
         } else if (sort.contains("view")) {
             recruitList = recruitRepository.findAllUsingJoinOrderByView(p, userId);
+        } else if (sort.contains("createDate")) {
+            recruitList = recruitRepository.findAllUsingJoinOrderByCreateDate(p, userId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }
@@ -538,6 +542,8 @@ public class RecruitService {
             recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByDeadlineDate(pageable, userId, categoryId);
         } else if (sort.contains("view")) {
             recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByView(pageable, userId, categoryId);
+        } else if (sort.contains("createDate")) {
+            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByCreateDate(pageable, userId, categoryId);
         } else {
             throw new InvalidPageException("Wrong sort parameter.");
         }

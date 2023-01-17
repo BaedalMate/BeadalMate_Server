@@ -45,7 +45,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
         , name = "size"
         , schema = @Schema(type = "integer", defaultValue = "10"))
 @Parameter(in = ParameterIn.QUERY
-        , description = "Sorting criteria in the format: <b>(deadlineDate | score | view),(asc|desc)</b>. "
+        , description = "Sorting criteria in the format: <b>(deadlineDate | score | view | createDate),(asc|desc)</b>. "
         + "Default sort order is ascending. " + "Multiple sort criteria are supported."
         , name = "sort"
         , array = @ArraySchema(schema = @Schema(type = "string", example = "deadlineDate, ASC")))
