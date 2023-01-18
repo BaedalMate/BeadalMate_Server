@@ -46,6 +46,8 @@ import java.util.Map;
                                             value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
                                     @ExampleObject(name = "이미 차단한 유저",
                                             value = "{\"code\": 400, \"message\": \"Already blocked\"}"),
+                                    @ExampleObject(name = "자기 자신을 차단할 경우",
+                                            value = "{\"code\": 400, \"message\": \"Users cannot block themselves\"}"),
                             }
                     )),
     })
