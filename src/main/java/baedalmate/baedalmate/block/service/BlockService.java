@@ -25,6 +25,9 @@ public class BlockService {
     @Transactional
     public void block(Long userId, Long targetId) {
         User user = userJpaRepository.findByIdUsingJoinWithBlock(userId);
+        if(targetId == userId) {
+            throw new InvalidApiRequestException("Users cannot block themselves");
+        }
         if(user.getBlocks().stream().anyMatch(b -> b.getTarget().getId() == targetId)) {
             throw new InvalidApiRequestException("Already blocked");
         }
