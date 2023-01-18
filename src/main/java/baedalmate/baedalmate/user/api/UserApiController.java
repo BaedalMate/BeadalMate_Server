@@ -116,32 +116,9 @@ public class UserApiController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "유저 프로필 이미지 수정")
+    @Operation(summary = "유저 정보 수정")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "프로필 이미지 수정 성공",
-                    content = @Content(
-                            mediaType = "application/json",
-                    examples = {
-                            @ExampleObject(name = "이미지 이름 응답",
-                                    value = "{\"image\": \"12345678.jpg\"}"),
-                    }
-            )),
-
-    })
-    @PutMapping(value = "/user/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, Object>> updateProfileImage(
-            @AuthUser PrincipalDetails principalDetails,
-            @RequestParam("uploadfile") MultipartFile uploadfile
-    ) {
-        String imageName = userService.updateProfileImage(principalDetails.getId(), uploadfile);
-        Map<String, Object> response = new HashMap<>();
-        response.put("image", imageName);
-        return ResponseEntity.ok().body(response);
-    }
-
-    @Operation(summary = "유저 닉네임 수정")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "유저 닉네임 수정 성공"),
+            @ApiResponse(responseCode = "200", description = "유저 정보 수정 성공"),
             @ApiResponse(
                     responseCode = "400",
                     content = @Content(
@@ -152,12 +129,13 @@ public class UserApiController {
                             }
                     )),
     })
-    @PutMapping(value = "/user/nickname")
+    @PutMapping(value = "/user")
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @AuthUser PrincipalDetails principalDetails,
-            @RequestBody UpdateUserDto updateUserDto
+            @RequestParam(value = "uploadfile", required = false) MultipartFile uploadfile,
+            @RequestParam(value = "nickname", required = false) String nickname
     ) {
-        UserInfoDto userInfo = userService.update(principalDetails.getId(), updateUserDto.getNickname());
+        UserInfoDto userInfo = userService.update(principalDetails.getId(), nickname, uploadfile);
         return ResponseEntity.ok().body(userInfo);
     }
 
