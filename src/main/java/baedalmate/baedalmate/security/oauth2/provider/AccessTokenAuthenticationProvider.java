@@ -88,8 +88,9 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
             User user = User.builder()
                     .socialType(oAuth2User.getSocialType())
                     .socialId(oAuth2User.getSocialId())
-                    .profileImage(imageUrl)
-                    .nickname(oAuth2User.getUsername())
+                    .profileImage("default_profile.png")
+                    .nickname("")
+                    .dormitory(null)
                     .role("GUEST").build();
             return authRepository.save(user);
         }

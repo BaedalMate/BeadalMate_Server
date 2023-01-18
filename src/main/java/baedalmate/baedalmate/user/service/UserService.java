@@ -92,6 +92,9 @@ public class UserService {
             }
             user.setProfileImage(sb.toString());
         }
+        if(user.getNickname()!="" && user.getDormitory()!=null && user.getRole() != "USER") {
+            user.setRole("USER");
+        }
         userJpaRepository.save(user);
         return new UserInfoDto(user.getId(), user.getNickname(), user.getProfileImage(), user.getDormitoryName(), user.getScore());
     }
@@ -108,9 +111,6 @@ public class UserService {
     @Transactional
     public User updateDormitory(Long id, String dormitory) {
         User user = userJpaRepository.findById(id).get();
-        if (user.getRole() != "USER") {
-            user.setRole("USER");
-        }
         switch (dormitory) {
             case "BURAM":
                 user.setDormitory(Dormitory.BURAM);
@@ -129,6 +129,9 @@ public class UserService {
                 break;
             default:
                 throw new InvalidParameterException("Wrong dormitory name");
+        }
+        if(user.getNickname()!="" && user.getDormitory()!=null && user.getRole() != "USER") {
+            user.setRole("USER");
         }
         userJpaRepository.save(user);
         return user;
