@@ -233,6 +233,7 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .where(recruit.cancel.eq(false), recruit.fail.eq(false))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .where(recruit.category.id.eq(categoryId))
                 .fetchCount();
 
         return new PageImpl<>(results, pageable, total);
@@ -277,6 +278,7 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .where(recruit.cancel.eq(false), recruit.fail.eq(false))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .where(recruit.category.id.eq(categoryId))
                 .fetchCount();
 
         return new PageImpl<>(results, pageable, total);
@@ -321,6 +323,7 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .where(recruit.cancel.eq(false), recruit.fail.eq(false))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .where(recruit.category.id.eq(categoryId))
                 .fetchCount();
 
         return new PageImpl<>(results, pageable, total);
@@ -365,6 +368,7 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .where(recruit.cancel.eq(false), recruit.fail.eq(false))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
+                .where(recruit.category.id.eq(categoryId))
                 .fetchCount();
 
         return new PageImpl<>(results, pageable, total);
