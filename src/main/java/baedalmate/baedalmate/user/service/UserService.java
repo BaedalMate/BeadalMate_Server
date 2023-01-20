@@ -65,7 +65,7 @@ public class UserService {
         return "";
     }
 
-    public UserInfoDto update(Long id, String nickname, MultipartFile profileImage) {
+    public UserInfoDto update(Long id, String nickname, boolean defaultImage, MultipartFile profileImage) {
         User user = userJpaRepository.findById(id).get();
         if (nickname != null) {
             if (nickname.length() > 5) {
@@ -75,7 +75,9 @@ public class UserService {
                 user.setNickname(nickname);
             }
         }
-        if (profileImage != null) {
+        if (defaultImage == true) {
+            user.setProfileImage("default_image.png");
+        } else if (profileImage != null) {
             Date date = new Date();
             StringBuilder sb = new StringBuilder();
             String fileName = profileImage.getOriginalFilename();
@@ -92,7 +94,7 @@ public class UserService {
             }
             user.setProfileImage(sb.toString());
         }
-        if(user.getNickname()!="" && user.getDormitory()!=null && user.getRole() != "USER") {
+        if (user.getNickname() != "" && user.getDormitory() != null && user.getRole() != "USER") {
             user.setRole("USER");
         }
         userJpaRepository.save(user);
@@ -130,7 +132,7 @@ public class UserService {
             default:
                 throw new InvalidParameterException("Wrong dormitory name");
         }
-        if(user.getNickname()!="" && user.getDormitory()!=null && user.getRole() != "USER") {
+        if (user.getNickname() != "" && user.getDormitory() != null && user.getRole() != "USER") {
             user.setRole("USER");
         }
         userJpaRepository.save(user);

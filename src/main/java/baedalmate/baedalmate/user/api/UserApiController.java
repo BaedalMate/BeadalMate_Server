@@ -133,9 +133,11 @@ public class UserApiController {
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @AuthUser PrincipalDetails principalDetails,
             @RequestParam(value = "uploadfile", required = false) MultipartFile uploadfile,
+            @Parameter(description = "기본 이미지로 변경할 때만 true 처리. 파일 존재 여부보다 우선이기 때문에 파일과 함께 true를 보내면 기본이미지로 변경됩니다.")
+            @RequestParam(value = "default_image", required = false, defaultValue = "false") boolean isDefaultImage,
             @RequestParam(value = "nickname", required = false) String nickname
     ) {
-        UserInfoDto userInfo = userService.update(principalDetails.getId(), nickname, uploadfile);
+        UserInfoDto userInfo = userService.update(principalDetails.getId(), nickname, isDefaultImage, uploadfile);
         return ResponseEntity.ok().body(userInfo);
     }
 
