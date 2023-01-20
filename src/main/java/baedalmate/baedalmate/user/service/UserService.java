@@ -38,6 +38,7 @@ public class UserService {
         user.setNickname("");
         user.setProfileImage("");
         user.setSocialId("");
+        user.setScore(0);
         userJpaRepository.save(user);
         recruitJpaRepository.setCancelTrueByUserId(id);
     }
