@@ -127,7 +127,7 @@ public class UserApiController {
                             }
                     )),
     })
-    @PutMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @AuthUser PrincipalDetails principalDetails,
             @RequestParam(value = "uploadfile", required = false) MultipartFile uploadfile,
