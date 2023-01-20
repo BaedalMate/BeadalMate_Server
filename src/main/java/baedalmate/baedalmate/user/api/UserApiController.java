@@ -50,9 +50,9 @@ public class UserApiController {
     @Value("${spring.servlet.multipart.location}")
     private String path;
 
-    @Operation(summary = "회원 탈퇴(비활성화)")
+    @Operation(summary = "회원 탈퇴")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "탈퇴(비활성화) 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
+            @ApiResponse(responseCode = "200", description = "탈퇴 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
             @ApiResponse(responseCode = "400",
                     content = @Content(
                             mediaType = "application/json",
@@ -62,11 +62,11 @@ public class UserApiController {
                             }
                     )),
     })
-    @GetMapping(value = "/user/deactivate")
-    public ResponseEntity<Map> deactivate(
+    @DeleteMapping(value = "/user/withdrawal")
+    public ResponseEntity<Map> withdrawal(
             @AuthUser PrincipalDetails principalDetails
     ) {
-        userService.deactivate(principalDetails.getId());
+        userService.withdrawal(principalDetails.getId());
         Map<String, Object> response = new HashMap<>();
         response.put("result", "success");
         return ResponseEntity.ok().body(response);
@@ -86,7 +86,7 @@ public class UserApiController {
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
             })
-            Pageable pageable
+                    Pageable pageable
     ) {
         Page<ParticipatedRecruitDto> participatedRecruitDto = recruitService.findParticipatedRecruit(principalDetails.getId(), pageable);
         RecruitListWithLastDto response = new RecruitListWithLastDto(participatedRecruitDto.getContent(), participatedRecruitDto.isLast());

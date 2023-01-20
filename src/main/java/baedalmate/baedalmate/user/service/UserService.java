@@ -5,6 +5,7 @@ import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
+import baedalmate.baedalmate.recruit.domain.Recruit;
 import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.errors.exceptions.InvalidParameterException;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
 
@@ -28,17 +30,24 @@ public class UserService {
     private final OrderJpaRepository orderJpaRepository;
 
     @Transactional
-    public void deactivate(Long id) {
+    public void withdrawal(Long id) {
         List<Order> orders = orderJpaRepository.findAllByUserIdUsingJoin(id);
         if (orders.size() > 0) {
             throw new InvalidApiRequestException("User is participating some recruit.");
+        }
+        List<Recruit> recruits = recruitJpaRepository.findAllActivateByUserIdUsingJoin(id);
+        if(recruits.size() > 0) {
+            throw new InvalidApiRequestException("User is participating some recruit.");
+
         }
         User user = userJpaRepository.findById(id).get();
         user.setRole("deactivate");
         user.setNickname("");
         user.setProfileImage("");
+        user.setSocialId("");
+        user.setScore(0);
+        user.setDormitory(null);
         userJpaRepository.save(user);
-        recruitJpaRepository.setCancelTrueByUserId(id);
     }
 
     public String updateProfileImage(Long id, MultipartFile profileImage) {
@@ -65,6 +74,7 @@ public class UserService {
         return "";
     }
 
+    @Transactional
     public UserInfoDto update(Long id, String nickname, boolean defaultImage, MultipartFile profileImage) {
         User user = userJpaRepository.findById(id).get();
         if (nickname != null) {
