@@ -1,5 +1,5 @@
 package baedalmate.baedalmate.recruit.domain;
 
 public enum Platform {
-    BAEMIN, YOGIYO, COUPANG, ETC
+    BAEMIN, YOGIYO, COUPANG, DDANGYO, ETC
 }
