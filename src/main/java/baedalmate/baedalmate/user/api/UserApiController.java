@@ -10,7 +10,6 @@ import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.user.dto.UpdateDormitoryDto;
-import baedalmate.baedalmate.user.dto.UpdateUserDto;
 import baedalmate.baedalmate.user.service.UserService;
 import baedalmate.baedalmate.user.dto.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Tag(name = "유저 api")
@@ -129,7 +127,7 @@ public class UserApiController {
                             }
                     )),
     })
-    @PutMapping(value = "/user")
+    @PutMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @AuthUser PrincipalDetails principalDetails,
             @RequestParam(value = "uploadfile", required = false) MultipartFile uploadfile,
