@@ -258,6 +258,31 @@ public class RecruitApiController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(summary = "모집글 수정용 전체 정보")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "호스트가 아닌 경우",
+                                            value = "{\"code\": 400, \"message\": \"Not host\"}"),
+                            }
+                    )),
+    })
+    @GetMapping(value = "/recruit/{id}/detail")
+    public ResponseEntity<RecruitDetailForModifyDto> getRecruitDetail(
+            @AuthUser PrincipalDetails principalDetails,
+            @Parameter(description = "모집글 id")
+            @PathVariable("id")
+            Long recruitId
+    ) {
+        RecruitDetailForModifyDto response = recruitService.getRecruitDetail(principalDetails.getId(), recruitId);
+
+        return ResponseEntity.ok().body(response);
+    }
+
     @Operation(summary = "모집글 상세 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),

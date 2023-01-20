@@ -380,6 +380,44 @@ public class RecruitService {
         return recruit.getId();
     }
 
+    public RecruitDetailForModifyDto getRecruitDetail(Long userId, Long recruitId) {
+        // Recruit 조회
+        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+
+        if (recruit.getUser().getId() != userId) {
+            throw new InvalidApiRequestException("Not host");
+        }
+
+        Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
+        List<MenuDto> menuDtos = order.getMenus().stream()
+                .map(m -> new MenuDto(m.getName(), m.getPrice(), m.getQuantity())).collect(Collectors.toList());
+        return new RecruitDetailForModifyDto(
+                recruitId,
+                recruit.getCategory().getId(),
+                new PlaceDto(
+                        recruit.getPlace().getName(),
+                        recruit.getPlace().getAddressName(),
+                        recruit.getPlace().getRoadAddressName(),
+                        recruit.getPlace().getX(),
+                        recruit.getPlace().getY()),
+                recruit.getDormitory(),
+                recruit.getCriteria(),
+                recruit.getMinPrice(),
+                recruit.getMinPeople(),
+                recruit.getShippingFees().stream()
+                        .map(sf -> new ShippingFeeDto(sf.getShippingFee(), sf.getLowerPrice(), sf.getUpperPrice()))
+                        .collect(Collectors.toList()),
+                recruit.getCoupon(),
+                recruit.getPlatform(),
+                recruit.getDeadlineDate(),
+                recruit.getTitle(),
+                recruit.getDescription(),
+                recruit.isFreeShipping(),
+                menuDtos,
+                recruit.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList())
+        );
+    }
+
     public RecruitDetailDto findOne(User user, Long recruitId) {
 
         // Recruit 조회
