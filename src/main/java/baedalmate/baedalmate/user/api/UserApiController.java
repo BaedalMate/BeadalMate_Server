@@ -10,7 +10,6 @@ import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.security.annotation.AuthUser;
 import baedalmate.baedalmate.security.user.PrincipalDetails;
 import baedalmate.baedalmate.user.dto.UpdateDormitoryDto;
-import baedalmate.baedalmate.user.dto.UpdateUserDto;
 import baedalmate.baedalmate.user.service.UserService;
 import baedalmate.baedalmate.user.dto.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Tag(name = "유저 api")
@@ -129,13 +127,15 @@ public class UserApiController {
                             }
                     )),
     })
-    @PutMapping(value = "/user")
+    @PutMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserInfoDto> updateUserInfo(
             @AuthUser PrincipalDetails principalDetails,
             @RequestParam(value = "uploadfile", required = false) MultipartFile uploadfile,
+            @Parameter(description = "기본 이미지로 변경할 때만 true 처리. 파일 존재 여부보다 우선이기 때문에 파일과 함께 true를 보내면 기본이미지로 변경됩니다.")
+            @RequestParam(value = "default_image", required = false, defaultValue = "false") boolean isDefaultImage,
             @RequestParam(value = "nickname", required = false) String nickname
     ) {
-        UserInfoDto userInfo = userService.update(principalDetails.getId(), nickname, uploadfile);
+        UserInfoDto userInfo = userService.update(principalDetails.getId(), nickname, isDefaultImage, uploadfile);
         return ResponseEntity.ok().body(userInfo);
     }
 
