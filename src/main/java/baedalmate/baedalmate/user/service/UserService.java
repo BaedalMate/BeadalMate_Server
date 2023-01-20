@@ -28,7 +28,7 @@ public class UserService {
     private final OrderJpaRepository orderJpaRepository;
 
     @Transactional
-    public void deactivate(Long id) {
+    public void withdrawal(Long id) {
         List<Order> orders = orderJpaRepository.findAllByUserIdUsingJoin(id);
         if (orders.size() > 0) {
             throw new InvalidApiRequestException("User is participating some recruit.");
@@ -37,6 +37,7 @@ public class UserService {
         user.setRole("deactivate");
         user.setNickname("");
         user.setProfileImage("");
+        user.setSocialId("");
         userJpaRepository.save(user);
         recruitJpaRepository.setCancelTrueByUserId(id);
     }
