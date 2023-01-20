@@ -410,9 +410,10 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
 
         long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
                 .join(recruit.user)
+                .join(recruit.tags)
                 .leftJoin(recruit.user.blocks)
                 .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(recruit.cancel.eq(false), recruit.fail.eq(false), recruit.active.eq(true))
                 .where(recruit.tags.any().name.like(Expressions.stringTemplate("'%'")
                         .concat(keyword)
                         .concat(Expressions.stringTemplate("'%'"))))

@@ -47,7 +47,7 @@ public class RecruitApiController {
     })
     @GetMapping(value = "/recruit/search")
     @CustomPageableAsQueryParam
-    public ResponseEntity<RecruitListWithLastDto> searchByTag(
+    public ResponseEntity<RecruitListWithLastAndCount> searchByTag(
             @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "태그 검색 키워드")
             @RequestParam(required = true) String keyword,
@@ -58,7 +58,7 @@ public class RecruitApiController {
             })
                     Pageable pageable) {
         Page<RecruitDto> recruits = recruitService.findAllByTag(principalDetails.getId(), keyword, pageable);
-        RecruitListWithLastDto response = new RecruitListWithLastDto(recruits.getContent(), recruits.isLast());
+        RecruitListWithLastAndCount response = new RecruitListWithLastAndCount(recruits.getContent(), recruits.isLast(), recruits.getTotalElements());
 
         return ResponseEntity.ok().body(response);
     }
