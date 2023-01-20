@@ -48,7 +48,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long>, Recr
     void setActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false, r.fail = true where r.active = true and r.cancel = false and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
+    @Query("update Recruit r set r.active = false, r.fail = true where r.active = true and r.cancel = false and r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
     void setFailTrueAndActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
