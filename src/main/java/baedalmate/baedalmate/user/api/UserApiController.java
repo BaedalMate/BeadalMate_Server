@@ -62,8 +62,8 @@ public class UserApiController {
                             }
                     )),
     })
-    @GetMapping(value = "/user/withdrawal")
-    public ResponseEntity<Map> deactivate(
+    @DeleteMapping(value = "/user/withdrawal")
+    public ResponseEntity<Map> withdrawal(
             @AuthUser PrincipalDetails principalDetails
     ) {
         userService.withdrawal(principalDetails.getId());
@@ -86,7 +86,7 @@ public class UserApiController {
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createDate", direction = Sort.Direction.ASC)
             })
-            Pageable pageable
+                    Pageable pageable
     ) {
         Page<ParticipatedRecruitDto> participatedRecruitDto = recruitService.findParticipatedRecruit(principalDetails.getId(), pageable);
         RecruitListWithLastDto response = new RecruitListWithLastDto(participatedRecruitDto.getContent(), participatedRecruitDto.isLast());

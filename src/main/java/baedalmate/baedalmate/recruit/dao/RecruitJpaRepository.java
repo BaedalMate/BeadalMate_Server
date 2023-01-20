@@ -9,11 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface RecruitJpaRepository extends JpaRepository<Recruit, Long>, RecruitCustomRepository {
 
     @Query("select r from Recruit r join fetch r.orders where r.id = :id")
     Recruit findByIdUsingJoinWithOrder(@Param("id") Long id);
+
+    @Query("select r from Recruit r join fetch r.user where r.user.id = :userId")
+    List<Recruit> findAllActivateByUserIdUsingJoin(@Param("userId") Long userId);
 
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.view = r.view + 1 where r.id = :id")

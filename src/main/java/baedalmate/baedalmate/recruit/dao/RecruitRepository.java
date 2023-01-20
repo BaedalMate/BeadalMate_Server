@@ -58,6 +58,7 @@ public class RecruitRepository {
                         "where r.cancel = false and r.fail = false " +
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
+                        "and r.user.role != 'deactivate' " +
                         "order by r.user.score DESC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
@@ -75,6 +76,7 @@ public class RecruitRepository {
                         "where r.cancel = false and r.fail = false " +
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
+                        "and r.user.role != 'deactivate' " +
                         "order by r.deadlineDate ASC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
@@ -92,6 +94,7 @@ public class RecruitRepository {
                         "where r.cancel = false and r.fail = false " +
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
+                        "and r.user.role != 'deactivate' " +
                         "order by r.createDate DESC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
@@ -109,6 +112,7 @@ public class RecruitRepository {
                         "where r.cancel = false and r.fail = false " +
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
+                        "and r.user.role != 'deactivate' " +
                         "order by r.deadlineDate ASC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
@@ -128,6 +132,7 @@ public class RecruitRepository {
                         "and r.cancel = false and r.fail = false " +
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
+                        "and r.user.role != 'deactivate' " +
                         "order by r.deadlineDate ASC", Recruit.class)
                 .setParameter("dormitory", dormitory)
                 .setParameter("userId", userId)

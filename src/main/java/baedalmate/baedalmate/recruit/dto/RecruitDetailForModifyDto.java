@@ -30,7 +30,7 @@ public class RecruitDetailForModifyDto {
     private int minPrice;
     @Schema(description = "최소 인원", example = "3")
     private int minPeople;
-    @Schema(description = "배달팁", example = "3000")
+    @Schema(description = "배달팁")
     private List<ShippingFeeDto> shippingFee;
     @Schema(description = "쿠폰 사용 금액", example = "3000")
     private int coupon;
