@@ -72,6 +72,8 @@ dependencies {
 
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+    // fcm
+    implementation 'com.google.firebase:firebase-admin:6.8.1'
 }
 def querydslDir = "$buildDir/generated/querydsl"
 querydsl {
