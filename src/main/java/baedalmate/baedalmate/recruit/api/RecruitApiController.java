@@ -43,7 +43,7 @@ public class RecruitApiController {
 
     @Operation(summary = "태그로 모집글 검색")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListResponseDto.class))),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListWithLastAndCount.class))),
     })
     @GetMapping(value = "/recruit/search")
     @CustomPageableAsQueryParam
