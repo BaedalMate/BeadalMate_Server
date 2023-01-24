@@ -1,6 +1,5 @@
 package baedalmate.baedalmate.chat.dto;
 
-import baedalmate.baedalmate.chat.api.ChatRoomApiController;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;

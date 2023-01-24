@@ -23,7 +23,6 @@ import baedalmate.baedalmate.user.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -423,13 +422,19 @@ public class RecruitService {
                 place.getY()
         );
 
+        AtomicInteger shippingFee = new AtomicInteger();
         // ShippingFeeDetail 생성
         List<ShippingFeeDto> shippingFeeDetails = recruit.getShippingFees()
-                .stream().map(s -> new ShippingFeeDto(
-                                s.getShippingFee(),
-                                s.getLowerPrice(),
-                                s.getUpperPrice()
-                        )
+                .stream().map(s -> {
+                            if (s.getLowerPrice() <= recruit.getCurrentPrice()) {
+                                shippingFee.set(s.getShippingFee());
+                            }
+                            return new ShippingFeeDto(
+                                    s.getShippingFee(),
+                                    s.getLowerPrice(),
+                                    s.getUpperPrice()
+                            );
+                        }
                 )
                 .collect(Collectors.toList());
 
@@ -459,7 +464,7 @@ public class RecruitService {
                 placeDto,
                 recruit.getPlatform().name(),
                 recruit.getDeadlineDate(),
-                recruit.getMinShippingFee(),
+                shippingFee.get(),
                 shippingFeeDetails,
                 recruit.getCoupon(),
                 recruit.getCurrentPeople(),
