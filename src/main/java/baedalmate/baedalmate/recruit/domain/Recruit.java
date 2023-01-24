@@ -73,7 +73,7 @@ public class Recruit {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToOne(mappedBy = "recruit")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "recruit")
     private ChatRoom chatRoom;
 
     @CreationTimestamp
@@ -138,6 +138,10 @@ public class Recruit {
     }
 
     //== setter ==//
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public void setDescription(String description) {
         this.description = description;
