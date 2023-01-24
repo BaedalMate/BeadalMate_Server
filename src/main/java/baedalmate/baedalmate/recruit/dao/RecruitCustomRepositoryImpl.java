@@ -1,12 +1,15 @@
 package baedalmate.baedalmate.recruit.dao;
 
+import baedalmate.baedalmate.errors.exceptions.InvalidPageException;
 import baedalmate.baedalmate.recruit.domain.Recruit;
 import baedalmate.baedalmate.recruit.dto.HostedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.MainPageRecruitDto;
 import baedalmate.baedalmate.recruit.dto.ParticipatedRecruitDto;
 import baedalmate.baedalmate.recruit.dto.RecruitDto;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -26,50 +29,37 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override
-    public Page<RecruitDto> findAllUsingJoinOrderByCreateDate(Pageable pageable, Long userId) {
-        List<RecruitDto> results = jpaQueryFactory
-                .select(Projections.constructor(RecruitDto.class,
-                        recruit.id,
-                        recruit.place.name,
-                        recruit.minPeople,
-                        recruit.minPrice,
-                        recruit.currentPeople,
-                        recruit.currentPrice,
-                        recruit.criteria,
-                        recruit.createDate,
-                        recruit.deadlineDate,
-                        recruit.user.score,
-                        recruit.dormitory,
-                        recruit.title,
-                        recruit.image,
-                        recruit.active))
-                .from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .orderBy(recruit.createDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+    private OrderSpecifier<?> recruitSort(Pageable pageable) {
+        String sort = pageable.getSort().toString();
+        if (sort.contains("score")) {
+            return recruit.user.score.desc();
+        } else if (sort.contains("deadlineDate")) {
+            return recruit.deadlineDate.asc();
+        } else if (sort.contains("view")) {
+            return recruit.view.desc();
+        } else if (sort.contains("createDate")) {
+            return recruit.createDate.desc();
+        } else {
+            throw new InvalidPageException("Wrong sort parameter.");
+        }
+    }
 
-        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .fetchCount();
+    private BooleanExpression exceptClosedRecruit(Boolean exceptClose) {
+        if(exceptClose) {
+            return recruit.active.eq(true);
+        }
+        return null;
+    }
 
-        return new PageImpl<>(results, pageable, total);
+    private BooleanExpression recruitCategory(Long categoryId) {
+        if(categoryId == null) {
+            return null;
+        }
+        return recruit.category.id.eq(categoryId);
     }
 
     @Override
-    public Page<RecruitDto> findAllUsingJoinOrderByDeadlineDate(Pageable pageable, Long userId) {
+    public Page<RecruitDto> findAllUsingJoin(Pageable pageable, Long userId, Long categoryId, Boolean exceptClose) {
         List<RecruitDto> results = jpaQueryFactory
                 .select(Projections.constructor(RecruitDto.class,
                         recruit.id,
@@ -91,9 +81,11 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .leftJoin(recruit.user.blocks)
                 .leftJoin(recruit.user.blocked)
                 .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(exceptClosedRecruit(exceptClose))
+                .where(recruitCategory(categoryId))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .orderBy(recruit.deadlineDate.asc())
+                .orderBy(recruitSort(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -103,272 +95,10 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .leftJoin(recruit.user.blocks)
                 .leftJoin(recruit.user.blocked)
                 .where(recruit.cancel.eq(false), recruit.fail.eq(false))
+                .where(exceptClosedRecruit(exceptClose))
+                .where(recruitCategory(categoryId))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .fetchCount();
-
-        return new PageImpl<>(results, pageable, total);
-    }
-
-    @Override
-    public Page<RecruitDto> findAllUsingJoinOrderByScore(Pageable pageable, Long userId) {
-        List<RecruitDto> results = jpaQueryFactory
-                .select(Projections.constructor(RecruitDto.class,
-                        recruit.id,
-                        recruit.place.name,
-                        recruit.minPeople,
-                        recruit.minPrice,
-                        recruit.currentPeople,
-                        recruit.currentPrice,
-                        recruit.criteria,
-                        recruit.createDate,
-                        recruit.deadlineDate,
-                        recruit.user.score,
-                        recruit.dormitory,
-                        recruit.title,
-                        recruit.image,
-                        recruit.active))
-                .from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .orderBy(recruit.user.score.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .fetchCount();
-
-        return new PageImpl<>(results, pageable, total);
-    }
-
-    @Override
-    public Page<RecruitDto> findAllUsingJoinOrderByView(Pageable pageable, Long userId) {
-        List<RecruitDto> results = jpaQueryFactory
-                .select(Projections.constructor(RecruitDto.class,
-                        recruit.id,
-                        recruit.place.name,
-                        recruit.minPeople,
-                        recruit.minPrice,
-                        recruit.currentPeople,
-                        recruit.currentPrice,
-                        recruit.criteria,
-                        recruit.createDate,
-                        recruit.deadlineDate,
-                        recruit.user.score,
-                        recruit.dormitory,
-                        recruit.title,
-                        recruit.image,
-                        recruit.active))
-                .from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .orderBy(recruit.view.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .fetchCount();
-
-        return new PageImpl<>(results, pageable, total);
-    }
-
-    @Override
-    public Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByView(Pageable pageable, Long userId, Long categoryId) {
-        List<RecruitDto> results = jpaQueryFactory
-                .select(Projections.constructor(RecruitDto.class,
-                        recruit.id,
-                        recruit.place.name,
-                        recruit.minPeople,
-                        recruit.minPrice,
-                        recruit.currentPeople,
-                        recruit.currentPrice,
-                        recruit.criteria,
-                        recruit.createDate,
-                        recruit.deadlineDate,
-                        recruit.user.score,
-                        recruit.dormitory,
-                        recruit.title,
-                        recruit.image,
-                        recruit.active))
-                .from(recruit).distinct()
-                .join(recruit.user)
-                .join(recruit.category)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
-                .orderBy(recruit.view.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
-                .fetchCount();
-
-        return new PageImpl<>(results, pageable, total);
-    }
-
-    @Override
-    public Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByCreateDate(Pageable pageable, Long userId, Long categoryId) {
-        List<RecruitDto> results = jpaQueryFactory
-                .select(Projections.constructor(RecruitDto.class,
-                        recruit.id,
-                        recruit.place.name,
-                        recruit.minPeople,
-                        recruit.minPrice,
-                        recruit.currentPeople,
-                        recruit.currentPrice,
-                        recruit.criteria,
-                        recruit.createDate,
-                        recruit.deadlineDate,
-                        recruit.user.score,
-                        recruit.dormitory,
-                        recruit.title,
-                        recruit.image,
-                        recruit.active))
-                .from(recruit).distinct()
-                .join(recruit.user)
-                .join(recruit.category)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
-                .orderBy(recruit.createDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
-                .fetchCount();
-
-        return new PageImpl<>(results, pageable, total);
-    }
-
-    @Override
-    public Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByDeadlineDate(Pageable pageable, Long userId, Long categoryId) {
-        List<RecruitDto> results = jpaQueryFactory
-                .select(Projections.constructor(RecruitDto.class,
-                        recruit.id,
-                        recruit.place.name,
-                        recruit.minPeople,
-                        recruit.minPrice,
-                        recruit.currentPeople,
-                        recruit.currentPrice,
-                        recruit.criteria,
-                        recruit.createDate,
-                        recruit.deadlineDate,
-                        recruit.user.score,
-                        recruit.dormitory,
-                        recruit.title,
-                        recruit.image,
-                        recruit.active))
-                .from(recruit).distinct()
-                .join(recruit.user)
-                .join(recruit.category)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
-                .orderBy(recruit.deadlineDate.asc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
-                .fetchCount();
-
-        return new PageImpl<>(results, pageable, total);
-    }
-
-    @Override
-    public Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByScore(Pageable pageable, Long userId, Long categoryId) {
-        List<RecruitDto> results = jpaQueryFactory
-                .select(Projections.constructor(RecruitDto.class,
-                        recruit.id,
-                        recruit.place.name,
-                        recruit.minPeople,
-                        recruit.minPrice,
-                        recruit.currentPeople,
-                        recruit.currentPrice,
-                        recruit.criteria,
-                        recruit.createDate,
-                        recruit.deadlineDate,
-                        recruit.user.score,
-                        recruit.dormitory,
-                        recruit.title,
-                        recruit.image,
-                        recruit.active))
-                .from(recruit).distinct()
-                .join(recruit.user)
-                .join(recruit.category)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
-                .orderBy(recruit.user.score.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        long total = jpaQueryFactory.select(recruit).from(recruit).distinct()
-                .join(recruit.user)
-                .leftJoin(recruit.user.blocks)
-                .leftJoin(recruit.user.blocked)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
-                .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
-                .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .where(recruit.category.id.eq(categoryId))
                 .fetchCount();
 
         return new PageImpl<>(results, pageable, total);

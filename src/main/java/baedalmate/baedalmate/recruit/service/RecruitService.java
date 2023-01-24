@@ -486,27 +486,6 @@ public class RecruitService {
         return recruitJpaRepository.updateView(recruitId);
     }
 
-    public Page<RecruitDto> findAllRecruitDto(Long userId, Pageable pageable) {
-        String sort = pageable.getSort().toString();
-        Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        List<Recruit> recruitList;
-        log.debug("get using queryDsl");
-        Page<RecruitDto> recruits;
-        if (sort.contains("score")) {
-            recruits = recruitJpaRepository.findAllUsingJoinOrderByScore(pageable, userId);
-        } else if (sort.contains("deadlineDate")) {
-            log.debug("get using JpaRepository");
-            recruits = recruitJpaRepository.findAllUsingJoinOrderByDeadlineDate(pageable, userId);
-        } else if (sort.contains("view")) {
-            recruits = recruitJpaRepository.findAllUsingJoinOrderByView(pageable, userId);
-        } else if (sort.contains("createDate")) {
-            recruits = recruitJpaRepository.findAllUsingJoinOrderByCreateDate(pageable, userId);
-        } else {
-            throw new InvalidPageException("Wrong sort parameter.");
-        }
-        return recruits;
-    }
-
     public List<MainPageRecruitDto> findAllMainPageRecruitDto(Long userId, Pageable pageable) {
         String sort = pageable.getSort().toString();
         Pageable p = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
@@ -567,20 +546,7 @@ public class RecruitService {
                 ).collect(Collectors.toList());
     }
 
-    public Page<RecruitDto> findAllByCategory(Long userId, Long categoryId, Pageable pageable) {
-        String sort = pageable.getSort().toString();
-        Page<RecruitDto> recruitList;
-        if (sort.contains("score")) {
-            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByScore(pageable, userId, categoryId);
-        } else if (sort.contains("deadlineDate")) {
-            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByDeadlineDate(pageable, userId, categoryId);
-        } else if (sort.contains("view")) {
-            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByView(pageable, userId, categoryId);
-        } else if (sort.contains("createDate")) {
-            recruitList = recruitJpaRepository.findAllByCategoryIdUsingJoinOrderByCreateDate(pageable, userId, categoryId);
-        } else {
-            throw new InvalidPageException("Wrong sort parameter.");
-        }
-        return recruitList;
+    public Page<RecruitDto> findAllByCategory(Long userId, Long categoryId, Pageable pageable, Boolean exceptClose) {
+        return recruitJpaRepository.findAllUsingJoin(pageable, userId, categoryId, exceptClose);
     }
 }

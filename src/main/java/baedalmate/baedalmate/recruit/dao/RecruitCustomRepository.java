@@ -8,14 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface RecruitCustomRepository {
 
-    Page<RecruitDto> findAllUsingJoinOrderByDeadlineDate(Pageable pageable, Long userId);
-    Page<RecruitDto> findAllUsingJoinOrderByCreateDate(Pageable pageable, Long userId);
-    Page<RecruitDto> findAllUsingJoinOrderByView(Pageable pageable, Long userId);
-    Page<RecruitDto> findAllUsingJoinOrderByScore(Pageable pageable, Long userId);
-    Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByDeadlineDate(Pageable pageable, Long userId, Long categoryId);
-    Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByCreateDate(Pageable pageable, Long userId, Long categoryId);
-    Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByScore(Pageable pageable, Long userId, Long categoryId);
-    Page<RecruitDto> findAllByCategoryIdUsingJoinOrderByView(Pageable pageable, Long userId, Long categoryId);
+    Page<RecruitDto> findAllUsingJoin(Pageable pageable, Long userId, Long categoryId, Boolean exceptClose);
     Page<RecruitDto> findAllByTagUsingJoin(String keyword, Pageable pageable, Long userId);
 
     Page<ParticipatedRecruitDto> findAllParticipatedRecruitDtoByUserIdUsingJoin(Pageable pageable, Long userId);
