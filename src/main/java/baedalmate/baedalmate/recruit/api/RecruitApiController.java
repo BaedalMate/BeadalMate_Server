@@ -146,7 +146,7 @@ public class RecruitApiController {
                             }
                     )),
     })
-    @PatchMapping(value = "/recruit/{id}")
+    @PutMapping(value = "/recruit/{id}")
     public ResponseEntity<Map<String, Object>> updateRecruit(
             @AuthUser PrincipalDetails principalDetails,
             @RequestBody UpdateRecruitDto updateRecruitDto,

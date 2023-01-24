@@ -13,11 +13,8 @@ import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dao.OrderRepository;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
-import baedalmate.baedalmate.recruit.dao.RecruitRepository;
-import baedalmate.baedalmate.recruit.dao.ShippingFeeJpaRepository;
-import baedalmate.baedalmate.recruit.dao.TagJpaRepository;
+import baedalmate.baedalmate.recruit.dao.*;
 import baedalmate.baedalmate.recruit.domain.*;
-import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.domain.embed.Place;
 import baedalmate.baedalmate.recruit.dto.*;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
@@ -57,6 +54,7 @@ public class RecruitService {
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
     private final OrderRepository orderRepository;
     private final BlockJpaRepository blockJpaRepository;
+    private final MenuJpaRepository menuJpaRepository;
 
     public Page<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
         Page<HostedRecruitDto> hostedRecruitDtos = recruitJpaRepository.findAllHostedRecruitDtoByUserIdUsingJoin(pageable, userId);
@@ -160,7 +158,9 @@ public class RecruitService {
         // 유저조회
         User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
-        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+        Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
+
+        Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
 
@@ -172,70 +172,60 @@ public class RecruitService {
             throw new InvalidApiRequestException("Someone is participating");
         }
 
-        if (updateRecruitDto.getCategoryId() != null) {
-            Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
-            recruit.setCategory(category);
-        }
-        if (updateRecruitDto.getCategoryId() != null) {
-            PlaceDto placeDto = updateRecruitDto.getPlace();
-            Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
-            recruit.setPlace(place);
-        }
-        if (updateRecruitDto.getDormitory() != null) {
-            recruit.setDormitory(updateRecruitDto.getDormitory());
-        }
-        if (updateRecruitDto.getCriteria() != null) {
-            recruit.setCriteria(updateRecruitDto.getCriteria());
-        }
-        if (updateRecruitDto.getMinPrice() != null) {
-            recruit.setMinPrice(updateRecruitDto.getMinPrice());
-        }
-        if (updateRecruitDto.getMinPeople() != null) {
-            recruit.setMinPeople(updateRecruitDto.getMinPeople());
-        }
-        if (updateRecruitDto.getFreeShipping() != null) {
-            recruit.setFreeShipping(updateRecruitDto.getFreeShipping());
-            if (recruit.isFreeShipping()) {
-                shippingFeeJpaRepository.deleteByRecruitId(recruitId);
-            }
-        }
-        if (updateRecruitDto.getShippingFee() != null) {
-            shippingFeeJpaRepository.deleteByRecruitId(recruitId);
-            if (!recruit.isFreeShipping()) {
-                for (ShippingFeeDto sf : updateRecruitDto.getShippingFee()) {
-                    ShippingFee shippingFee = ShippingFee.createShippingFee(sf.getShippingFee(), sf.getLowerPrice(), sf.getUpperPrice());
-                    shippingFee.setRecruit(recruit);
-                    shippingFeeJpaRepository.save(shippingFee);
-                }
-            }
-        }
-        if (updateRecruitDto.getPlatform() != null) {
-            recruit.setPlatform(updateRecruitDto.getPlatform());
-        }
-        if (updateRecruitDto.getDeadlineDate() != null) {
-            recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
-        }
-        if (updateRecruitDto.getTitle() != null) {
-            recruit.setTitle(updateRecruitDto.getTitle());
-        }
-        if (updateRecruitDto.getDescription() != null) {
-            recruit.setDescription(updateRecruitDto.getDescription());
-        }
-        if (updateRecruitDto.getTags() != null) {
-            tagJpaRepository.deleteByRecruitId(recruitId);
-            if (updateRecruitDto.getTags().size() > 4) {
-                throw new InvalidParameterException("Number of tag must be less than 5");
-            }
-            if (updateRecruitDto.getTags().size() > 0) {
-                for (TagDto tagDto : updateRecruitDto.getTags()) {
-                    Tag tag = Tag.createTag(tagDto.getTagname());
-                    tag.setRecruit(recruit);
-                    tagJpaRepository.save(tag);
-                }
-            }
-        }
+        Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
+        recruit.setCategory(category);
+        PlaceDto placeDto = updateRecruitDto.getPlace();
+        Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
+        recruit.setPlace(place);
+        recruit.setDormitory(updateRecruitDto.getDormitory());
+        recruit.setCriteria(updateRecruitDto.getCriteria());
+        recruit.setMinPrice(updateRecruitDto.getMinPrice());
+        recruit.setMinPeople(updateRecruitDto.getMinPeople());
+        recruit.setFreeShipping(updateRecruitDto.getFreeShipping());
 
+        recruit.setPlatform(updateRecruitDto.getPlatform());
+        recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
+        recruit.setTitle(updateRecruitDto.getTitle());
+        recruit.setDescription(updateRecruitDto.getDescription());
         recruitJpaRepository.save(recruit);
+        if (updateRecruitDto.getTags().size() > 4) {
+            throw new InvalidParameterException("Number of tag must be less than 5");
+        }
+        if (updateRecruitDto.getTags().size() > 0) {
+            tagJpaRepository.deleteByRecruitId(recruitId);
+            List<Tag> tags = updateRecruitDto.getTags().stream()
+                    .map(t -> {
+
+                        Tag tag = Tag.createTag(t.getTagname());
+                        tag.setRecruit(recruit);
+                        return tag;
+                    })
+                    .collect(Collectors.toList());
+            tagJpaRepository.saveAll(tags);
+        }
+        shippingFeeJpaRepository.deleteByRecruitId(recruitId);
+        List<ShippingFee> shippingFees = updateRecruitDto.getShippingFee().stream()
+                .map(sf -> {
+                    ShippingFee shippingFee = ShippingFee.createShippingFee(
+                            sf.getShippingFee(),
+                            sf.getLowerPrice(),
+                            sf.getUpperPrice());
+                    shippingFee.setRecruit(recruit);
+                    return shippingFee;
+                })
+                .collect(Collectors.toList());
+        shippingFeeJpaRepository.saveAll(shippingFees);
+
+        menuJpaRepository.deleteByOrderId(order.getId());
+        List<Menu> menus = updateRecruitDto.getMenu().stream()
+                .map(m -> {
+                    Menu menu = Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity());
+                    menu.setOrder(order);
+                    return menu;
+                })
+                .collect(Collectors.toList());
+        menuJpaRepository.saveAll(menus);
+
     }
 
     @Transactional

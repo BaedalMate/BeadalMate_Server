@@ -1,12 +1,12 @@
 package baedalmate.baedalmate.recruit.dto;
 
+import baedalmate.baedalmate.recruit.dto.MenuDto;
 import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.recruit.domain.Platform;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,4 +41,6 @@ public class UpdateRecruitDto {
     private Boolean freeShipping;
     @Schema(description = "태그")
     private List<TagDto> tags;
+    @Schema(description = "메뉴")
+    private List<MenuDto> menu;
 }
