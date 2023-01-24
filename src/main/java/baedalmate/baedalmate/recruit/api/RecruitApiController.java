@@ -197,6 +197,7 @@ public class RecruitApiController {
             @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(value = "except_close", defaultValue = "false") Boolean exceptClose,
             @PageableDefault(size = 10)
             @Parameter(hidden = true)
             @SortDefault.SortDefaults({
@@ -204,13 +205,12 @@ public class RecruitApiController {
             })
                     Pageable pageable) {
 
-        Page<RecruitDto> recruits;
-
-        if (categoryId == null) {
-            recruits = recruitService.findAllRecruitDto(principalDetails.getId(), pageable);
-        } else {
-            recruits = recruitService.findAllByCategory(principalDetails.getId(), categoryId, pageable);
-        }
+        Page<RecruitDto> recruits = recruitService.findAllByCategory(
+                principalDetails.getId(),
+                categoryId,
+                pageable,
+                exceptClose
+        );
 
         RecruitListWithLastDto response = new RecruitListWithLastDto(recruits.getContent(), recruits.isLast());
 
