@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface MenuJpaRepository extends JpaRepository<Menu, Long> {
     @Modifying(clearAutomatically = true)
-    @Query("delete from Menu m where m.order = :orderId")
+    @Query("delete from Menu m where m.order.id = :orderId")
     void deleteByOrderId(@Param("orderId") Long orderId);
 }
