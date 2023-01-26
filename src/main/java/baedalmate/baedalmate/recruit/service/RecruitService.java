@@ -191,8 +191,8 @@ public class RecruitService {
         if (updateRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
         }
+        tagJpaRepository.deleteByRecruitId(recruitId);
         if (updateRecruitDto.getTags().size() > 0) {
-            tagJpaRepository.deleteByRecruitId(recruitId);
             List<Tag> tags = updateRecruitDto.getTags().stream()
                     .map(t -> {
 

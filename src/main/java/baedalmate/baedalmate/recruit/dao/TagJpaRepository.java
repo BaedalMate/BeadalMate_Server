@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface TagJpaRepository extends JpaRepository<Tag, Long> {
     @Modifying(clearAutomatically = true)
-    @Query("delete from Tag t where t in " +
-            "(select t from Recruit r join r.tags t where r.id = :id)")
-    void deleteByRecruitId(@Param("id") Long recruitId);
+    @Query("delete from Tag t where t.recruit.id = :recruitId")
+    void deleteByRecruitId(@Param("recruitId") Long recruitId);
 }
