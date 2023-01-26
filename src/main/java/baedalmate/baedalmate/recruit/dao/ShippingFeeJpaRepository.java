@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ShippingFeeJpaRepository extends JpaRepository<ShippingFee, Long> {
     @Modifying(clearAutomatically = true)
-    @Query("delete from ShippingFee sf where sf in " +
-            "(select sf from Recruit r join r.shippingFees sf where r.id = :id)")
+    @Query("delete from ShippingFee sf where sf.recruit.id = :id")
     void deleteByRecruitId(@Param("id") Long recruitId);
 }
