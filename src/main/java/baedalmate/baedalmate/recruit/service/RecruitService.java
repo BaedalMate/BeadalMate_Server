@@ -173,7 +173,7 @@ public class RecruitService {
         }
 
         Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
-        recruit.setCategory(category);
+        category.addRecruit(recruit);
         PlaceDto placeDto = updateRecruitDto.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
         recruit.setPlace(place);
@@ -182,7 +182,6 @@ public class RecruitService {
         recruit.setMinPrice(updateRecruitDto.getMinPrice());
         recruit.setMinPeople(updateRecruitDto.getMinPeople());
         recruit.setFreeShipping(updateRecruitDto.getFreeShipping());
-
         recruit.setPlatform(updateRecruitDto.getPlatform());
         recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
         recruit.setTitle(updateRecruitDto.getTitle());
