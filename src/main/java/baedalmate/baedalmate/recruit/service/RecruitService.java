@@ -173,7 +173,8 @@ public class RecruitService {
         }
 
         Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
-        recruit.setCategory(category);
+//        recruit.setCategory(category);
+        category.addRecruit(recruit);
         PlaceDto placeDto = updateRecruitDto.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
         recruit.setPlace(place);
