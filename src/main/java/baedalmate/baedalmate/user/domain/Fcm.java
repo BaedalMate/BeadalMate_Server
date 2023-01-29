@@ -1,8 +1,11 @@
 package baedalmate.baedalmate.user.domain;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class Fcm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
