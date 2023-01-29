@@ -1,7 +1,6 @@
 package baedalmate.baedalmate.user.domain;
 
 import baedalmate.baedalmate.block.domain.Block;
-import baedalmate.baedalmate.notification.domain.Notification;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
