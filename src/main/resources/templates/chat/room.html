@@ -18,6 +18,7 @@
     <div class="row">
         <div class="col-md-12">
             <h3>채팅방 리스트</h3>
+            <h2>{{token}}</h2>
         </div>
     </div>
     <div class="input-group">
@@ -30,9 +31,9 @@
         </div>
     </div>
     <ul class="list-group">
-        <li class="list-group-item list-group-item-action" v-for="item in chatrooms" v-bind:key="item.roomId"
-            v-on:click="enterRoom(item.id)">
-            {{item.id}}
+        <li class="list-group-item list-group-item-action" v-for="item in chatrooms" v-bind:key="item.chatRoomId"
+            v-on:click="enterRoom(item.chatRoomId, token)">
+            {{item.chatRoomId}}
             {{item.lastMessage.message}}
         </li>
     </ul>
@@ -62,7 +63,7 @@
                         Authorization: this.token
                     }
                 })
-                .then(response => { this.chatrooms = response.data.rooms; });
+                .then(response => { console.log(response); this.chatrooms = response.data.rooms; });
             },
             createRoom: function() {
                 if("" === this.room_name) {
@@ -82,12 +83,13 @@
                         .catch( response => { alert("채팅방 개설에 실패하였습니다."); } );
                 }
             },
-            enterRoom: function(roomId) {
+            enterRoom: function(chatRoomId, token) {
                 var senderId = prompt('유저 id를 입력해 주세요.');
                 if(senderId !== "") {
+                    localStorage.setItem('wschat.token', token);
                     localStorage.setItem('wschat.senderId',senderId);
-                    localStorage.setItem('wschat.roomId',roomId);
-                    location.href="/chat/room/enter/"+roomId;
+                    localStorage.setItem('wschat.chatRoomId',chatRoomId);
+                    location.href="/chat/room/enter/"+chatRoomId;
                 }
             }
         }
