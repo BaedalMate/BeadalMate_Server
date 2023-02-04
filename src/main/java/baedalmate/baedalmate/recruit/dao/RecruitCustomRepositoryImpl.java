@@ -456,7 +456,6 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .from(recruit).distinct()
                 .join(recruit.user)
                 .leftJoin(recruit.orders)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
                 .where(recruit.user.id.eq(userId))
                 .fetchCount();
 
@@ -480,7 +479,6 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .from(recruit).distinct()
                 .join(recruit.user)
                 .leftJoin(recruit.orders)
-                .where(recruit.cancel.eq(false), recruit.fail.eq(false))
                 .where(recruit.user.id.eq(userId))
                 .orderBy(recruit.createDate.desc())
                 .offset(pageable.getOffset())
