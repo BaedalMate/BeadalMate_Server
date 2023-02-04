@@ -1,6 +1,5 @@
 package baedalmate.baedalmate.recruit.dto;
 
-import baedalmate.baedalmate.recruit.api.RecruitApiController;
 import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.recruit.domain.Platform;

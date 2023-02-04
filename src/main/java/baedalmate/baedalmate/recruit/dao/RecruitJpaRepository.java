@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.recruit.dao;
 
+import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.recruit.domain.Recruit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,18 +45,28 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long>, Recr
     void setCancelTrueAndActiveFalse(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false, r.cancel = true where r.active = true and r.cancel = false and r.criteria <> baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
-    void setCancelTrueFromRecruitExceedTime(@Param("date") LocalDateTime date);
-
-    @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false where r.active = true and r.cancel = false and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
+    @Query("update Recruit r set r.active = false " +
+            "where r.active = true and r.cancel = false and r.fail = false and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
     void setActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false, r.fail = true where r.active = true and r.cancel = false and r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
+    @Query("update Recruit r set r.active = false, r.fail = true " +
+            "where r.active = true and r.cancel = false and r.fail = false and r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
     void setFailTrueAndActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.active = false, r.cancel = true where r.active = true and r.user.id = :userId")
     void setCancelTrueByUserId(@Param("userId") Long userId);
+
+    @Query("select distinct r from Recruit r " +
+            "where r.active = true and r.cancel = false " +
+            "and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME " +
+            "and r.deadlineDate < :date")
+    List<Recruit> findAllByDeadlineDateAndCriteriaDate(@Param("date") LocalDateTime date);
+
+    @Query("select distinct r from Recruit r " +
+            "where r.active = true and r.cancel = false " +
+            "and r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME " +
+            "and r.deadlineDate < :date")
+    List<Recruit> findAllByDeadlineDateAndCriteriaNotDate(@Param("date") LocalDateTime date);
 }

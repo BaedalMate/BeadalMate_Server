@@ -15,7 +15,9 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,15 +56,22 @@ public class FcmService {
 
 
     // 알림 보내기
-    public void sendByTokenList(List<String> tokenList, String title, String description, String image) {
+    public void sendByTokenList(List<String> tokenList, String title, String description, String image, String type, Long chatRoomId) {
 
         // 메시지 만들기
+
+        Map<String, String> data = new HashMap<>();
+        data.put("time", LocalDateTime.now().toString());
+        data.put("image", image);
+        data.put("type", type);
+        if(chatRoomId != null) {
+            data.put("chatRoomId", chatRoomId.toString());
+        }
         List<Message> messages = tokenList.stream().map(token -> Message.builder()
-                .putData("time", LocalDateTime.now().toString())
+                .putAllData(data)
                 .setNotification(new Notification(title, description))
                 .setToken(token)
                 .build()).collect(Collectors.toList());
-
         // 요청에 대한 응답을 받을 response
         BatchResponse response;
         try {
