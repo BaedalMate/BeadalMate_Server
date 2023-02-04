@@ -53,6 +53,8 @@ public class Recruit {
 
     private boolean freeShipping;
 
+    private LocalDateTime deactiveDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

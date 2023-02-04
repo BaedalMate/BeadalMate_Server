@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,7 +78,7 @@ public class OrderService {
         recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() - previousPrice + currentPrice, recruit.getId());
         // 마감 기준 체크
         if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
-            recruitJpaRepository.setActiveFalse(recruit.getId());
+            recruitJpaRepository.setActiveFalse(recruit.getId(), LocalDateTime.now());
         }
         List<Fcm> fcmList = new ArrayList<>();
         fcmList.addAll(recruit.getUser().getFcms());
@@ -164,7 +165,7 @@ public class OrderService {
 
         // 마감 기준 체크
         if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() == recruit.getMinPeople()) {
-            recruitJpaRepository.setActiveFalse(recruit.getId());
+            recruitJpaRepository.setActiveFalse(recruit.getId(), LocalDateTime.now());
             List<Fcm> fcmList = new ArrayList<>();
             for(User u : users) {
                 fcmList.addAll(u.getFcms());
@@ -176,7 +177,7 @@ public class OrderService {
                     recruit.getImage(),
                     fcmList));
         } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
-            recruitJpaRepository.setActiveFalse(recruit.getId());
+            recruitJpaRepository.setActiveFalse(recruit.getId(), LocalDateTime.now());
             List<Fcm> fcmList = new ArrayList<>();
             for(User u : users) {
                 fcmList.addAll(u.getFcms());

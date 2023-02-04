@@ -58,6 +58,7 @@ public class RecruitService {
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
     private final OrderRepository orderRepository;
     private final BlockJpaRepository blockJpaRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final MenuJpaRepository menuJpaRepository;
 
     public Page<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
@@ -297,7 +298,7 @@ public class RecruitService {
                 "모집이 취소되었습니다.",
                 recruit.getImage(),
                 fcmList));
-        recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId);
+        recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId, LocalDateTime.now());
     }
 
     @Transactional
@@ -318,7 +319,7 @@ public class RecruitService {
         if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
-        recruitJpaRepository.setActiveFalse(recruitId);
+        recruitJpaRepository.setActiveFalse(recruitId, LocalDateTime.now());
     }
 
     @Transactional
