@@ -32,6 +32,9 @@ public class ChatRoomRecruitDetailDto {
     @Schema(description = "모집글 마감날짜", example = "2022-12-5 11:11:11")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime deadlineDate;
+    @Schema(description = "모집글 비활성날짜", example = "2022-12-5 11:11:11")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime deactivateDate;
     @Schema(description = "모집글 활성화 여부", example = "true | false")
     private boolean active;
     @Schema(description = "모집글 취소 여부", example = "true | false")

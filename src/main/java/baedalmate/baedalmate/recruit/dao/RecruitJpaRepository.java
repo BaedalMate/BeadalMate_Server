@@ -37,20 +37,20 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long>, Recr
     int reduceCurrentPeople(@Param("id") Long recruitId);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false where r.id = :id")
-    void setActiveFalse(@Param("id") Long recruitId);
+    @Query("update Recruit r set r.active = false, r.deactivateDate = :date where r.id = :id")
+    void setActiveFalse(@Param("id") Long recruitId, @Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.cancel = true, r.active = false where r.id = :id")
-    void setCancelTrueAndActiveFalse(@Param("id") Long recruitId);
+    @Query("update Recruit r set r.cancel = true, r.active = false, r.deactivateDate = :date where r.id = :id")
+    void setCancelTrueAndActiveFalse(@Param("id") Long recruitId, @Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false " +
+    @Query("update Recruit r set r.active = false, r.deactivateDate = :date  " +
             "where r.active = true and r.cancel = false and r.fail = false and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
     void setActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Recruit r set r.active = false, r.fail = true " +
+    @Query("update Recruit r set r.active = false, r.fail = true, r.deactivateDate = :date  " +
             "where r.active = true and r.cancel = false and r.fail = false and r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
     void setFailTrueAndActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
