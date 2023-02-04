@@ -1,12 +1,12 @@
 package baedalmate.baedalmate.recruit.dto;
 
+import baedalmate.baedalmate.recruit.dto.MenuDto;
 import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.recruit.domain.Platform;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class UpdateRecruitDto {
     private Integer minPrice;
     @Schema(description = "최소 인원", example = "3")
     private Integer minPeople;
-    @Schema(description = "배달팁", example = "3000")
+    @Schema(description = "배달팁")
     private List<ShippingFeeDto> shippingFee;
     @Schema(description = "쿠폰 사용 금액", example = "3000")
     private Integer coupon;
@@ -41,4 +41,6 @@ public class UpdateRecruitDto {
     private Boolean freeShipping;
     @Schema(description = "태그")
     private List<TagDto> tags;
+    @Schema(description = "메뉴")
+    private List<MenuDto> menu;
 }

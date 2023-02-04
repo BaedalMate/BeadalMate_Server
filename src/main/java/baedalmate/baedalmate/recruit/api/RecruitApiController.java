@@ -43,7 +43,7 @@ public class RecruitApiController {
 
     @Operation(summary = "태그로 모집글 검색")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListResponseDto.class))),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListWithLastAndCount.class))),
     })
     @GetMapping(value = "/recruit/search")
     @CustomPageableAsQueryParam
@@ -146,7 +146,7 @@ public class RecruitApiController {
                             }
                     )),
     })
-    @PatchMapping(value = "/recruit/{id}")
+    @PutMapping(value = "/recruit/{id}")
     public ResponseEntity<Map<String, Object>> updateRecruit(
             @AuthUser PrincipalDetails principalDetails,
             @RequestBody UpdateRecruitDto updateRecruitDto,
@@ -197,6 +197,7 @@ public class RecruitApiController {
             @AuthUser PrincipalDetails principalDetails,
             @Parameter(description = "카테고리별 조회")
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(value = "except_close", defaultValue = "false") Boolean exceptClose,
             @PageableDefault(size = 10)
             @Parameter(hidden = true)
             @SortDefault.SortDefaults({
@@ -204,13 +205,12 @@ public class RecruitApiController {
             })
                     Pageable pageable) {
 
-        Page<RecruitDto> recruits;
-
-        if (categoryId == null) {
-            recruits = recruitService.findAllRecruitDto(principalDetails.getId(), pageable);
-        } else {
-            recruits = recruitService.findAllByCategory(principalDetails.getId(), categoryId, pageable);
-        }
+        Page<RecruitDto> recruits = recruitService.findAllByCategory(
+                principalDetails.getId(),
+                categoryId,
+                pageable,
+                exceptClose
+        );
 
         RecruitListWithLastDto response = new RecruitListWithLastDto(recruits.getContent(), recruits.isLast());
 
