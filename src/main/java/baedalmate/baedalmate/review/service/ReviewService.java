@@ -6,8 +6,6 @@ import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.recruit.dao.RecruitRepository;
 import baedalmate.baedalmate.recruit.domain.Recruit;
-import baedalmate.baedalmate.recruit.dto.ParticipantDto;
-import baedalmate.baedalmate.recruit.dto.ParticipantsDto;
 import baedalmate.baedalmate.review.dao.ReviewJpaRepository;
 import baedalmate.baedalmate.review.domain.Review;
 import baedalmate.baedalmate.review.dto.CreateReviewDto;

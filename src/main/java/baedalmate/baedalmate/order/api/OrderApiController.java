@@ -42,7 +42,7 @@ public class OrderApiController {
 
     @Operation(summary = "메뉴 수정")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "참여 취소 성공",
+            @ApiResponse(responseCode = "200", description = "메뉴 수정 성공",
                     content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
             @ApiResponse(
                     responseCode = "400",

@@ -51,27 +51,32 @@
     var vm = new Vue({
         el: '#app',
         data: {
-            roomId: '',
+            chatRoomId: '',
             room: {},
             sender: '',
             message: '',
             messages: []
         },
         created() {
-            this.roomId = localStorage.getItem('wschat.roomId');
+            this.token = localStorage.getItem('wschat.token');
+            this.chatRoomId = localStorage.getItem('wschat.chatRoomId');
             this.senderId = localStorage.getItem('wschat.senderId');
             this.findRoom();
         },
         methods: {
             findRoom: function() {
-                axios.get('/api/v1/room/'+this.roomId).then(response => {
+                axios.get('/api/v1/room/'+this.chatRoomId,{
+                    headers: {
+                        Authorization: this.token
+                    }
+                }).then(response => {
                     this.room = response.data;
                     this.messages = response.data.messages;
                 });
                 console.log(response.data);
             },
             sendMessage: function() {
-                ws.send("/app/chat/message", {}, JSON.stringify({roomId:this.roomId, senderId:this.senderId, message:this.message}));
+                ws.send("/app/chat/message", {}, JSON.stringify({chatRoomId:this.chatRoomId, senderId:this.senderId, message:this.message}));
                 this.message = '';
             },
             recvMessage: function(recv) {
@@ -100,6 +105,29 @@
     }
     connect();
 
+</script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDspf5Exnm_2Ticbx4jhF8ocnhZFxhcVyk",
+    authDomain: "baedalmate-bc331.firebaseapp.com",
+    projectId: "baedalmate-bc331",
+    storageBucket: "baedalmate-bc331.appspot.com",
+    messagingSenderId: "219881756238",
+    appId: "1:219881756238:web:080a2a9141a832b4c4551f",
+    measurementId: "G-BNDQ26DG8N"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
 </script>
 </body>
 </html>

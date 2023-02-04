@@ -60,6 +60,9 @@ public class User {
     @OneToMany(mappedBy = "target")
     private List<Block> blocked = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Fcm> fcms = new ArrayList<>();
+
     @CreationTimestamp
     private Timestamp createDate;
     @UpdateTimestamp
@@ -97,5 +100,10 @@ public class User {
     public void addBlock(Block block) {
         blocks.add(block);
         block.setUser(this);
+    }
+
+    public void addFcm(Fcm fcm) {
+        fcms.add(fcm);
+        fcm.setUser(this);
     }
 }

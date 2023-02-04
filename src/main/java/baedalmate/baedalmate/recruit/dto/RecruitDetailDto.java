@@ -25,7 +25,7 @@ public class RecruitDetailDto {
     private String description;
     @Schema(description = "배달 가게 정보")
     private PlaceDto place;
-    @Schema(description = "배달 플랫폼(BAEMIN | YOGIYO | COUPANG | ETC)", example = "BAEMIN")
+    @Schema(description = "배달 플랫폼(BAEMIN | YOGIYO | COUPANG | DDANGYO | ETC)", example = "BAEMIN")
     private String platform;
     @Schema(description = "마감 시간", example = "2020-12-24T16:28:27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")

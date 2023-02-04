@@ -15,7 +15,7 @@ public class MessageDto {
     //채팅방 ID
     @Schema(description = "채팅방 id")
     @NotNull
-    private Long roomId;
+    private Long chatRoomId;
     //보내는 사람
     @Schema(description = "보낸사람 id")
     @NotNull

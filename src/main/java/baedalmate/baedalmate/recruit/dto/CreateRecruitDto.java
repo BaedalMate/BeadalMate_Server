@@ -1,6 +1,5 @@
 package baedalmate.baedalmate.recruit.dto;
 
-import baedalmate.baedalmate.recruit.api.RecruitApiController;
 import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.recruit.domain.Platform;
@@ -38,7 +37,7 @@ public class CreateRecruitDto {
     @Schema(description = "쿠폰 사용 금액", example = "3000")
     @NotNull
     private Integer coupon;
-    @Schema(description = "배달앱", example = "BAEMIN | YOGIYO | COUPANG | ETC")
+    @Schema(description = "배달앱", example = "BAEMIN | YOGIYO | COUPANG | DDANGYO | ETC")
     @NotNull
     private Platform platform;
     @Schema(description = "마감 시간", example = "2020-12-24T16:28:27")

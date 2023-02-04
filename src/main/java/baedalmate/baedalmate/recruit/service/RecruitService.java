@@ -9,6 +9,9 @@ import baedalmate.baedalmate.category.service.CategoryImageService;
 import baedalmate.baedalmate.chat.domain.ChatRoom;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
 import baedalmate.baedalmate.errors.exceptions.*;
+import baedalmate.baedalmate.fcm.event.CancelEvent;
+import baedalmate.baedalmate.fcm.event.CloseEvent;
+import baedalmate.baedalmate.fcm.event.FailEvent;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dao.OrderRepository;
 import baedalmate.baedalmate.order.domain.Menu;
@@ -18,10 +21,12 @@ import baedalmate.baedalmate.recruit.domain.*;
 import baedalmate.baedalmate.recruit.domain.embed.Place;
 import baedalmate.baedalmate.recruit.dto.*;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
+import baedalmate.baedalmate.user.domain.Fcm;
 import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.user.dto.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -231,7 +236,34 @@ public class RecruitService {
 
     @Transactional
     public void closeBySchedule() {
-//        recruitJpaRepository.setCancelTrueFromRecruitExceedTime(LocalDateTime.now());
+        List<Recruit> closedRecruitList = recruitJpaRepository.findAllByDeadlineDateAndCriteriaDate(LocalDateTime.now());
+        for(Recruit r : closedRecruitList) {
+            List<User> users = r.getOrders().stream().map(o -> o.getUser()).collect(Collectors.toList());
+            List<Fcm> fcmList = new ArrayList<>();
+            for(User u : users) {
+                fcmList.addAll(u.getFcms());
+            }
+            eventPublisher.publishEvent(new CloseEvent(
+                    r.getChatRoom().getId(),
+                    r.getTitle(),
+                    "모집이 마감되었습니다.",
+                    r.getImage(),
+                    fcmList));
+        }
+        List<Recruit> failedRecruitList  = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
+        for(Recruit r : failedRecruitList) {
+            List<User> users = r.getOrders().stream().map(o -> o.getUser()).collect(Collectors.toList());
+            List<Fcm> fcmList = new ArrayList<>();
+            for(User u : users) {
+                fcmList.addAll(u.getFcms());
+            }
+            eventPublisher.publishEvent(new FailEvent(
+                    r.getChatRoom().getId(),
+                    r.getTitle(),
+                    "모집에 실패하였습니다.",
+                    r.getImage(),
+                    fcmList));
+        }
         recruitJpaRepository.setActiveFalseFromRecruitExceedTime(LocalDateTime.now());
         recruitJpaRepository.setFailTrueAndActiveFalseFromRecruitExceedTime(LocalDateTime.now());
     }
@@ -254,7 +286,17 @@ public class RecruitService {
         if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
-//        recruitJpaRepository.setActiveFalse(recruitId);
+        List<User> users = recruit.getOrders().stream().map(o -> o.getUser()).collect(Collectors.toList());
+        List<Fcm> fcmList = new ArrayList<>();
+        for(User u : users) {
+            fcmList.addAll(u.getFcms());
+        }
+        eventPublisher.publishEvent(new CancelEvent(
+                recruit.getChatRoom().getId(),
+                recruit.getTitle(),
+                "모집이 취소되었습니다.",
+                recruit.getImage(),
+                fcmList));
         recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId);
     }
 
