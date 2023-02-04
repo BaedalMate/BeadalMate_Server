@@ -64,6 +64,7 @@ public class ChatRoomService {
                 recruit.getMinPrice(),
                 recruit.getMinPeople(),
                 recruit.getDeadlineDate(),
+                recruit.getDeactivateDate(),
                 recruit.isActive(),
                 recruit.isCancel(),
                 recruit.isFail()
