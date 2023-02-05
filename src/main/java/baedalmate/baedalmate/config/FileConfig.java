@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 class FileConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/home/ec2-user/baedalmate/config/**")
-                .addResourceLocations("file:///home/ec2-user/baedalmate/config/");
+        registry.addResourceHandler("/")
+                .addResourceLocations("file:///");
     }
 }
