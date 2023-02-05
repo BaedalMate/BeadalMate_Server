@@ -201,6 +201,10 @@ public class Recruit {
         this.currentPeople = currentPeople;
     }
 
+    public void setDeactivateDate(LocalDateTime deactivateDate) {
+        this.deactivateDate = deactivateDate;
+    }
+
     //== 연관관계 편의 메서드 ==//
     public void addOrder(Order order) {
         orders.add(order);

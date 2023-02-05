@@ -12,6 +12,8 @@ import baedalmate.baedalmate.errors.exceptions.*;
 import baedalmate.baedalmate.fcm.event.CancelEvent;
 import baedalmate.baedalmate.fcm.event.CloseEvent;
 import baedalmate.baedalmate.fcm.event.FailEvent;
+import baedalmate.baedalmate.notification.dao.NotificationJpaRepository;
+import baedalmate.baedalmate.notification.domain.Notification;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dao.OrderRepository;
 import baedalmate.baedalmate.order.domain.Menu;
@@ -20,6 +22,7 @@ import baedalmate.baedalmate.recruit.dao.*;
 import baedalmate.baedalmate.recruit.domain.*;
 import baedalmate.baedalmate.recruit.domain.embed.Place;
 import baedalmate.baedalmate.recruit.dto.*;
+import baedalmate.baedalmate.user.dao.FcmJpaRepository;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.Fcm;
 import baedalmate.baedalmate.user.domain.User;
@@ -60,6 +63,8 @@ public class RecruitService {
     private final BlockJpaRepository blockJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final MenuJpaRepository menuJpaRepository;
+    private final FcmJpaRepository fcmJpaRepository;
+    private final NotificationJpaRepository notificationJpaRepository;
 
     public Page<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
         Page<HostedRecruitDto> hostedRecruitDtos = recruitJpaRepository.findAllHostedRecruitDtoByUserIdUsingJoin(pageable, userId);
@@ -239,11 +244,17 @@ public class RecruitService {
     public void closeBySchedule() {
         List<Recruit> closedRecruitList = recruitJpaRepository.findAllByDeadlineDateAndCriteriaDate(LocalDateTime.now());
         for(Recruit r : closedRecruitList) {
-            List<User> users = r.getOrders().stream().map(o -> o.getUser()).collect(Collectors.toList());
-            List<Fcm> fcmList = new ArrayList<>();
-            for(User u : users) {
-                fcmList.addAll(u.getFcms());
-            }
+            List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
+            List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+            List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                    .map(u -> Notification.createNotification(
+                            r.getTitle(),
+                            "모집이 마감되었습니다.",
+                            r.getImage(),
+                            r.getChatRoom().getId(),
+                            u))
+                    .collect(Collectors.toList());
+            notificationJpaRepository.saveAll(notifications);
             eventPublisher.publishEvent(new CloseEvent(
                     r.getChatRoom().getId(),
                     r.getTitle(),
@@ -253,11 +264,17 @@ public class RecruitService {
         }
         List<Recruit> failedRecruitList  = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
         for(Recruit r : failedRecruitList) {
-            List<User> users = r.getOrders().stream().map(o -> o.getUser()).collect(Collectors.toList());
-            List<Fcm> fcmList = new ArrayList<>();
-            for(User u : users) {
-                fcmList.addAll(u.getFcms());
-            }
+            List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
+            List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+            List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                    .map(u -> Notification.createNotification(
+                            r.getTitle(),
+                            "모집에 실패하였습니다.",
+                            r.getImage(),
+                            r.getChatRoom().getId(),
+                            u))
+                    .collect(Collectors.toList());
+            notificationJpaRepository.saveAll(notifications);
             eventPublisher.publishEvent(new FailEvent(
                     r.getChatRoom().getId(),
                     r.getTitle(),
@@ -274,7 +291,7 @@ public class RecruitService {
         // 유저조회
         User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
-        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+        Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
 
@@ -287,11 +304,17 @@ public class RecruitService {
         if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
-        List<User> users = recruit.getOrders().stream().map(o -> o.getUser()).collect(Collectors.toList());
-        List<Fcm> fcmList = new ArrayList<>();
-        for(User u : users) {
-            fcmList.addAll(u.getFcms());
-        }
+        List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
+        List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+        List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        recruit.getTitle(),
+                        "모집이 취소되었습니다.",
+                        recruit.getImage(),
+                        recruit.getChatRoom().getId(),
+                        u))
+                .collect(Collectors.toList());
+        notificationJpaRepository.saveAll(notifications);
         eventPublisher.publishEvent(new CancelEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
@@ -306,7 +329,7 @@ public class RecruitService {
         // 유저조회
         User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
-        Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
+        Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
 
@@ -320,6 +343,23 @@ public class RecruitService {
             throw new InvalidApiRequestException("Already closed recruit");
         }
         recruitJpaRepository.setActiveFalse(recruitId, LocalDateTime.now());
+        List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
+        List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+        List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        recruit.getTitle(),
+                        "모집이 마감되었습니다.",
+                        recruit.getImage(),
+                        recruit.getChatRoom().getId(),
+                        u))
+                .collect(Collectors.toList());
+        notificationJpaRepository.saveAll(notifications);
+        eventPublisher.publishEvent(new CloseEvent(
+                recruit.getChatRoom().getId(),
+                recruit.getTitle(),
+                "모집이 마감되었습니다.",
+                recruit.getImage(),
+                fcmList));
     }
 
     @Transactional

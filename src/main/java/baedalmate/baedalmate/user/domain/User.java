@@ -1,6 +1,7 @@
 package baedalmate.baedalmate.user.domain;
 
 import baedalmate.baedalmate.block.domain.Block;
+import baedalmate.baedalmate.notification.domain.Notification;
 import baedalmate.baedalmate.recruit.domain.Dormitory;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
@@ -61,6 +62,9 @@ public class User {
     private List<Block> blocked = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    private List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
     private List<Fcm> fcms = new ArrayList<>();
 
     @CreationTimestamp
@@ -105,5 +109,10 @@ public class User {
     public void addFcm(Fcm fcm) {
         fcms.add(fcm);
         fcm.setUser(this);
+    }
+
+    public void addNotification(Notification notification) {
+        notifications.add(notification);
+        notification.setUser(this);
     }
 }

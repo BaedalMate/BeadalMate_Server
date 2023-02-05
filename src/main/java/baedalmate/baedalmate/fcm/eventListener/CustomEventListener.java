@@ -2,6 +2,8 @@ package baedalmate.baedalmate.fcm.eventListener;
 
 import baedalmate.baedalmate.fcm.event.*;
 import baedalmate.baedalmate.fcm.service.FcmService;
+import baedalmate.baedalmate.notification.domain.Notification;
+import baedalmate.baedalmate.user.dao.FcmJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CustomEventListener {
     private final FcmService fcmService;
+    private final FcmJpaRepository fcmJpaRepository;
 
     @EventListener
     public void handleChatEvent(ChatEvent chatEvent) {
@@ -28,7 +31,6 @@ public class CustomEventListener {
         List<String> fcmTokenList = chatEvent.getFcmList()
                 .stream()
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
-
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
             fcmService.sendByTokenList(fcmTokenList, chatEvent.getTitle(), chatEvent.getMessage(), chatEvent.getImage(), "chat", chatEvent.getChatRoomId());
@@ -56,7 +58,6 @@ public class CustomEventListener {
         List<String> fcmTokenList = failEvent.getFcmList()
                 .stream()
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
-
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
             fcmService.sendByTokenList(fcmTokenList, failEvent.getTitle(), failEvent.getDescription(), failEvent.getImage(), "fail", failEvent.getChatRoomId());
@@ -70,7 +71,10 @@ public class CustomEventListener {
         List<String> fcmTokenList = cancelEvent.getFcmList()
                 .stream()
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
-
+        List<Notification> notifications = fcmJpaRepository.findByFcmTokenList(fcmTokenList).stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        cancelEvent.getTitle(), cancelEvent.getDescription(), cancelEvent.getImage(), cancelEvent.getChatRoomId(), u))
+                .collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
             fcmService.sendByTokenList(fcmTokenList, cancelEvent.getTitle(), cancelEvent.getDescription(), cancelEvent.getImage(), "cancel", cancelEvent.getChatRoomId());
@@ -84,7 +88,6 @@ public class CustomEventListener {
         List<String> fcmTokenList = participateEvent.getFcmList()
                 .stream()
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
-
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
             fcmService.sendByTokenList(fcmTokenList, participateEvent.getTitle(), participateEvent.getDescription(), participateEvent.getImage(), "participate", participateEvent.getChatRoomId());
@@ -98,7 +101,10 @@ public class CustomEventListener {
         List<String> fcmTokenList = menuEvent.getFcmList()
                 .stream()
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
-
+        List<Notification> notifications = fcmJpaRepository.findByFcmTokenList(fcmTokenList).stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        menuEvent.getTitle(), menuEvent.getDescription(), menuEvent.getImage(), menuEvent.getChatRoomId(), u))
+                .collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
             fcmService.sendByTokenList(fcmTokenList, menuEvent.getTitle(), menuEvent.getDescription(), menuEvent.getImage(), "menu", menuEvent.getChatRoomId());
@@ -111,7 +117,10 @@ public class CustomEventListener {
         List<String> fcmTokenList = withdrawalEvent.getFcmList()
                 .stream()
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
-
+        List<Notification> notifications = fcmJpaRepository.findByFcmTokenList(fcmTokenList).stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        withdrawalEvent.getTitle(), withdrawalEvent.getDescription(), withdrawalEvent.getImage(), withdrawalEvent.getChatRoomId(), u))
+                .collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
             fcmService.sendByTokenList(fcmTokenList, withdrawalEvent.getTitle(), withdrawalEvent.getDescription(), withdrawalEvent.getImage(), "withdrawal", withdrawalEvent.getChatRoomId());
