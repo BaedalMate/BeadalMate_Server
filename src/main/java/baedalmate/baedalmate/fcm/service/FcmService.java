@@ -11,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ public class FcmService {
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(
                             GoogleCredentials
-                                    .fromStream(new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream())
+//                                    .fromStream(new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream())
+                                    .fromStream(new FileInputStream(FCM_PRIVATE_KEY_PATH))
                                     .createScoped(List.of(fireBaseScope)))
                     .build();
             if (FirebaseApp.getApps().isEmpty()) {
