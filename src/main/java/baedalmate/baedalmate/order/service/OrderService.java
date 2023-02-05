@@ -9,6 +9,8 @@ import baedalmate.baedalmate.errors.exceptions.ExistOrderException;
 import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
 import baedalmate.baedalmate.fcm.event.CloseEvent;
 import baedalmate.baedalmate.fcm.event.ParticipateEvent;
+import baedalmate.baedalmate.notification.dao.NotificationJpaRepository;
+import baedalmate.baedalmate.notification.domain.Notification;
 import baedalmate.baedalmate.order.dto.OrderDto;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.dto.MenuDto;
@@ -19,6 +21,7 @@ import baedalmate.baedalmate.recruit.domain.Criteria;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
+import baedalmate.baedalmate.user.dao.FcmJpaRepository;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
 import baedalmate.baedalmate.user.domain.Fcm;
 import baedalmate.baedalmate.user.domain.User;
@@ -44,6 +47,8 @@ public class OrderService {
     private final MessageJpaRepository messageJpaRepository;
     private final MenuJpaRepository menuJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final FcmJpaRepository fcmJpaRepository;
+    private final NotificationJpaRepository notificationJpaRepository;
 
     public List<Order> findByRecruitId(Long recruitId) {
         return orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
@@ -52,7 +57,7 @@ public class OrderService {
     @Transactional
     public void updateOrder(Long userId, OrderDto orderDto) {
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, orderDto.getRecruitId());
-        if(order == null) {
+        if (order == null) {
             throw new InvalidApiRequestException("User is not participant");
         }
         Recruit recruit = order.getRecruit();
@@ -80,8 +85,18 @@ public class OrderService {
         if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
             recruitJpaRepository.setActiveFalse(recruit.getId(), LocalDateTime.now());
         }
-        List<Fcm> fcmList = new ArrayList<>();
-        fcmList.addAll(recruit.getUser().getFcms());
+        List<Long> userIdList = new ArrayList<>();
+        userIdList.add(recruit.getUser().getId());
+        List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+        List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        recruit.getTitle(),
+                        "참가자가 메뉴를 변경했습니다.",
+                        recruit.getImage(),
+                        recruit.getChatRoom().getId(),
+                        u))
+                .collect(Collectors.toList());
+        notificationJpaRepository.saveAll(notifications);
         eventPublisher.publishEvent(new ParticipateEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
@@ -96,18 +111,29 @@ public class OrderService {
 
         Recruit recruit = order.getRecruit();
         // 현재 인원 감소
-        recruitJpaRepository.reduceCurrentPeople(recruit.getId());
         int price = 0;
         List<Menu> menus = order.getMenus();
         for (Menu menu : menus) {
             price += menu.getPrice();
         }
         // 현재 금액 감소
-        recruitJpaRepository.updateCurrentPrice(recruit.getCurrentPrice() - price, recruit.getId());
+        recruit.setCurrentPeople(recruit.getCurrentPeople() - 1);
+        recruit.setCurrentPrice(recruit.getCurrentPrice() - price);
+        recruitJpaRepository.save(recruit);
         // order 삭제
         orderJpaRepository.delete(order);
-        List<Fcm> fcmList = new ArrayList<>();
-        fcmList.addAll(recruit.getUser().getFcms());
+        List<Long> userIdList = new ArrayList<>();
+        userIdList.add(recruit.getUser().getId());
+        List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+        List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        recruit.getTitle(),
+                        "참가자가 모집을 나갔습니다.",
+                        recruit.getImage(),
+                        recruit.getChatRoom().getId(),
+                        u))
+                .collect(Collectors.toList());
+        notificationJpaRepository.saveAll(notifications);
         eventPublisher.publishEvent(new ParticipateEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
@@ -161,15 +187,22 @@ public class OrderService {
         // current people 갱신
         recruit.setCurrentPeople(recruit.getCurrentPeople() + 1);
 
-        recruitJpaRepository.save(recruit);
-
+        users.add(user);
         // 마감 기준 체크
         if (recruit.getCriteria() == Criteria.NUMBER && recruit.getCurrentPeople() == recruit.getMinPeople()) {
-            recruitJpaRepository.setActiveFalse(recruit.getId(), LocalDateTime.now());
-            List<Fcm> fcmList = new ArrayList<>();
-            for(User u : users) {
-                fcmList.addAll(u.getFcms());
-            }
+            recruit.setActive(false);
+            recruit.setDeactivateDate(LocalDateTime.now());
+            List<Long> userIdList = users.stream().map(u -> u.getId()).collect(Collectors.toList());
+            List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+            List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                    .map(u -> Notification.createNotification(
+                            recruit.getTitle(),
+                            "모집이 마감되었습니다.",
+                            recruit.getImage(),
+                            recruit.getChatRoom().getId(),
+                            u))
+                    .collect(Collectors.toList());
+            notificationJpaRepository.saveAll(notifications);
             eventPublisher.publishEvent(new CloseEvent(
                     recruit.getChatRoom().getId(),
                     recruit.getTitle(),
@@ -177,11 +210,19 @@ public class OrderService {
                     recruit.getImage(),
                     fcmList));
         } else if (recruit.getCriteria() == Criteria.PRICE && recruit.getCurrentPrice() >= recruit.getMinPrice()) {
-            recruitJpaRepository.setActiveFalse(recruit.getId(), LocalDateTime.now());
-            List<Fcm> fcmList = new ArrayList<>();
-            for(User u : users) {
-                fcmList.addAll(u.getFcms());
-            }
+            recruit.setActive(false);
+            recruit.setDeactivateDate(LocalDateTime.now());
+            List<Long> userIdList = users.stream().map(u -> u.getId()).collect(Collectors.toList());
+            List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+            List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                    .map(u -> Notification.createNotification(
+                            recruit.getTitle(),
+                            "모집이 마감되었습니다.",
+                            recruit.getImage(),
+                            recruit.getChatRoom().getId(),
+                            u))
+                    .collect(Collectors.toList());
+            notificationJpaRepository.saveAll(notifications);
             eventPublisher.publishEvent(new CloseEvent(
                     recruit.getChatRoom().getId(),
                     recruit.getTitle(),
@@ -189,14 +230,25 @@ public class OrderService {
                     recruit.getImage(),
                     fcmList));
         }
+        recruitJpaRepository.save(recruit);
+
         // 입장 메세지 생성
         ChatRoom chatRoom = chatRoomJpaRepository.findByRecruitId(orderDto.getRecruitId());
 
         Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
-
         messageJpaRepository.save(message);
-        List<Fcm> fcmList = new ArrayList<>();
-        fcmList.addAll(recruit.getUser().getFcms());
+        List<Long> userIdList = new ArrayList<>();
+        userIdList.add(recruit.getUser().getId());
+        List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+        List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+                .map(u -> Notification.createNotification(
+                        recruit.getTitle(),
+                        "모집에 참가하였습니다.",
+                        recruit.getImage(),
+                        recruit.getChatRoom().getId(),
+                        u))
+                .collect(Collectors.toList());
+        notificationJpaRepository.saveAll(notifications);
         eventPublisher.publishEvent(new ParticipateEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),

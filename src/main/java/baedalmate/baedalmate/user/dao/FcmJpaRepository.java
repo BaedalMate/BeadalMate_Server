@@ -18,4 +18,10 @@ public interface FcmJpaRepository extends JpaRepository<Fcm, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Fcm f set f.fcmToken = :fcmToken where f.user.id = :userId and f.deviceCode = :deviceCode")
     void updateFcmTokenByUserIdAndDeviceCode(@Param("userId") Long userId, @Param("deviceCode") String deviceCode, @Param("fcmToken") String fcmToken);
+
+    @Query("select f from Fcm f where f.fcmToken in :fcmList")
+    List<Fcm> findByFcmTokenList(@Param("fcmList") List<String> fcmList);
+
+    @Query("select f from Fcm f where f.user.id in :userIdList")
+    List<Fcm> findByUserIdList(@Param("userIdList") List<Long> userIdList);
 }
