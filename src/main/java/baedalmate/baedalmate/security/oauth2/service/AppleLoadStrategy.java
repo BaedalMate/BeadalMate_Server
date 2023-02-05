@@ -32,6 +32,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -119,7 +120,8 @@ public class AppleLoadStrategy {
     private PrivateKey getPrivateKey() throws IOException {
         ClassPathResource resource = new ClassPathResource(keyPath);
         log.debug(resource.toString());
-        String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
+//        String privateKey = new String(Files.readAllBytes(Paths.get(resource.getURI())));
+        String privateKey = new String(new FileInputStream(keyPath).readAllBytes());
         Reader pemReader = new StringReader(privateKey);
         PEMParser pemParser = new PEMParser(pemReader);
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
