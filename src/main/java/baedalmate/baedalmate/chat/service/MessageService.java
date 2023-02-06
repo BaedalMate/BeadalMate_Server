@@ -53,7 +53,7 @@ public class MessageService {
         eventPublisher.publishEvent(new ChatEvent(
                 chatRoomId,
                 chatRoom.getRecruit().getTitle(),
-                msg,
+                user.getNickname() + ": " + msg,
                 chatRoom.getRecruit().getImage(),
                 fcmList));
         return message.getId();

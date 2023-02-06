@@ -47,7 +47,7 @@ public class CustomEventListener {
 
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
-            fcmService.sendByTokenList(fcmTokenList, closeEvent.getTitle(), closeEvent.getDescription(), closeEvent.getImage(), "close", closeEvent.getChatRoomId());
+            fcmService.sendByTokenList(fcmTokenList, closeEvent.getTitle(), closeEvent.getDescription(), closeEvent.getImage(), "recruit", closeEvent.getChatRoomId());
         }
     }
 
@@ -60,7 +60,7 @@ public class CustomEventListener {
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
-            fcmService.sendByTokenList(fcmTokenList, failEvent.getTitle(), failEvent.getDescription(), failEvent.getImage(), "fail", failEvent.getChatRoomId());
+            fcmService.sendByTokenList(fcmTokenList, failEvent.getTitle(), failEvent.getDescription(), failEvent.getImage(), "recruit", failEvent.getChatRoomId());
         }
     }
 
@@ -77,7 +77,7 @@ public class CustomEventListener {
                 .collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
-            fcmService.sendByTokenList(fcmTokenList, cancelEvent.getTitle(), cancelEvent.getDescription(), cancelEvent.getImage(), "cancel", cancelEvent.getChatRoomId());
+            fcmService.sendByTokenList(fcmTokenList, cancelEvent.getTitle(), cancelEvent.getDescription(), cancelEvent.getImage(), "recruit", cancelEvent.getChatRoomId());
         }
     }
 
@@ -90,7 +90,7 @@ public class CustomEventListener {
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
-            fcmService.sendByTokenList(fcmTokenList, participateEvent.getTitle(), participateEvent.getDescription(), participateEvent.getImage(), "participate", participateEvent.getChatRoomId());
+            fcmService.sendByTokenList(fcmTokenList, participateEvent.getTitle(), participateEvent.getDescription(), participateEvent.getImage(), "recruit", participateEvent.getChatRoomId());
         }
     }
 
@@ -107,7 +107,7 @@ public class CustomEventListener {
                 .collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
-            fcmService.sendByTokenList(fcmTokenList, menuEvent.getTitle(), menuEvent.getDescription(), menuEvent.getImage(), "menu", menuEvent.getChatRoomId());
+            fcmService.sendByTokenList(fcmTokenList, menuEvent.getTitle(), menuEvent.getDescription(), menuEvent.getImage(), "recruit", menuEvent.getChatRoomId());
         }
     }
     @EventListener
@@ -123,7 +123,7 @@ public class CustomEventListener {
                 .collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
-            fcmService.sendByTokenList(fcmTokenList, withdrawalEvent.getTitle(), withdrawalEvent.getDescription(), withdrawalEvent.getImage(), "withdrawal", withdrawalEvent.getChatRoomId());
+            fcmService.sendByTokenList(fcmTokenList, withdrawalEvent.getTitle(), withdrawalEvent.getDescription(), withdrawalEvent.getImage(), "recruit", withdrawalEvent.getChatRoomId());
         }
     }
 }
