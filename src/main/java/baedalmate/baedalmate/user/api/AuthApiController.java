@@ -38,8 +38,9 @@ public class AuthApiController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(schema = @Schema(implementation = ResultSuccessResponseDto.class))),
     })
-    public ResponseEntity<Map<Object, String>> fakeLogin(
-            @RequestHeader(value = "Authorization") String token
+    public ResponseEntity<Map<Object, String>> fakeLogout(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestHeader(value = "Device-Code") String deviceCode
     ) {
 
         throw new IllegalStateException("This method shouldn't be called. It's implemented by Spring Security filters.");
