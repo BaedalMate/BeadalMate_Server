@@ -24,4 +24,8 @@ public interface FcmJpaRepository extends JpaRepository<Fcm, Long> {
 
     @Query("select f from Fcm f where f.user.id in :userIdList")
     List<Fcm> findByUserIdList(@Param("userIdList") List<Long> userIdList);
+
+    @Modifying(clearAutomatically = true)
+    @Query("delete from Fcm f where f.deviceCode = :deviceCode and f.user.id = :userId")
+    void deleteByDeviceCode(@Param("deviceCode") String deviceCode, @Param("userId") Long userId);
 }
