@@ -21,7 +21,7 @@ public class NotificationService {
     public List<NotificationDto> notificationList(Long userId) {
         List<Notification> notifications = notificationJpaRepository.findAllByUserId(userId);
         List<NotificationDto> notificationDtos = notifications.stream()
-                .map(n -> new NotificationDto(n.getTitle(),n.getBody(),n.getImage(),n.getChatRoomId()))
+                .map(n -> new NotificationDto(n.getTitle(),n.getBody(),n.getImage(),n.getChatRoomId(), n.getCreateDate()))
                 .collect(Collectors.toList());
         return notificationDtos;
     }
