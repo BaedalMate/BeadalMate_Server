@@ -605,7 +605,7 @@ public class RecruitService {
     public List<MainPageRecruitDtoWithTag> findAllWithTag(Long userId, Pageable pageable) {
         User user = userJpaRepository.findById(userId).get();
         if (user.getDormitory() == null) {
-            throw new ResourceNotFoundException();
+            throw new InvalidApiRequestException("Set dormitory.");
         }
         return recruitRepository.findAllWithTagsUsingJoinOrderByDeadlineDate(user.getDormitory(), pageable, userId)
                 .stream().map(r -> {
