@@ -59,7 +59,7 @@ public class RecruitRepository {
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
                         "and r.user.role != 'deactivate' " +
-                        "order by r.user.score DESC", Recruit.class)
+                        "order by r.active DESC, r.user.score DESC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -77,7 +77,7 @@ public class RecruitRepository {
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
                         "and r.user.role != 'deactivate' " +
-                        "order by r.deadlineDate ASC", Recruit.class)
+                        "order by r.active DESC, r.deadlineDate ASC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -95,7 +95,7 @@ public class RecruitRepository {
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
                         "and r.user.role != 'deactivate' " +
-                        "order by r.createDate DESC", Recruit.class)
+                        "order by r.active DESC, r.createDate DESC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
@@ -113,7 +113,7 @@ public class RecruitRepository {
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
                         "and r.user.role != 'deactivate' " +
-                        "order by r.deadlineDate ASC", Recruit.class)
+                        "order by r.active DESC, r.deadlineDate ASC", Recruit.class)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
                 .setMaxResults(pageable.getPageSize())
