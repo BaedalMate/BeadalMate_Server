@@ -85,7 +85,7 @@ public class RecruitCustomRepositoryImpl implements RecruitCustomRepository {
                 .where(recruitCategory(categoryId))
                 .where(recruit.user.blocked.size().eq(0).or(recruit.user.blocked.any().user.id.ne(userId)))
                 .where(recruit.user.blocks.size().eq(0).or(recruit.user.blocks.any().target.id.ne(userId).or(recruit.user.blocks.any().target.id.isNull())))
-                .orderBy(recruitSort(pageable))
+                .orderBy(recruit.active.desc(), recruitSort(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
