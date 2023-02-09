@@ -133,7 +133,7 @@ public class RecruitRepository {
                         "and (rubdu.id != :userId or rubdu.id is null) " +
                         "and (rubst.id != :userId or rubst.id is null) " +
                         "and r.user.role != 'deactivate' " +
-                        "order by r.deadlineDate ASC", Recruit.class)
+                        "order by r.active DESC, r.deadlineDate ASC", Recruit.class)
                 .setParameter("dormitory", dormitory)
                 .setParameter("userId", userId)
                 .setFirstResult(pageable.getPageNumber())
