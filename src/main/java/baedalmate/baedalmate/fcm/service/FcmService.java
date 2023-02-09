@@ -62,11 +62,11 @@ public class FcmService {
         // 메시지 만들기
         // fcm multiMessage 객체 생성 하여 보냄
         MulticastMessage message = MulticastMessage.builder()
-                .putData("fcm_type", "NOTIFICATION") // 알람 종류 타입
                 .putData("title", title)
                 .putData("body", description)
                 .putData("image", image)
                 .putData("chatRoomId", chatRoomId.toString())
+                .putData("type", type)
                 .setAndroidConfig(AndroidConfig.builder().setPriority(AndroidConfig.Priority.HIGH).build())
                 .addAllTokens(tokenList)
 //                .addToken(token)  // 단일 토큰일 경우
