@@ -172,8 +172,19 @@ public class RecruitApiController {
                             examples = {
                                     @ExampleObject(name = "필수 정보 누락",
                                             value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
+                                    @ExampleObject(name = "최소 인원 설정",
+                                            value = "{\"code\": 400, \"message\": \"Number of min people must be more than 1\"}"),
+                                    @ExampleObject(name = "태그 개수 제한",
+                                            value = "{\"code\": 400, \"message\": \"Number of tag must be less than 5\"}"),
+                                    @ExampleObject(name = "태그 길이 제한",
+                                            value = "{\"code\": 400, \"message\": \"Length of tag must be less than 9\"}"),
+                                    @ExampleObject(name = "호스트가 아닌 경우",
+                                            value = "{\"code\": 400, \"message\": \"Not host\"}"),
+                                    @ExampleObject(name = "등록한 메뉴의 금액이 이미 최소금액을 넘긴 경우",
+                                            value = "{\"code\": 400, \"message\": \"Current price is bigger than min price\"}"),
                             }
                     )),
+
     })
     @PostMapping(value = "/recruit/new")
     public ResponseEntity<RecruitIdDto> createRecruit(
