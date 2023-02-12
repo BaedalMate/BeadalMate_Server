@@ -364,6 +364,9 @@ public class RecruitService {
 
     @Transactional
     public Long create(Long userId, CreateRecruitDto createRecruitDto) {
+        if(createRecruitDto.getMinPeople()<=1) {
+            throw new InvalidApiRequestException("Number of min people must be more than 1");
+        }
         // 유저조회
         User user = userJpaRepository.findById(userId).get();
 
@@ -441,7 +444,10 @@ public class RecruitService {
         // current price 갱신
         int price = 0;
         for (MenuDto menuDto : createRecruitDto.getMenu()) {
-            price += menuDto.getPrice();
+            price += menuDto.getPrice() * menuDto.getQuantity();
+        }
+        if(price >= createRecruitDto.getMinPrice()) {
+            throw new InvalidApiRequestException("Current price is bigger than min price");
         }
         recruitJpaRepository.updateCurrentPrice(price, recruit.getId());
 
