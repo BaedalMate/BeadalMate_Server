@@ -84,20 +84,4 @@ public class AuthApiController {
 
         return authService.refresh(token.substring(7, token.length()), refreshToken);
     }
-
-    @Operation(summary = "fcm 토큰 등록")
-    @PostMapping("/api/v1/fcm")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "fcm 토큰 성공")
-    })
-    public ResponseEntity<Map<String, Object>> fcmToken(
-            @Parameter(description = "fcm token") @RequestHeader(value = "Fcm-Token") String fcmToken,
-            @Parameter(description = "기기 정보") @RequestHeader(value = "Device-Code") String deviceCode,
-            @AuthUser PrincipalDetails principalDetails) {
-
-        authService.updateFcm(principalDetails.getId(), fcmToken, deviceCode);
-        Map<String, Object> response = new HashMap<>();
-        response.put("result", "success");
-        return ResponseEntity.ok().body(response);
-    }
 }

@@ -1,5 +1,11 @@
 package baedalmate.baedalmate.fcm.service;
 
+import baedalmate.baedalmate.errors.exceptions.InvalidApiRequestException;
+import baedalmate.baedalmate.fcm.dto.FcmAllowDto;
+import baedalmate.baedalmate.user.dao.FcmJpaRepository;
+import baedalmate.baedalmate.user.dao.UserJpaRepository;
+import baedalmate.baedalmate.user.domain.Fcm;
+import baedalmate.baedalmate.user.domain.User;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -9,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
@@ -24,6 +31,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class FcmService {
+
+    private final FcmJpaRepository fcmJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Value("${fcm.key.path}")
     private String FCM_PRIVATE_KEY_PATH;
@@ -121,4 +131,40 @@ public class FcmService {
 //        }
 //        log.info("======================= Success : " + response + "=======================");
 //    }
+
+    @Transactional
+    public void saveOrGetFcm(Long userId, String fcmToken, String deviceCode) {
+        Fcm fcm = fcmJpaRepository.findAllByUserIdAndDeviceCode(userId, deviceCode);
+        if(fcm == null) {
+            User user = userJpaRepository.findById(userId).get();
+            fcm = Fcm.createFcm(user, fcmToken, deviceCode);
+            fcmJpaRepository.save(fcm);
+        } else {
+            fcmJpaRepository.updateFcmTokenByUserIdAndDeviceCode(userId, deviceCode, fcmToken);
+        }
+    }
+
+    @Transactional
+    public FcmAllowDto updateFcm(Long userId, String deviceCode, Boolean allowChat, Boolean allowRecruit) {
+        Fcm fcm = fcmJpaRepository.findAllByUserIdAndDeviceCode(userId, deviceCode);
+        if(fcm == null) {
+            throw new InvalidApiRequestException("Fcm token doesn't exist");
+        }
+        if(allowChat != null) {
+            fcm.setallowChat(allowChat);
+        }
+        if(allowRecruit != null) {
+            fcm.setallowRecruit(allowRecruit);
+        }
+        fcmJpaRepository.save(fcm);
+        return new FcmAllowDto(fcm.isAllowChat(), fcm.isAllowRecruit());
+    }
+
+    public FcmAllowDto findOne(Long userId, String deviceCode) {
+        Fcm fcm = fcmJpaRepository.findAllByUserIdAndDeviceCode(userId, deviceCode);
+        if(fcm == null) {
+            throw new InvalidApiRequestException("Fcm token doesn't exist");
+        }
+        return new FcmAllowDto(fcm.isAllowChat(), fcm.isAllowRecruit());
+    }
 }
