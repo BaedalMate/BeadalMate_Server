@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/refresh", "/login").permitAll()
                 .antMatchers("/swagger-ui/**", "/chat/room/**").permitAll()
 //                .antMatchers("/api/v1/**").authenticated()
-                .antMatchers("/api/v1/user/**", "/api/v1/fcm").hasAnyAuthority("ROLE_GUEST", "ROLE_USER")
+                .antMatchers("/api/v1/user/**", "/api/v1/fcm/**").hasAnyAuthority("ROLE_GUEST", "ROLE_USER")
                 .antMatchers("/api/v1/recruit/**", "/api/v1/order/**","/api/v1/review/**", "/api/v1/chat/**").hasAuthority("ROLE_USER")
                 .and()
                 .exceptionHandling()

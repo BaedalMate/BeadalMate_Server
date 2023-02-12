@@ -76,7 +76,7 @@
                 console.log(response.data);
             },
             sendMessage: function() {
-                ws.send("/app/chat/message", {}, JSON.stringify({chatRoomId:this.chatRoomId, senderId:this.senderId, message:this.message}));
+                ws.send("/app/chat/message", {}, JSON.stringify({roomId:this.chatRoomId, senderId:this.senderId, message:this.message}));
                 this.message = '';
             },
             recvMessage: function(recv) {
@@ -88,7 +88,7 @@
     function connect() {
         // pub/sub event
         ws.connect({}, function(frame) {
-            ws.subscribe("/topic/chat/room/"+vm.$data.roomId, function(message) {
+            ws.subscribe("/topic/chat/room/"+vm.$data.chatRoomId, function(message) {
                 var recv = JSON.parse(message.body);
                 vm.recvMessage(recv);
             });

@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface ChatRoomJpaRepository extends JpaRepository<ChatRoom, Long> {
 
-    @Query("select cr from ChatRoom cr join fetch cr.recruit join fetch cr.messages where cr.id = :id")
+    @Query("select cr from ChatRoom cr join cr.recruit where cr.id = :id")
     ChatRoom findOne(@Param("id") Long id);
 
     @Query("select cr from ChatRoom cr join fetch cr.recruit join fetch cr.messages where cr.recruit.id = :id")

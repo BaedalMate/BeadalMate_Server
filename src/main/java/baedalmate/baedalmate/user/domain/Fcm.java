@@ -14,6 +14,8 @@ public class Fcm {
 
     private String deviceCode;
     private String fcmToken;
+    private boolean allowRecruit = false;
+    private boolean allowChat = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -36,5 +38,13 @@ public class Fcm {
     //== setter ==//
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setallowChat(boolean allowChat) {
+        this.allowChat = allowChat;
+    }
+
+    public void setallowRecruit(boolean allowRecruit) {
+        this.allowRecruit = allowRecruit;
     }
 }
