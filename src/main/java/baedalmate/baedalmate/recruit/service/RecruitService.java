@@ -245,7 +245,7 @@ public class RecruitService {
         List<Recruit> closedRecruitList = recruitJpaRepository.findAllByDeadlineDateAndCriteriaDate(LocalDateTime.now());
         for(Recruit r : closedRecruitList) {
             List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-            List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
             List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                     .map(u -> Notification.createNotification(
                             r.getTitle(),
@@ -265,7 +265,7 @@ public class RecruitService {
         List<Recruit> failedRecruitList  = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
         for(Recruit r : failedRecruitList) {
             List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-            List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
             List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                     .map(u -> Notification.createNotification(
                             r.getTitle(),
@@ -305,7 +305,7 @@ public class RecruitService {
             throw new InvalidApiRequestException("Already closed recruit");
         }
         List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-        List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),
@@ -344,7 +344,7 @@ public class RecruitService {
         }
         recruitJpaRepository.setActiveFalse(recruitId, LocalDateTime.now());
         List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-        List<Fcm> fcmList = fcmJpaRepository.findByUserIdList(userIdList);
+        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),

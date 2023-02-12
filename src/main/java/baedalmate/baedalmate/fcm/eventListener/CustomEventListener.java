@@ -71,10 +71,6 @@ public class CustomEventListener {
         List<String> fcmTokenList = cancelEvent.getFcmList()
                 .stream()
                 .map(f -> f.getFcmToken()).collect(Collectors.toList());
-        List<Notification> notifications = fcmJpaRepository.findByFcmTokenList(fcmTokenList).stream().map(f -> f.getUser()).distinct()
-                .map(u -> Notification.createNotification(
-                        cancelEvent.getTitle(), cancelEvent.getDescription(), cancelEvent.getImage(), cancelEvent.getChatRoomId(), u))
-                .collect(Collectors.toList());
         // 로그아웃 안한 대상에게 알림 보내기
         if (fcmTokenList.size() != 0) {
             fcmService.sendByTokenList(fcmTokenList, cancelEvent.getTitle(), cancelEvent.getDescription(), cancelEvent.getImage(), "recruit", cancelEvent.getChatRoomId());
