@@ -22,8 +22,8 @@ public interface FcmJpaRepository extends JpaRepository<Fcm, Long> {
     @Query("select f from Fcm f where f.fcmToken in :fcmList")
     List<Fcm> findByFcmTokenList(@Param("fcmList") List<String> fcmList);
 
-    @Query("select f from Fcm f where f.user.id in :userIdList and allowRecruit = true")
-    List<Fcm> findAllByUserIdListAndAllowRecruitTrue(@Param("userIdList") List<Long> userIdList);
+    @Query("select f from Fcm f where f.user.id in :userIdList")
+    List<Fcm> findAllByUserIdList(@Param("userIdList") List<Long> userIdList);
 
     @Query("select f from Fcm f where f.user.id in :userIdList and allowChat = true")
     List<Fcm> findAllByUserIdListAndAllowChatTrue(@Param("userIdList") List<Long> userIdList);

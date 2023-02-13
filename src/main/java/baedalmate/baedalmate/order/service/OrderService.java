@@ -88,7 +88,7 @@ public class OrderService {
         }
         List<Long> userIdList = new ArrayList<>();
         userIdList.add(recruit.getUser().getId());
-        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
+        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),
@@ -98,6 +98,8 @@ public class OrderService {
                         u))
                 .collect(Collectors.toList());
         notificationJpaRepository.saveAll(notifications);
+        fcmList = fcmList.stream().filter(f -> f.isAllowRecruit())
+                .collect(Collectors.toList());
         eventPublisher.publishEvent(new MenuEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
@@ -125,7 +127,7 @@ public class OrderService {
         orderJpaRepository.delete(order);
         List<Long> userIdList = new ArrayList<>();
         userIdList.add(recruit.getUser().getId());
-        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
+        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),
@@ -135,6 +137,8 @@ public class OrderService {
                         u))
                 .collect(Collectors.toList());
         notificationJpaRepository.saveAll(notifications);
+        fcmList = fcmList.stream().filter(f -> f.isAllowRecruit())
+                .collect(Collectors.toList());
         eventPublisher.publishEvent(new ParticipateEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
@@ -194,7 +198,7 @@ public class OrderService {
             recruit.setActive(false);
             recruit.setDeactivateDate(LocalDateTime.now());
             List<Long> userIdList = users.stream().map(u -> u.getId()).collect(Collectors.toList());
-            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
+            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
             List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                     .map(u -> Notification.createNotification(
                             recruit.getTitle(),
@@ -204,6 +208,8 @@ public class OrderService {
                             u))
                     .collect(Collectors.toList());
             notificationJpaRepository.saveAll(notifications);
+            fcmList = fcmList.stream().filter(f -> f.isAllowRecruit())
+                    .collect(Collectors.toList());
             eventPublisher.publishEvent(new CloseEvent(
                     recruit.getChatRoom().getId(),
                     recruit.getTitle(),
@@ -214,7 +220,7 @@ public class OrderService {
             recruit.setActive(false);
             recruit.setDeactivateDate(LocalDateTime.now());
             List<Long> userIdList = users.stream().map(u -> u.getId()).collect(Collectors.toList());
-            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
+            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
             List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                     .map(u -> Notification.createNotification(
                             recruit.getTitle(),
@@ -224,6 +230,8 @@ public class OrderService {
                             u))
                     .collect(Collectors.toList());
             notificationJpaRepository.saveAll(notifications);
+            fcmList = fcmList.stream().filter(f -> f.isAllowRecruit())
+                    .collect(Collectors.toList());
             eventPublisher.publishEvent(new CloseEvent(
                     recruit.getChatRoom().getId(),
                     recruit.getTitle(),
@@ -240,7 +248,7 @@ public class OrderService {
         messageJpaRepository.save(message);
         List<Long> userIdList = new ArrayList<>();
         userIdList.add(recruit.getUser().getId());
-        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
+        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),
@@ -250,6 +258,8 @@ public class OrderService {
                         u))
                 .collect(Collectors.toList());
         notificationJpaRepository.saveAll(notifications);
+        fcmList = fcmList.stream().filter(f -> f.isAllowRecruit())
+                .collect(Collectors.toList());
         eventPublisher.publishEvent(new ParticipateEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),

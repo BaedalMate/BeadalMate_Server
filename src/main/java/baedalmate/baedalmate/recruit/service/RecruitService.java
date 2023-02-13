@@ -15,7 +15,6 @@ import baedalmate.baedalmate.fcm.event.FailEvent;
 import baedalmate.baedalmate.notification.dao.NotificationJpaRepository;
 import baedalmate.baedalmate.notification.domain.Notification;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
-import baedalmate.baedalmate.order.dao.OrderRepository;
 import baedalmate.baedalmate.order.domain.Menu;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.dao.*;
@@ -59,7 +58,6 @@ public class RecruitService {
     private final CategoryImageService categoryImageService;
     private final ChatRoomService chatRoomService;
     private final ShippingFeeJpaRepository shippingFeeJpaRepository;
-    private final OrderRepository orderRepository;
     private final BlockJpaRepository blockJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final MenuJpaRepository menuJpaRepository;
@@ -67,18 +65,15 @@ public class RecruitService {
     private final NotificationJpaRepository notificationJpaRepository;
 
     public Page<HostedRecruitDto> findHostedRecruit(Long userId, Pageable pageable) {
-        Page<HostedRecruitDto> hostedRecruitDtos = recruitJpaRepository.findAllHostedRecruitDtoByUserIdUsingJoin(pageable, userId);
-        return hostedRecruitDtos;
+        return recruitJpaRepository.findAllHostedRecruitDtoByUserIdUsingJoin(pageable, userId);
     }
 
     public Page<ParticipatedRecruitDto> findParticipatedRecruit(Long userId, Pageable pageable) {
-        Page<ParticipatedRecruitDto> participatedRecruits = recruitJpaRepository.findAllParticipatedRecruitDtoByUserIdUsingJoin(pageable, userId);
-        return participatedRecruits;
+        return recruitJpaRepository.findAllParticipatedRecruitDtoByUserIdUsingJoin(pageable, userId);
     }
 
     public Page<RecruitDto> findAllByTag(Long userId, String keyword, Pageable pageable) {
-        Page<RecruitDto> recruits = recruitJpaRepository.findAllByTagUsingJoin(keyword, pageable, userId);
-        return recruits;
+        return recruitJpaRepository.findAllByTagUsingJoin(keyword, pageable, userId);
     }
 
     public MyMenuDto getMyMenu(Long userId, Long recruitId) {
@@ -104,7 +99,7 @@ public class RecruitService {
         Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
         List<ParticipantMenuDto> participants = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId)
                 .stream().map(o -> {
-                    if (o.getUser().getId() == userId) {
+                    if (o.getUser().getId().equals(userId)) {
                         participate.set(true);
                     }
                     AtomicInteger t = new AtomicInteger(0);
@@ -113,7 +108,7 @@ public class RecruitService {
                         return new MenuDto(m.getName(), m.getPrice(), m.getQuantity());
                     }).collect(Collectors.toList());
                     total.addAndGet(t.get());
-                    if (o.getUser().getId() == userId) {
+                    if (o.getUser().getId().equals(userId)) {
                         participate.set(true);
                         myTotal.set(t.get());
                     }
@@ -125,7 +120,7 @@ public class RecruitService {
                             t.get());
                 })
                 .collect(Collectors.toList());
-        if (participate.get() == false) {
+        if (!participate.get()) {
             throw new InvalidApiRequestException("User is not participant");
         }
 
@@ -148,17 +143,14 @@ public class RecruitService {
         List<Block> blocks = blockJpaRepository.findAllByUserIdUsingJoinWithTarget(userId);
         List<ParticipantDto> participants = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId)
                 .stream().map(o -> {
-                    if (o.getUser().getId() == userId) {
+                    if (o.getUser().getId().equals(userId)) {
                         participate.set(true);
                     }
-                    boolean block = false;
-                    if (blocks.stream().anyMatch(b -> b.getTarget().getId() == o.getUser().getId())) {
-                        block = true;
-                    }
+                    boolean block = blocks.stream().anyMatch(b -> b.getTarget().getId().equals(o.getUser().getId()));
                     return new ParticipantDto(o.getUser().getId(), o.getUser().getNickname(), o.getUser().getProfileImage(), block);
                 })
                 .collect(Collectors.toList());
-        if (participate.get() == false) {
+        if (!participate.get()) {
             throw new InvalidApiRequestException("User is not participant");
         }
         return new ParticipantsDto(recruitId, participants);
@@ -173,7 +165,7 @@ public class RecruitService {
 
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
 
-        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+        boolean host = recruit.getUser().getId().equals(user.getId());
 
         if (!host) {
             throw new InvalidApiRequestException("Not host");
@@ -245,8 +237,8 @@ public class RecruitService {
         List<Recruit> closedRecruitList = recruitJpaRepository.findAllByDeadlineDateAndCriteriaDate(LocalDateTime.now());
         for(Recruit r : closedRecruitList) {
             List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
-            List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
+            List<Notification> notifications = fcmList.stream().map(Fcm::getUser).distinct()
                     .map(u -> Notification.createNotification(
                             r.getTitle(),
                             "모집이 마감되었습니다.",
@@ -255,6 +247,9 @@ public class RecruitService {
                             u))
                     .collect(Collectors.toList());
             notificationJpaRepository.saveAll(notifications);
+            fcmList = fcmList.stream().filter(Fcm::isAllowRecruit)
+                    .collect(Collectors.toList());
+
             eventPublisher.publishEvent(new CloseEvent(
                     r.getChatRoom().getId(),
                     r.getTitle(),
@@ -265,8 +260,8 @@ public class RecruitService {
         List<Recruit> failedRecruitList  = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
         for(Recruit r : failedRecruitList) {
             List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
-            List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
+            List<Notification> notifications = fcmList.stream().map(Fcm::getUser).distinct()
                     .map(u -> Notification.createNotification(
                             r.getTitle(),
                             "모집에 실패하였습니다.",
@@ -275,6 +270,8 @@ public class RecruitService {
                             u))
                     .collect(Collectors.toList());
             notificationJpaRepository.saveAll(notifications);
+            fcmList = fcmList.stream().filter(Fcm::isAllowRecruit)
+                    .collect(Collectors.toList());
             eventPublisher.publishEvent(new FailEvent(
                     r.getChatRoom().getId(),
                     r.getTitle(),
@@ -293,7 +290,7 @@ public class RecruitService {
         // Recruit 조회
         Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
 
-        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+        boolean host = recruit.getUser().getId().equals(user.getId());
 
         if (!host) {
             throw new InvalidApiRequestException("Not host");
@@ -305,8 +302,8 @@ public class RecruitService {
             throw new InvalidApiRequestException("Already closed recruit");
         }
         List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
-        List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
+        List<Notification> notifications = fcmList.stream().map(Fcm::getUser).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),
                         "모집이 취소되었습니다.",
@@ -315,6 +312,8 @@ public class RecruitService {
                         u))
                 .collect(Collectors.toList());
         notificationJpaRepository.saveAll(notifications);
+        fcmList = fcmList.stream().filter(Fcm::isAllowRecruit)
+                .collect(Collectors.toList());
         eventPublisher.publishEvent(new CancelEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
@@ -331,7 +330,7 @@ public class RecruitService {
         // Recruit 조회
         Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
 
-        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+        boolean host = recruit.getUser().getId().equals(user.getId());
 
         if (!host) {
             throw new InvalidApiRequestException("Not host");
@@ -344,8 +343,8 @@ public class RecruitService {
         }
         recruitJpaRepository.setActiveFalse(recruitId, LocalDateTime.now());
         List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
-        List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
+        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdList(userIdList);
+        List<Notification> notifications = fcmList.stream().map(Fcm::getUser).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),
                         "모집이 마감되었습니다.",
@@ -354,6 +353,8 @@ public class RecruitService {
                         u))
                 .collect(Collectors.toList());
         notificationJpaRepository.saveAll(notifications);
+        fcmList = fcmList.stream().filter(Fcm::isAllowRecruit)
+                .collect(Collectors.toList());
         eventPublisher.publishEvent(new CloseEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
@@ -415,7 +416,7 @@ public class RecruitService {
                 .map(m -> Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity()))
                 .collect(Collectors.toList());
         Order order = Order.createOrder(user, menus);
-        List<Order> orders = new ArrayList<Order>();
+        List<Order> orders = new ArrayList<>();
         orders.add(order);
 
         // recruit 생성
@@ -464,7 +465,7 @@ public class RecruitService {
         // Recruit 조회
         Recruit recruit = recruitRepository.findByIdUsingJoin(recruitId);
 
-        if (recruit.getUser().getId() != userId) {
+        if (!recruit.getUser().getId().equals(userId)) {
             throw new InvalidApiRequestException("Not host");
         }
 
@@ -529,12 +530,13 @@ public class RecruitService {
                 )
                 .collect(Collectors.toList());
 
-        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
+        boolean host = recruit.getUser().getId().equals(user.getId());
         boolean participate = false;
         List<Order> orders = orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
         for (Order order : orders) {
-            if (order.getUser().getId() == user.getId()) {
+            if (order.getUser().getId().equals(user.getId())) {
                 participate = true;
+                break;
             }
         }
 
@@ -617,8 +619,8 @@ public class RecruitService {
                 .stream().map(r -> {
                             List<Tag> tags = r.getTags();
                             Collections.shuffle(tags);
-                            int size = tags.size() >= 2 ? 2 : tags.size();
-                            List<Tag> subList = new ArrayList<Tag>(tags.subList(0, size));
+                            int size = Math.min(tags.size(), 2);
+                            List<Tag> subList = new ArrayList<>(tags.subList(0, size));
                             return new MainPageRecruitDtoWithTag(
                                     r.getId(),
                                     r.getPlace().getName(),
