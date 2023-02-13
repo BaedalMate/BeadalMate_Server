@@ -40,7 +40,7 @@ public class NoticeApiController {
 
     @Operation(summary = "공지 리스트 조회")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListWithLastAndCount.class))),
+            @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping(value = "/notice")
     public ResponseEntity<NoticeListDto> noticeList() {
@@ -48,9 +48,9 @@ public class NoticeApiController {
         return ResponseEntity.ok().body(response);
     }
 
-    @Operation(summary = "공지 리스트 상세")
+    @Operation(summary = "공지 리스트 상세 조회")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListWithLastAndCount.class))),
+            @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping(value = "/notice/{id}")
     public ResponseEntity<NoticeDetailDto> noticeDetail(
