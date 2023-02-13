@@ -38,7 +38,6 @@ import java.util.Map;
 })
 public class RecruitApiController {
 
-    private final UserService userService;
     private final RecruitService recruitService;
 
     @Operation(summary = "태그로 모집글 검색")
