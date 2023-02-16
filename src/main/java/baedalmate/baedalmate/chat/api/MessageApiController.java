@@ -37,7 +37,6 @@ public class MessageApiController {
     private final UserService userService;
     private final ChatRoomService chatRoomService;
     private final FcmJpaRepository fcmJpaRepository;
-    private final NotificationJpaRepository notificationJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final OrderJpaRepository orderJpaRepository;
     @MessageMapping("/chat/message")

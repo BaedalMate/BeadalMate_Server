@@ -59,6 +59,7 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long>, Recr
     void setCancelTrueByUserId(@Param("userId") Long userId);
 
     @Query("select distinct r from Recruit r " +
+            "join r.orders " +
             "where r.active = true and r.cancel = false " +
             "and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME " +
             "and r.deadlineDate < :date")

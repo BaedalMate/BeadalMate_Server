@@ -243,7 +243,12 @@ public class RecruitService {
     @Transactional
     public void closeBySchedule() {
         List<Recruit> closedRecruitList = recruitJpaRepository.findAllByDeadlineDateAndCriteriaDate(LocalDateTime.now());
+        List<Recruit> failedRecruitList  = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
         for(Recruit r : closedRecruitList) {
+            if(r.getOrders().size() == 1) {
+                failedRecruitList.add(r);
+                continue;
+            }
             List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
             List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
             List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
@@ -262,7 +267,6 @@ public class RecruitService {
                     r.getImage(),
                     fcmList));
         }
-        List<Recruit> failedRecruitList  = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
         for(Recruit r : failedRecruitList) {
             List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
             List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
