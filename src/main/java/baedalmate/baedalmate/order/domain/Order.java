@@ -25,7 +25,7 @@ public class Order {
     @JoinColumn(name = "recruit_id")
     private Recruit recruit;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "order", orphanRemoval = true)
     private List<Menu> menus = new ArrayList<>();
 
     //== constructor ==//
