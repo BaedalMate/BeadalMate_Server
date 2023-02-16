@@ -62,10 +62,10 @@ public class Recruit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
     private List<Order> orders = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit", orphanRemoval = true)
     private List<ShippingFee> shippingFees = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit", orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "recruit")
@@ -254,5 +254,13 @@ public class Recruit {
 
     public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
+    }
+
+    public void setShippingFees(List<ShippingFee> shippingFees) {
+        this.shippingFees = shippingFees;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 }

@@ -166,26 +166,20 @@ public class RecruitService {
 
     @Transactional
     public void update(Long userId, Long recruitId, UpdateRecruitDto updateRecruitDto) {
-        // 유저조회
-        User user = userJpaRepository.findById(userId).get();
         // Recruit 조회
         Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
-
-        Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
-
-        boolean host = recruit.getUser().getId() == user.getId() ? true : false;
-
-        if (!host) {
-            throw new InvalidApiRequestException("Not host");
-        }
-
         if (recruit.getCurrentPeople() > 1) {
             throw new InvalidApiRequestException("Someone is participating");
         }
-
+        // 유저조회
+        User user = userJpaRepository.findById(userId).get();
         Category category = categoryJpaRepository.findById(updateRecruitDto.getCategoryId()).get();
-        recruit.setCategory(category);
-//        category.addRecruit(recruit);
+
+        if (recruit.getUser().getId() != user.getId()) {
+            throw new InvalidApiRequestException("Not host");
+        }
+
+        category.addRecruit(recruit);
         PlaceDto placeDto = updateRecruitDto.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
         recruit.setPlace(place);
@@ -194,58 +188,48 @@ public class RecruitService {
         recruit.setMinPrice(updateRecruitDto.getMinPrice());
         recruit.setMinPeople(updateRecruitDto.getMinPeople());
         recruit.setFreeShipping(updateRecruitDto.getFreeShipping());
-
         recruit.setPlatform(updateRecruitDto.getPlatform());
         recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
         recruit.setTitle(updateRecruitDto.getTitle());
         recruit.setDescription(updateRecruitDto.getDescription());
-        recruitJpaRepository.save(recruit);
+
         if (updateRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
         }
-        tagJpaRepository.deleteByRecruitId(recruitId);
-        if (updateRecruitDto.getTags().size() > 0) {
-            List<Tag> tags = updateRecruitDto.getTags().stream()
-                    .map(t -> {
-
-                        Tag tag = Tag.createTag(t.getTagname());
-                        tag.setRecruit(recruit);
-                        return tag;
-                    })
-                    .collect(Collectors.toList());
-            tagJpaRepository.saveAll(tags);
+        if (updateRecruitDto.getTags().size() == 0) {
+            throw new InvalidParameterException("Number of tag must be more than 0");
         }
-        shippingFeeJpaRepository.deleteByRecruitId(recruitId);
-        List<ShippingFee> shippingFees = updateRecruitDto.getShippingFee().stream()
-                .map(sf -> {
-                    ShippingFee shippingFee = ShippingFee.createShippingFee(
-                            sf.getShippingFee(),
-                            sf.getLowerPrice(),
-                            sf.getUpperPrice());
-                    shippingFee.setRecruit(recruit);
-                    return shippingFee;
-                })
-                .collect(Collectors.toList());
-        shippingFeeJpaRepository.saveAll(shippingFees);
 
-        menuJpaRepository.deleteByOrderId(order.getId());
-        List<Menu> menus = updateRecruitDto.getMenu().stream()
-                .map(m -> {
-                    Menu menu = Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity());
-                    menu.setOrder(order);
-                    return menu;
-                })
-                .collect(Collectors.toList());
-        menuJpaRepository.saveAll(menus);
+        recruit.getTags().clear();
+        for (TagDto t : updateRecruitDto.getTags()) {
+            Tag tag = Tag.createTag(t.getTagname());
+            recruit.addTag(tag);
+        }
 
+
+        recruit.getShippingFees().clear();
+        for (ShippingFeeDto sf : updateRecruitDto.getShippingFee()) {
+            ShippingFee shippingFee = ShippingFee.createShippingFee(
+                    sf.getShippingFee(),
+                    sf.getLowerPrice(),
+                    sf.getUpperPrice());
+            recruit.addShippingFee(shippingFee);
+        }
+
+        Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
+        order.getMenus().clear();
+        for(MenuDto m : updateRecruitDto.getMenu()) {
+            Menu menu = Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity());
+            order.addMenu(menu);
+        }
     }
 
     @Transactional
     public void closeBySchedule() {
         List<Recruit> closedRecruitList = recruitJpaRepository.findAllByDeadlineDateAndCriteriaDate(LocalDateTime.now());
-        List<Recruit> failedRecruitList  = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
-        for(Recruit r : closedRecruitList) {
-            if(r.getOrders().size() == 1) {
+        List<Recruit> failedRecruitList = recruitJpaRepository.findAllByDeadlineDateAndCriteriaNotDate(LocalDateTime.now());
+        for (Recruit r : closedRecruitList) {
+            if (r.getOrders().size() == 1) {
                 failedRecruitList.add(r);
                 continue;
             }
@@ -267,7 +251,7 @@ public class RecruitService {
                     r.getImage(),
                     fcmList));
         }
-        for(Recruit r : failedRecruitList) {
+        for (Recruit r : failedRecruitList) {
             List<Long> userIdList = r.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
             List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
             List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
@@ -368,7 +352,7 @@ public class RecruitService {
 
     @Transactional
     public Long create(Long userId, CreateRecruitDto createRecruitDto) {
-        if(createRecruitDto.getMinPeople()<=1) {
+        if (createRecruitDto.getMinPeople() <= 1) {
             throw new InvalidApiRequestException("Number of min people must be more than 1");
         }
         // 유저조회
@@ -450,7 +434,7 @@ public class RecruitService {
         for (MenuDto menuDto : createRecruitDto.getMenu()) {
             price += menuDto.getPrice() * menuDto.getQuantity();
         }
-        if(price >= createRecruitDto.getMinPrice()) {
+        if (price >= createRecruitDto.getMinPrice()) {
             throw new InvalidApiRequestException("Current price is bigger than min price");
         }
         recruitJpaRepository.updateCurrentPrice(price, recruit.getId());
