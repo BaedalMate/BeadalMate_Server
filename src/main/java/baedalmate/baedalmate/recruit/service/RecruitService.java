@@ -423,6 +423,14 @@ public class RecruitService {
         List<Order> orders = new ArrayList<Order>();
         orders.add(order);
 
+        // current price 갱신
+        int price = 0;
+        for (MenuDto menuDto : createRecruitDto.getMenu()) {
+            price += menuDto.getPrice() * menuDto.getQuantity();
+        }
+        if (price >= createRecruitDto.getMinPrice()) {
+            throw new InvalidApiRequestException("Current price is bigger than min price");
+        }
         // recruit 생성
         Recruit recruit = Recruit.createRecruit(
                 user,
@@ -439,25 +447,13 @@ public class RecruitService {
                 createRecruitDto.getDescription(),
                 categoryImage.getName(),
                 createRecruitDto.getFreeShipping(),
+                price,
                 shippingFees,
                 tags,
                 orders
         );
         // recruit 영속화 (cascade -> order, tag, shippingfee, menu 전부 영속화)
         recruitJpaRepository.save(recruit);
-
-        // current price 갱신
-        int price = 0;
-        for (MenuDto menuDto : createRecruitDto.getMenu()) {
-            price += menuDto.getPrice() * menuDto.getQuantity();
-        }
-        if (price >= createRecruitDto.getMinPrice()) {
-            throw new InvalidApiRequestException("Current price is bigger than min price");
-        }
-        recruitJpaRepository.updateCurrentPrice(price, recruit.getId());
-
-        // current people 갱신
-        recruitJpaRepository.updateCurrentPeople(recruit.getId());
 
         // chat room 생성
         ChatRoom chatRoom = ChatRoom.createChatRoom(recruit);

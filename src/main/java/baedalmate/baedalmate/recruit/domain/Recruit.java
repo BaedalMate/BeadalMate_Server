@@ -116,6 +116,7 @@ public class Recruit {
         this.description = description;
         this.image = image;
         this.freeShipping = freeShipping;
+        this.currentPeople = 1;
     }
 
     //== 생성 메서드 ==//
@@ -123,6 +124,7 @@ public class Recruit {
             User user, Category category,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
             Place place, Platform platform, int coupon, String title, String description, String image, boolean freeShipping,
+            int currentPrice,
             List<ShippingFee> shippingFees, List<Tag> tags, List<Order> orders) {
         Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, image, freeShipping);
         user.addRecruit(recruit);
