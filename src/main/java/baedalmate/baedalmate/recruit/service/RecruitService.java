@@ -167,6 +167,9 @@ public class RecruitService {
     @Transactional
     public void update(Long userId, Long recruitId, UpdateRecruitDto updateRecruitDto) {
         // Recruit 조회
+        if (updateRecruitDto.getMinPeople() <= 1) {
+            throw new InvalidApiRequestException("Number of min people must be more than 1");
+        }
         Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
         if (recruit.getCurrentPeople() > 1) {
             throw new InvalidApiRequestException("Someone is participating");
@@ -207,19 +210,26 @@ public class RecruitService {
             recruit.addTag(tag);
         }
 
-
-        recruit.getShippingFees().clear();
-        for (ShippingFeeDto sf : updateRecruitDto.getShippingFee()) {
-            ShippingFee shippingFee = ShippingFee.createShippingFee(
-                    sf.getShippingFee(),
-                    sf.getLowerPrice(),
-                    sf.getUpperPrice());
-            recruit.addShippingFee(shippingFee);
+        if (updateRecruitDto.getFreeShipping().equals(true) && updateRecruitDto.getShippingFee().size() > 0) {
+            throw new InvalidApiRequestException("Free shipping is true but shipping fee list is not empty");
+        }
+        if (updateRecruitDto.getFreeShipping().equals(false) && updateRecruitDto.getShippingFee().size() == 0) {
+            throw new InvalidApiRequestException("Free shipping is false but shipping fee list is empty");
         }
 
+        if (!updateRecruitDto.getFreeShipping().equals(false)) {
+            recruit.getShippingFees().clear();
+            for (ShippingFeeDto sf : updateRecruitDto.getShippingFee()) {
+                ShippingFee shippingFee = ShippingFee.createShippingFee(
+                        sf.getShippingFee(),
+                        sf.getLowerPrice(),
+                        sf.getUpperPrice());
+                recruit.addShippingFee(shippingFee);
+            }
+        }
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
         order.getMenus().clear();
-        for(MenuDto m : updateRecruitDto.getMenu()) {
+        for (MenuDto m : updateRecruitDto.getMenu()) {
             Menu menu = Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity());
             order.addMenu(menu);
         }
@@ -380,8 +390,14 @@ public class RecruitService {
         }
 
         // 배달비 생성
+        if (createRecruitDto.getFreeShipping().equals(true) && createRecruitDto.getShippingFee().size() > 0) {
+            throw new InvalidApiRequestException("Free shipping is true but shipping fee list is not empty");
+        }
+        if (createRecruitDto.getFreeShipping().equals(false) && createRecruitDto.getShippingFee().size() == 0) {
+            throw new InvalidApiRequestException("Free shipping is false but shipping fee list is empty");
+        }
         List<ShippingFee> shippingFees;
-        if (createRecruitDto.getFreeShipping()) { // 무료배달이면 shippingFees는 빈 ArrayList
+        if (createRecruitDto.getFreeShipping().equals(true)) { // 무료배달이면 shippingFees는 빈 ArrayList
             shippingFees = new ArrayList<>();
         } else {
             shippingFees = createRecruitDto.getShippingFee().stream()
