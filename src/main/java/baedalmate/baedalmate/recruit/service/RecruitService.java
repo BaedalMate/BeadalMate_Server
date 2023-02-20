@@ -229,10 +229,16 @@ public class RecruitService {
         }
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
         order.getMenus().clear();
+        int price = 0;
         for (MenuDto m : updateRecruitDto.getMenu()) {
+            price += m.getPrice() * m.getQuantity();
             Menu menu = Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity());
             order.addMenu(menu);
         }
+        if (price >= updateRecruitDto.getMinPrice()) {
+            throw new InvalidApiRequestException("Current price is bigger than min price");
+        }
+        recruit.setCurrentPrice(price);
     }
 
     @Transactional
