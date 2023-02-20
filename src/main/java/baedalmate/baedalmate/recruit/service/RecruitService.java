@@ -192,6 +192,7 @@ public class RecruitService {
         recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
         recruit.setTitle(updateRecruitDto.getTitle());
         recruit.setDescription(updateRecruitDto.getDescription());
+        recruit.setCoupon(updateRecruitDto.getCoupon());
 
         if (updateRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");

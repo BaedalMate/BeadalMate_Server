@@ -205,6 +205,10 @@ public class Recruit {
         this.deactivateDate = deactivateDate;
     }
 
+    public void setCoupon(int coupon) {
+        this.coupon = coupon;
+    }
+
     //== 연관관계 편의 메서드 ==//
     public void addOrder(Order order) {
         orders.add(order);
