@@ -30,12 +30,8 @@ public class RecruitDetailDto {
     @Schema(description = "마감 시간", example = "2020-12-24T16:28:27")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime deadlineDate;
-    @Schema(description = "최소 배달비", example = "3000")
+    @Schema(description = "예상 배달비", example = "3000")
     private int shippingFee;
-    @Schema(description = "배달비 상세")
-    private List<ShippingFeeDto> shippingFeeDetail;
-    @Schema(description = "쿠폰 사용 금액", example = "3000")
-    private int coupon;
     @Schema(description = "모집 현재 인원", example = "2")
     private int currentPeople;
     @Schema(description = "모집 최소 인원", example = "3")
