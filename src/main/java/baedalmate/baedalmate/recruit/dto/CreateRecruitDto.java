@@ -31,12 +31,6 @@ public class CreateRecruitDto {
     @Schema(description = "최소 인원", example = "3")
     @NotNull
     private Integer minPeople;
-    @Schema(description = "배달팁")
-    @NotNull
-    private List<ShippingFeeDto> shippingFee;
-    @Schema(description = "쿠폰 사용 금액", example = "3000")
-    @NotNull
-    private Integer coupon;
     @Schema(description = "배달앱", example = "BAEMIN | YOGIYO | COUPANG | DDANGYO | ETC")
     @NotNull
     private Platform platform;
@@ -51,6 +45,8 @@ public class CreateRecruitDto {
     @Schema(description = "무료 배달 여부", example = "true | false")
     @NotNull
     private Boolean freeShipping;
+    @Schema(description = "예상 배달비", example = "1000")
+    private Integer shippingFee;
     @Schema(description = "메뉴")
     private List<MenuDto> menu;
     @Schema(description = "태그")

@@ -129,18 +129,10 @@ public class RecruitService {
             throw new InvalidApiRequestException("User is not participant");
         }
 
-        int shippingFee = 0;
-        if (!recruit.isFreeShipping()) {
-            for (ShippingFee sf : recruit.getShippingFees()) {
-                if (sf.getLowerPrice() <= total.get()) {
-                    shippingFee = sf.getShippingFee();
-                }
-            }
-        }
+        int shippingFee = recruit.getShippingFee();
         int shippingFeePerParticipant = (int) Math.ceil((double) shippingFee / participants.size());
-        int coupon = (int) Math.floor((double) recruit.getCoupon() / participants.size());
-        int paymentPrice = myTotal.get() + shippingFeePerParticipant - coupon;
-        return new ParticipantsMenuDto(total.get(), participants.size(), participants, myTotal.get(), shippingFee, shippingFeePerParticipant, coupon, paymentPrice);
+        int paymentPrice = myTotal.get() + shippingFeePerParticipant;
+        return new ParticipantsMenuDto(total.get(), participants.size(), participants, myTotal.get(), shippingFee, shippingFeePerParticipant, paymentPrice);
     }
 
     public ParticipantsDto getParticipants(Long userId, Long recruitId) {
@@ -167,6 +159,9 @@ public class RecruitService {
     @Transactional
     public void update(Long userId, Long recruitId, UpdateRecruitDto updateRecruitDto) {
         // Recruit 조회
+        if (updateRecruitDto.getMinPeople() <= 1) {
+            throw new InvalidApiRequestException("Number of min people must be more than 1");
+        }
         Recruit recruit = recruitRepository.findByIdUsingJoinWithOrder(recruitId);
         if (recruit.getCurrentPeople() > 1) {
             throw new InvalidApiRequestException("Someone is participating");
@@ -179,6 +174,13 @@ public class RecruitService {
             throw new InvalidApiRequestException("Not host");
         }
 
+        // 배달비 예외
+        if (updateRecruitDto.getFreeShipping().equals(true) && updateRecruitDto.getShippingFee() != null) {
+            throw new InvalidApiRequestException("Free shipping is true but shipping fee is not null");
+        }
+        if (updateRecruitDto.getFreeShipping().equals(false) && updateRecruitDto.getShippingFee() == null) {
+            throw new InvalidApiRequestException("Free shipping is false but shipping fee is null");
+        }
         category.addRecruit(recruit);
         PlaceDto placeDto = updateRecruitDto.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
@@ -192,6 +194,7 @@ public class RecruitService {
         recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
         recruit.setTitle(updateRecruitDto.getTitle());
         recruit.setDescription(updateRecruitDto.getDescription());
+        recruit.setShippingFee(updateRecruitDto.getShippingFee());
 
         if (updateRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
@@ -205,23 +208,19 @@ public class RecruitService {
             Tag tag = Tag.createTag(t.getTagname());
             recruit.addTag(tag);
         }
-
-
-        recruit.getShippingFees().clear();
-        for (ShippingFeeDto sf : updateRecruitDto.getShippingFee()) {
-            ShippingFee shippingFee = ShippingFee.createShippingFee(
-                    sf.getShippingFee(),
-                    sf.getLowerPrice(),
-                    sf.getUpperPrice());
-            recruit.addShippingFee(shippingFee);
-        }
-
         Order order = orderJpaRepository.findByUserIdAndRecruitIdUsingJoin(userId, recruitId);
         order.getMenus().clear();
-        for(MenuDto m : updateRecruitDto.getMenu()) {
+        int price = 0;
+        for (MenuDto m : updateRecruitDto.getMenu()) {
+            price += m.getPrice() * m.getQuantity();
             Menu menu = Menu.createMenu(m.getName(), m.getPrice(), m.getQuantity());
             order.addMenu(menu);
         }
+        if (price >= updateRecruitDto.getMinPrice()) {
+            throw new InvalidApiRequestException("Current price is bigger than min price");
+        }
+        recruit.setShippingFee(updateRecruitDto.getFreeShipping().equals(true) ? 0 : updateRecruitDto.getShippingFee());
+        recruit.setCurrentPrice(price);
     }
 
     @Transactional
@@ -360,6 +359,9 @@ public class RecruitService {
 
         // 태그 생성
         List<Tag> tags;
+        if (createRecruitDto.getTags().size() == 0) {
+            throw new InvalidParameterException("Number of tag must be more than 0");
+        }
         if (createRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
         }
@@ -378,14 +380,12 @@ public class RecruitService {
             tags = new ArrayList<>();
         }
 
-        // 배달비 생성
-        List<ShippingFee> shippingFees;
-        if (createRecruitDto.getFreeShipping()) { // 무료배달이면 shippingFees는 빈 ArrayList
-            shippingFees = new ArrayList<>();
-        } else {
-            shippingFees = createRecruitDto.getShippingFee().stream()
-                    .map(c -> ShippingFee.createShippingFee(c.getShippingFee(), c.getLowerPrice(), c.getUpperPrice()))
-                    .collect(Collectors.toList());
+        // 배달비 예외
+        if (createRecruitDto.getFreeShipping().equals(true) && createRecruitDto.getShippingFee() != null) {
+            throw new InvalidApiRequestException("Free shipping is true but shipping fee is not null");
+        }
+        if (createRecruitDto.getFreeShipping().equals(false) && createRecruitDto.getShippingFee() == null) {
+            throw new InvalidApiRequestException("Free shipping is false but shipping fee is null");
         }
 
         // place 생성
@@ -406,6 +406,16 @@ public class RecruitService {
         List<Order> orders = new ArrayList<Order>();
         orders.add(order);
 
+        // current price 갱신
+        int price = 0;
+        for (MenuDto menuDto : createRecruitDto.getMenu()) {
+            price += menuDto.getPrice() * menuDto.getQuantity();
+        }
+        if (price >= createRecruitDto.getMinPrice()) {
+            throw new InvalidApiRequestException("Current price is bigger than min price");
+        }
+
+        int shippingFee = createRecruitDto.getFreeShipping().equals(true) ? 0 : createRecruitDto.getShippingFee();
         // recruit 생성
         Recruit recruit = Recruit.createRecruit(
                 user,
@@ -417,30 +427,17 @@ public class RecruitService {
                 createRecruitDto.getDormitory(),
                 place,
                 createRecruitDto.getPlatform(),
-                createRecruitDto.getCoupon(),
                 createRecruitDto.getTitle(),
                 createRecruitDto.getDescription(),
                 categoryImage.getName(),
                 createRecruitDto.getFreeShipping(),
-                shippingFees,
+                shippingFee,
+                price,
                 tags,
                 orders
         );
         // recruit 영속화 (cascade -> order, tag, shippingfee, menu 전부 영속화)
         recruitJpaRepository.save(recruit);
-
-        // current price 갱신
-        int price = 0;
-        for (MenuDto menuDto : createRecruitDto.getMenu()) {
-            price += menuDto.getPrice() * menuDto.getQuantity();
-        }
-        if (price >= createRecruitDto.getMinPrice()) {
-            throw new InvalidApiRequestException("Current price is bigger than min price");
-        }
-        recruitJpaRepository.updateCurrentPrice(price, recruit.getId());
-
-        // current people 갱신
-        recruitJpaRepository.updateCurrentPeople(recruit.getId());
 
         // chat room 생성
         ChatRoom chatRoom = ChatRoom.createChatRoom(recruit);
@@ -472,15 +469,12 @@ public class RecruitService {
                 recruit.getCriteria(),
                 recruit.getMinPrice(),
                 recruit.getMinPeople(),
-                recruit.getShippingFees().stream()
-                        .map(sf -> new ShippingFeeDto(sf.getShippingFee(), sf.getLowerPrice(), sf.getUpperPrice()))
-                        .collect(Collectors.toList()),
-                recruit.getCoupon(),
                 recruit.getPlatform(),
                 recruit.getDeadlineDate(),
                 recruit.getTitle(),
                 recruit.getDescription(),
                 recruit.isFreeShipping(),
+                recruit.getShippingFee(),
                 menuDtos,
                 recruit.getTags().stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList())
         );
@@ -500,22 +494,6 @@ public class RecruitService {
                 place.getX(),
                 place.getY()
         );
-
-        AtomicInteger shippingFee = new AtomicInteger();
-        // ShippingFeeDetail 생성
-        List<ShippingFeeDto> shippingFeeDetails = recruit.getShippingFees()
-                .stream().map(s -> {
-                            if (s.getLowerPrice() <= recruit.getCurrentPrice()) {
-                                shippingFee.set(s.getShippingFee());
-                            }
-                            return new ShippingFeeDto(
-                                    s.getShippingFee(),
-                                    s.getLowerPrice(),
-                                    s.getUpperPrice()
-                            );
-                        }
-                )
-                .collect(Collectors.toList());
 
         boolean host = recruit.getUser().getId() == user.getId() ? true : false;
         boolean participate = false;
@@ -543,9 +521,7 @@ public class RecruitService {
                 placeDto,
                 recruit.getPlatform().name(),
                 recruit.getDeadlineDate(),
-                shippingFee.get(),
-                shippingFeeDetails,
-                recruit.getCoupon(),
+                recruit.getShippingFee(),
                 recruit.getCurrentPeople(),
                 recruit.getMinPeople(),
                 recruit.getCurrentPrice(),
@@ -590,7 +566,7 @@ public class RecruitService {
                 r.getUser().getNickname(),
                 r.getUser().getScore(),
                 r.getDormitory().getName(),
-                r.getMinShippingFee(),
+                r.getShippingFee(),
                 r.getImage(),
                 r.isActive()
         )).collect(Collectors.toList());
@@ -616,7 +592,7 @@ public class RecruitService {
                                     r.getUser().getNickname(),
                                     r.getUser().getScore(),
                                     r.getDormitory().getName(),
-                                    r.getMinShippingFee(),
+                                    r.getShippingFee(),
                                     subList.stream().map(t -> new TagDto(t.getName())).collect(Collectors.toList()),
                                     r.getImage(),
                                     r.isActive());

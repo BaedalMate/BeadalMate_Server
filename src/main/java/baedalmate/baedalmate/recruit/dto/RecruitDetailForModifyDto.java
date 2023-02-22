@@ -30,10 +30,6 @@ public class RecruitDetailForModifyDto {
     private int minPrice;
     @Schema(description = "최소 인원", example = "3")
     private int minPeople;
-    @Schema(description = "배달팁")
-    private List<ShippingFeeDto> shippingFee;
-    @Schema(description = "쿠폰 사용 금액", example = "3000")
-    private int coupon;
     @Schema(description = "배달앱", example = "BAEMIN | YOGIYO | COUPANG | DDANGYO | ETC")
     private Platform platform;
     @Schema(description = "마감 시간", example = "2020-12-24T16:28:27")
@@ -44,6 +40,8 @@ public class RecruitDetailForModifyDto {
     private String description;
     @Schema(description = "무료 배달 여부", example = "true | false")
     private Boolean freeShipping;
+    @Schema(description = "배달비", example = "1000")
+    private int shippingFee;
     @Schema(description = "메뉴")
     private List<MenuDto> menu;
     @Schema(description = "태그")

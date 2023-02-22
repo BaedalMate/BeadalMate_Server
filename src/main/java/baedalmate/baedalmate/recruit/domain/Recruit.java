@@ -49,8 +49,6 @@ public class Recruit {
 
     private int minPrice;
 
-    private int coupon;
-
     private boolean freeShipping;
 
     private LocalDateTime deactivateDate;
@@ -61,9 +59,6 @@ public class Recruit {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit")
     private List<Order> orders = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit", orphanRemoval = true)
-    private List<ShippingFee> shippingFees = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recruit", orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
@@ -92,6 +87,8 @@ public class Recruit {
 
     private String image;
 
+    private int shippingFee;
+
     //    @Column(columnDefinition = "boolean default true", nullable = false)
     private boolean active = true;
 
@@ -103,7 +100,7 @@ public class Recruit {
 //    private Recruit() { }
 
     private Recruit(int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-                    Place place, Platform platform, int coupon, String title, String description, String image, boolean freeShipping) {
+                    Place place, Platform platform, String title, String description, String image, boolean freeShipping, int shippingFee) {
         this.minPeople = minPeople;
         this.minPrice = minPrice;
         this.deadlineDate = deadlineDate;
@@ -111,25 +108,25 @@ public class Recruit {
         this.dormitory = dormitory;
         this.place = place;
         this.platform = platform;
-        this.coupon = coupon;
         this.title = title;
         this.description = description;
         this.image = image;
         this.freeShipping = freeShipping;
+        this.currentPeople = 1;
+        this.shippingFee = shippingFee;
     }
 
     //== 생성 메서드 ==//
     public static Recruit createRecruit(
             User user, Category category,
             int minPeople, int minPrice, LocalDateTime deadlineDate, Criteria criteria, Dormitory dormitory,
-            Place place, Platform platform, int coupon, String title, String description, String image, boolean freeShipping,
-            List<ShippingFee> shippingFees, List<Tag> tags, List<Order> orders) {
-        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, coupon, title, description, image, freeShipping);
+            Place place, Platform platform, String title, String description, String image, boolean freeShipping,
+            int shippingFee, int currentPrice,
+            List<Tag> tags, List<Order> orders) {
+        Recruit recruit = new Recruit(minPeople, minPrice, deadlineDate, criteria, dormitory, place, platform, title, description, image, freeShipping, shippingFee);
         user.addRecruit(recruit);
         category.addRecruit(recruit);
-        for (ShippingFee shippingFee : shippingFees) {
-            recruit.addShippingFee(shippingFee);
-        }
+
         for (Tag tag : tags) {
             recruit.addTag(tag);
         }
@@ -163,6 +160,10 @@ public class Recruit {
 
     public void setFreeShipping(Boolean freeShipping) {
         this.freeShipping = freeShipping;
+    }
+
+    public void setShippingFee(int shippingFee) {
+        this.shippingFee = shippingFee;
     }
 
     public void setMinPrice(int minPrice) {
@@ -205,15 +206,22 @@ public class Recruit {
         this.deactivateDate = deactivateDate;
     }
 
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
     //== 연관관계 편의 메서드 ==//
     public void addOrder(Order order) {
         orders.add(order);
         order.setRecruit(this);
-    }
-
-    public void addShippingFee(ShippingFee shippingFee) {
-        shippingFees.add(shippingFee);
-        shippingFee.setRecruit(this);
     }
 
     public void addTag(Tag tag) {
@@ -226,17 +234,6 @@ public class Recruit {
         review.setRecruit(this);
     }
 
-    //== Getter ==//
-    public int getMinShippingFee() {
-        if (freeShipping) return 0;
-
-        int min = shippingFees.get(0).getShippingFee();
-        for (ShippingFee shippingFee : shippingFees) {
-            min = Math.min(shippingFee.getShippingFee(), min);
-        }
-        return min;
-    }
-
     //== Set Methods ==//
     public int updateCurrentPeople() {
         currentPeople = currentPeople + 1;
@@ -246,21 +243,5 @@ public class Recruit {
     public int updateCurrentPrice(int price) {
         currentPrice = currentPrice + price;
         return currentPrice;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public void setChatRoom(ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
-    }
-
-    public void setShippingFees(List<ShippingFee> shippingFees) {
-        this.shippingFees = shippingFees;
-    }
-
-    public void setTags(List<Tag> tags) {
-        this.tags = tags;
     }
 }

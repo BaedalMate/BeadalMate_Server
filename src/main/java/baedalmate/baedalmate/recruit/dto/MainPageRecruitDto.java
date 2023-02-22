@@ -44,7 +44,7 @@ public class MainPageRecruitDto {
     @Schema(description = "배달 거점", example = "수림학사")
     private String dormitory;
 
-    @Schema(description = "배달비", example = "4000")
+    @Schema(description = "예상 배달비", example = "4000")
     private int shippingFee;
 
     @Schema(description = "모집글 이미지", example = "1234567.jpg")
