@@ -130,6 +130,36 @@ public class RecruitApiController {
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(summary = "모집글 리스트 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListResponseDto.class))),
+    })
+    @CustomPageableAsQueryParam
+    @GetMapping(value = "/recruit/list")
+    public ResponseEntity<RecruitListWithLastDto> getRecruitList(
+            @AuthUser PrincipalDetails principalDetails,
+            @Parameter(description = "카테고리별 조회")
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(value = "except_close", defaultValue = "false") Boolean exceptClose,
+            @PageableDefault(size = 10)
+            @Parameter(hidden = true)
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
+            })
+                    Pageable pageable) {
+
+        Page<RecruitDto> recruits = recruitService.findAllByCategory(
+                principalDetails.getId(),
+                categoryId,
+                pageable,
+                exceptClose
+        );
+
+        RecruitListWithLastDto response = new RecruitListWithLastDto(recruits.getContent(), recruits.isLast());
+
+        return ResponseEntity.ok().body(response);
+    }
+
     @Operation(summary = "모집글 수정")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ResultSuccessWithIdResponseDto.class))),
@@ -141,7 +171,23 @@ public class RecruitApiController {
                                     @ExampleObject(name = "호스트가 아닌 경우",
                                             value = "{\"code\": 400, \"message\": \"Not host\"}"),
                                     @ExampleObject(name = "참여자가 있는 경우",
-                                            value = "{\"code\": 400, \"message\": \"Someone is participating\"}")
+                                            value = "{\"code\": 400, \"message\": \"Someone is participating\"}"),
+                                    @ExampleObject(name = "필수 정보 누락",
+                                            value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
+                                    @ExampleObject(name = "최소 인원 설정",
+                                            value = "{\"code\": 400, \"message\": \"Number of min people must be more than 1\"}"),
+                                    @ExampleObject(name = "태그 개수 제한(상한)",
+                                            value = "{\"code\": 400, \"message\": \"Number of tag must be less than 5\"}"),
+                                    @ExampleObject(name = "태그 개수 제한(하한)",
+                                            value = "{\"code\": 400, \"message\": \"Number of tag must be more than 0\"}"),
+                                    @ExampleObject(name = "태그 길이 제한",
+                                            value = "{\"code\": 400, \"message\": \"Length of tag must be less than 9\"}"),
+                                    @ExampleObject(name = "등록한 메뉴의 금액이 이미 최소금액을 넘긴 경우",
+                                            value = "{\"code\": 400, \"message\": \"Current price is bigger than min price\"}"),
+                                    @ExampleObject(name = "무료배송인데 배송비 리스트 존재",
+                                            value = "{\"code\": 400, \"message\": \"Free shipping is true but shipping fee is not null\"}"),
+                                    @ExampleObject(name = "무료배송아닌데 배송비 리스트 없음",
+                                            value = "{\"code\": 400, \"message\": \"Free shipping is false but shipping fee is null\"}"),
                             }
                     )),
     })
@@ -173,14 +219,20 @@ public class RecruitApiController {
                                             value = "{\"code\": 400, \"message\": \"Api request body invalid\"}"),
                                     @ExampleObject(name = "최소 인원 설정",
                                             value = "{\"code\": 400, \"message\": \"Number of min people must be more than 1\"}"),
-                                    @ExampleObject(name = "태그 개수 제한",
+                                    @ExampleObject(name = "태그 개수 제한(상한)",
                                             value = "{\"code\": 400, \"message\": \"Number of tag must be less than 5\"}"),
+                                    @ExampleObject(name = "태그 개수 제한(하한)",
+                                            value = "{\"code\": 400, \"message\": \"Number of tag must be more than 0\"}"),
                                     @ExampleObject(name = "태그 길이 제한",
                                             value = "{\"code\": 400, \"message\": \"Length of tag must be less than 9\"}"),
                                     @ExampleObject(name = "호스트가 아닌 경우",
                                             value = "{\"code\": 400, \"message\": \"Not host\"}"),
                                     @ExampleObject(name = "등록한 메뉴의 금액이 이미 최소금액을 넘긴 경우",
                                             value = "{\"code\": 400, \"message\": \"Current price is bigger than min price\"}"),
+                                    @ExampleObject(name = "무료배송인데 배송비 리스트 존재",
+                                           value = "{\"code\": 400, \"message\": \"Free shipping is true but shipping fee is not null\"}"),
+                                    @ExampleObject(name = "무료배송아닌데 배송비 리스트 없음",
+                                            value = "{\"code\": 400, \"message\": \"Free shipping is false but shipping fee is null\"}"),
                             }
                     )),
 
@@ -193,36 +245,6 @@ public class RecruitApiController {
         Long recruitId = recruitService.create(principalDetails.getId(), createRecruitDto);
 
         RecruitIdDto response = new RecruitIdDto(recruitId);
-
-        return ResponseEntity.ok().body(response);
-    }
-
-    @Operation(summary = "모집글 리스트 조회")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = RecruitListResponseDto.class))),
-    })
-    @CustomPageableAsQueryParam
-    @GetMapping(value = "/recruit/list")
-    public ResponseEntity<RecruitListWithLastDto> getRecruitList(
-            @AuthUser PrincipalDetails principalDetails,
-            @Parameter(description = "카테고리별 조회")
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(value = "except_close", defaultValue = "false") Boolean exceptClose,
-            @PageableDefault(size = 10)
-            @Parameter(hidden = true)
-            @SortDefault.SortDefaults({
-                    @SortDefault(sort = "deadlineDate", direction = Sort.Direction.ASC)
-            })
-                    Pageable pageable) {
-
-        Page<RecruitDto> recruits = recruitService.findAllByCategory(
-                principalDetails.getId(),
-                categoryId,
-                pageable,
-                exceptClose
-        );
-
-        RecruitListWithLastDto response = new RecruitListWithLastDto(recruits.getContent(), recruits.isLast());
 
         return ResponseEntity.ok().body(response);
     }
