@@ -537,7 +537,8 @@ public class RecruitService {
                 host,
                 participate,
                 userInfo,
-                tags
+                tags,
+                recruit.getChatRoom().getId()
         );
     }
 
