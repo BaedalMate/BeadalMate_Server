@@ -188,6 +188,7 @@ public class RecruitService {
             throw new InvalidParameterException("Number of tag must be more than 0");
         }
         category.addRecruit(recruit);
+        CategoryImage categoryImage = categoryImageService.getRandomCategoryImage(category);
         PlaceDto placeDto = updateRecruitDto.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
         recruit.setPlace(place);
@@ -201,7 +202,7 @@ public class RecruitService {
         recruit.setTitle(updateRecruitDto.getTitle());
         recruit.setDescription(updateRecruitDto.getDescription());
         recruit.setShippingFee(updateRecruitDto.getShippingFee());
-
+        recruit.setImage(categoryImage.getName());
         recruit.getTags().clear();
         for (TagDto t : updateRecruitDto.getTags()) {
             if (t.getTagname().length() > 8) {
