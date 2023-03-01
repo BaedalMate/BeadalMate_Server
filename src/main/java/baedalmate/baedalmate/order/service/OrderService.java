@@ -87,7 +87,9 @@ public class OrderService {
             recruitJpaRepository.setActiveFalse(recruit.getId(), LocalDateTime.now());
         }
         List<Long> userIdList = new ArrayList<>();
-        userIdList.add(recruit.getUser().getId());
+        if (recruit.getUser().getId() != userId) {
+            userIdList.add(recruit.getUser().getId());
+        }
         List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                 .map(u -> Notification.createNotification(
