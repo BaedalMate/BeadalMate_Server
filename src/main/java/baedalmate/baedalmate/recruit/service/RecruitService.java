@@ -506,6 +506,8 @@ public class RecruitService {
                 hostUser.getScore()
         );
 
+        List<TagDto> tags = recruit.getTags().stream().map(t -> new TagDto(t.getName()))
+                .collect(Collectors.toList());
         return new RecruitDetailDto(
                 recruit.getId(),
                 recruit.getImage(),
@@ -524,7 +526,8 @@ public class RecruitService {
                 recruit.isCancel(),
                 host,
                 participate,
-                userInfo
+                userInfo,
+                tags
         );
     }
 
