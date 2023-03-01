@@ -46,12 +46,17 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long>, Recr
 
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.active = false, r.deactivateDate = :date  " +
-            "where r.active = true and r.cancel = false and r.fail = false and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
+            "where r.active = true and r.cancel = false and r.fail = false " +
+            "and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME " +
+            "and r.currentPeople != 1" +
+            "and r.deadlineDate < :date")
     void setActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
     @Query("update Recruit r set r.active = false, r.fail = true, r.deactivateDate = :date  " +
-            "where r.active = true and r.cancel = false and r.fail = false and r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.deadlineDate < :date")
+            "where r.active = true and r.cancel = false and r.fail = false " +
+            "and (r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME or (r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.currentPeople = 1)) " +
+            "and r.deadlineDate < :date")
     void setFailTrueAndActiveFalseFromRecruitExceedTime(@Param("date") LocalDateTime date);
 
     @Modifying(clearAutomatically = true)
@@ -62,12 +67,13 @@ public interface RecruitJpaRepository extends JpaRepository<Recruit, Long>, Recr
             "join r.orders " +
             "where r.active = true and r.cancel = false " +
             "and r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME " +
+            "and r.currentPeople != 1" +
             "and r.deadlineDate < :date")
     List<Recruit> findAllByDeadlineDateAndCriteriaDate(@Param("date") LocalDateTime date);
 
     @Query("select distinct r from Recruit r " +
             "where r.active = true and r.cancel = false " +
-            "and r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME " +
+            "and (r.criteria != baedalmate.baedalmate.recruit.domain.Criteria.TIME or (r.criteria = baedalmate.baedalmate.recruit.domain.Criteria.TIME and r.currentPeople = 1)) " +
             "and r.deadlineDate < :date")
     List<Recruit> findAllByDeadlineDateAndCriteriaNotDate(@Param("date") LocalDateTime date);
 }
