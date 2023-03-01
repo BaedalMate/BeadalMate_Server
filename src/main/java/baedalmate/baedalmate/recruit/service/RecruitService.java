@@ -173,7 +173,6 @@ public class RecruitService {
         if (recruit.getUser().getId() != user.getId()) {
             throw new InvalidApiRequestException("Not host");
         }
-
         // 배달비 예외
         if (updateRecruitDto.getFreeShipping().equals(true) && updateRecruitDto.getShippingFee() != null) {
             throw new InvalidApiRequestException("Free shipping is true but shipping fee is not null");
@@ -198,9 +197,6 @@ public class RecruitService {
 
         if (updateRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
-        }
-        if (updateRecruitDto.getTags().size() == 0) {
-            throw new InvalidParameterException("Number of tag must be more than 0");
         }
 
         recruit.getTags().clear();
@@ -359,9 +355,6 @@ public class RecruitService {
 
         // 태그 생성
         List<Tag> tags;
-        if (createRecruitDto.getTags().size() == 0) {
-            throw new InvalidParameterException("Number of tag must be more than 0");
-        }
         if (createRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
         }
@@ -513,6 +506,8 @@ public class RecruitService {
                 hostUser.getScore()
         );
 
+        List<TagDto> tags = recruit.getTags().stream().map(t -> new TagDto(t.getName()))
+                .collect(Collectors.toList());
         return new RecruitDetailDto(
                 recruit.getId(),
                 recruit.getImage(),
@@ -531,7 +526,8 @@ public class RecruitService {
                 recruit.isCancel(),
                 host,
                 participate,
-                userInfo
+                userInfo,
+                tags
         );
     }
 

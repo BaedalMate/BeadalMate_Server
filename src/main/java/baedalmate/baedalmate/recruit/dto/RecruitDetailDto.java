@@ -52,6 +52,8 @@ public class RecruitDetailDto {
     private boolean participate;
     @Schema(description = "유저 정보")
     private UserInfoDto userInfo;
+    @Schema(description = "태그")
+    private List<TagDto> tags;
 
 //    @Data
 //    @AllArgsConstructor
