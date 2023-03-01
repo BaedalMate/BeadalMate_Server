@@ -244,7 +244,7 @@ public class OrderService {
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
                 .map(u -> Notification.createNotification(
                         recruit.getTitle(),
-                        "모집에 참가하였습니다.",
+                        "모집에 참여하였습니다.",
                         recruit.getImage(),
                         recruit.getChatRoom().getId(),
                         u))
@@ -253,7 +253,7 @@ public class OrderService {
         eventPublisher.publishEvent(new ParticipateEvent(
                 recruit.getChatRoom().getId(),
                 recruit.getTitle(),
-                "모집에 참가하였습니다.",
+                "모집에 참여하였습니다.",
                 recruit.getImage(),
                 fcmList));
         return new OrderAndChatRoomIdDto(order.getId(), chatRoom.getId());
