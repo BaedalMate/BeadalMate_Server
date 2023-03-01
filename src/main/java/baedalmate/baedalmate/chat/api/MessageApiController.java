@@ -44,8 +44,12 @@ public class MessageApiController {
 //        if (MessageType.ENTER.equals(message.getType())) {
 //            message.setMessage(message.getSender()+"님이 입장하였습니다.");
 //        }
+
         // 유저 조회
         User user = userService.findOne(messageDto.getSenderId());
+        messageDto.setSender(user.getNickname());
+        messageDto.setSenderImage(user.getProfileImage());
+        sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
         // 채팅방 조회
         ChatRoom chatRoom = chatRoomService.findOne(messageDto.getRoomId());
         Recruit recruit = chatRoom.getRecruit();
@@ -64,9 +68,5 @@ public class MessageApiController {
 
         // 메세지 db 저장
         messageService.createMessage(messageDto.getRoomId(), messageDto.getSenderId(), MessageType.TALK, messageDto.getMessage());
-        messageDto.setSender(user.getNickname());
-        messageDto.setSenderImage(user.getProfileImage());
-
-        sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
     }
 }
