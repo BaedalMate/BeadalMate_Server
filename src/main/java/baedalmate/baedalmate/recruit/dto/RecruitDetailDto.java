@@ -54,7 +54,8 @@ public class RecruitDetailDto {
     private UserInfoDto userInfo;
     @Schema(description = "태그")
     private List<TagDto> tags;
-
+    @Schema(description = "채팅방 id", example = "1")
+    private Long chatRoomId;
 //    @Data
 //    @AllArgsConstructor
 //    public static class UserInfo {

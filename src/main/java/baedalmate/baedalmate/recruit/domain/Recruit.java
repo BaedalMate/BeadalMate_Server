@@ -218,6 +218,10 @@ public class Recruit {
         this.tags = tags;
     }
 
+    public void setImage(String imageName) {
+        this.image = imageName;
+    }
+
     //== 연관관계 편의 메서드 ==//
     public void addOrder(Order order) {
         orders.add(order);

@@ -180,7 +180,15 @@ public class RecruitService {
         if (updateRecruitDto.getFreeShipping().equals(false) && updateRecruitDto.getShippingFee() == null) {
             throw new InvalidApiRequestException("Free shipping is false but shipping fee is null");
         }
+        // 태그 예외
+        if (updateRecruitDto.getTags().size() > 4) {
+            throw new InvalidParameterException("Number of tag must be less than 5");
+        }
+        if (updateRecruitDto.getTags().size() == 0) {
+            throw new InvalidParameterException("Number of tag must be more than 0");
+        }
         category.addRecruit(recruit);
+        CategoryImage categoryImage = categoryImageService.getRandomCategoryImage(category);
         PlaceDto placeDto = updateRecruitDto.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
         recruit.setPlace(place);
@@ -194,13 +202,12 @@ public class RecruitService {
         recruit.setTitle(updateRecruitDto.getTitle());
         recruit.setDescription(updateRecruitDto.getDescription());
         recruit.setShippingFee(updateRecruitDto.getShippingFee());
-
-        if (updateRecruitDto.getTags().size() > 4) {
-            throw new InvalidParameterException("Number of tag must be less than 5");
-        }
-
+        recruit.setImage(categoryImage.getName());
         recruit.getTags().clear();
         for (TagDto t : updateRecruitDto.getTags()) {
+            if (t.getTagname().length() > 8) {
+                throw new InvalidParameterException("Length of tag must be less than 9");
+            }
             Tag tag = Tag.createTag(t.getTagname());
             recruit.addTag(tag);
         }
@@ -287,6 +294,8 @@ public class RecruitService {
         if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
+        recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId, LocalDateTime.now());
+        orderJpaRepository.deleteById(recruit.getOrders().get(0).getId());
         List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
         List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
@@ -304,7 +313,6 @@ public class RecruitService {
                 "모집이 취소되었습니다.",
                 recruit.getImage(),
                 fcmList));
-        recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId, LocalDateTime.now());
     }
 
     @Transactional
@@ -357,6 +365,9 @@ public class RecruitService {
         List<Tag> tags;
         if (createRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
+        }
+        if (createRecruitDto.getTags().size() == 0) {
+            throw new InvalidParameterException("Number of tag must be more than 0");
         }
         if (createRecruitDto.getTags().size() > 0) {
             tags = createRecruitDto
@@ -527,7 +538,8 @@ public class RecruitService {
                 host,
                 participate,
                 userInfo,
-                tags
+                tags,
+                recruit.getChatRoom().getId()
         );
     }
 
