@@ -180,6 +180,13 @@ public class RecruitService {
         if (updateRecruitDto.getFreeShipping().equals(false) && updateRecruitDto.getShippingFee() == null) {
             throw new InvalidApiRequestException("Free shipping is false but shipping fee is null");
         }
+        // 태그 예외
+        if (updateRecruitDto.getTags().size() > 4) {
+            throw new InvalidParameterException("Number of tag must be less than 5");
+        }
+        if (updateRecruitDto.getTags().size() == 0) {
+            throw new InvalidParameterException("Number of tag must be more than 0");
+        }
         category.addRecruit(recruit);
         PlaceDto placeDto = updateRecruitDto.getPlace();
         Place place = Place.createPlace(placeDto.getName(), placeDto.getAddressName(), placeDto.getRoadAddressName(), placeDto.getX(), placeDto.getY());
@@ -195,12 +202,11 @@ public class RecruitService {
         recruit.setDescription(updateRecruitDto.getDescription());
         recruit.setShippingFee(updateRecruitDto.getShippingFee());
 
-        if (updateRecruitDto.getTags().size() > 4) {
-            throw new InvalidParameterException("Number of tag must be less than 5");
-        }
-
         recruit.getTags().clear();
         for (TagDto t : updateRecruitDto.getTags()) {
+            if (t.getTagname().length() > 8) {
+                throw new InvalidParameterException("Length of tag must be less than 9");
+            }
             Tag tag = Tag.createTag(t.getTagname());
             recruit.addTag(tag);
         }
@@ -357,6 +363,9 @@ public class RecruitService {
         List<Tag> tags;
         if (createRecruitDto.getTags().size() > 4) {
             throw new InvalidParameterException("Number of tag must be less than 5");
+        }
+        if (createRecruitDto.getTags().size() == 0) {
+            throw new InvalidParameterException("Number of tag must be more than 0");
         }
         if (createRecruitDto.getTags().size() > 0) {
             tags = createRecruitDto
