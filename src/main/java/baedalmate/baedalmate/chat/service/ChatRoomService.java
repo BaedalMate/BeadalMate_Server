@@ -6,6 +6,8 @@ import baedalmate.baedalmate.chat.domain.MessageType;
 import baedalmate.baedalmate.chat.dao.ChatRoomJpaRepository;
 import baedalmate.baedalmate.chat.dao.MessageJpaRepository;
 import baedalmate.baedalmate.chat.dto.*;
+import baedalmate.baedalmate.order.dao.OrderJpaRepository;
+import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
 import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.review.dao.ReviewJpaRepository;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatRoomService {
 
-    private final RecruitJpaRepository recruitJpaRepository;
+    private final OrderJpaRepository orderJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final ChatRoomJpaRepository chatRoomJpaRepository;
     private final MessageJpaRepository messageJpaRepository;
@@ -74,9 +76,9 @@ public class ChatRoomService {
 
     public ChatRoomListDto getChatRoomList(Long userId) {
         User user = userJpaRepository.findById(userId).get();
-
-        List<ChatRoom> chatRooms = messageJpaRepository.findAllByUserIdUsingJoin(user.getId())
-                .stream().map(m -> m.getChatRoom()).collect(Collectors.toList());
+        List<Order> orders = orderJpaRepository.findAllByUserIdUsingJoin(userId);
+        List<ChatRoom> chatRooms = orders.stream().map(o -> o.getRecruit().getChatRoom())
+                .collect(Collectors.toList());
         List<ChatRoomDto> chatRoomInfos = chatRooms.stream().distinct().map(
                 c -> {
                     Message message = c.getMessages().get(c.getMessages().size() - 1);

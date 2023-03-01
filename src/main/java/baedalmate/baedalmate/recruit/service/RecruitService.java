@@ -294,6 +294,8 @@ public class RecruitService {
         if (!recruit.isActive()) {
             throw new InvalidApiRequestException("Already closed recruit");
         }
+        recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId, LocalDateTime.now());
+        orderJpaRepository.deleteById(recruit.getOrders().get(0).getId());
         List<Long> userIdList = recruit.getOrders().stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
         List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);
         List<Notification> notifications = fcmList.stream().map(f -> f.getUser()).distinct()
@@ -311,7 +313,6 @@ public class RecruitService {
                 "모집이 취소되었습니다.",
                 recruit.getImage(),
                 fcmList));
-        recruitJpaRepository.setCancelTrueAndActiveFalse(recruitId, LocalDateTime.now());
     }
 
     @Transactional
