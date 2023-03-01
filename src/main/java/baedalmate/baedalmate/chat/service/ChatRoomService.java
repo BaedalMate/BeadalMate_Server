@@ -32,6 +32,7 @@ public class ChatRoomService {
     private final ChatRoomJpaRepository chatRoomJpaRepository;
     private final MessageJpaRepository messageJpaRepository;
     private final ReviewJpaRepository reviewJpaRepository;
+
     @Transactional
     public Long save(User user, ChatRoom chatRoom) {
         chatRoomJpaRepository.save(chatRoom);
@@ -76,16 +77,23 @@ public class ChatRoomService {
 
     public ChatRoomListDto getChatRoomList(Long userId) {
         User user = userJpaRepository.findById(userId).get();
-        List<Order> orders = orderJpaRepository.findAllByUserIdUsingJoin(userId);
+        List<Order> orders = orderJpaRepository.findAllByUserId(userId);
         List<ChatRoom> chatRooms = orders.stream().map(o -> o.getRecruit().getChatRoom())
                 .collect(Collectors.toList());
-        List<ChatRoomDto> chatRoomInfos = chatRooms.stream().distinct().map(
+        List<ChatRoomDto> chatRoomInfos = chatRooms.stream().map(
                 c -> {
-                    Message message = c.getMessages().get(c.getMessages().size() - 1);
-                    MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
-                    return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo);
+                    List<Message> messages = c.getMessages().stream()
+                            .filter(m -> m.getMessageType().equals(MessageType.TALK))
+                            .collect(Collectors.toList());
+                    if(messages.size()>0) {
+                        Message message = messages.get(messages.size()-1);
+                        MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
+                        return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo);
+                    }
+                    return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), null);
                 }
         ).collect(Collectors.toList());
+        chatRoomInfos = chatRoomInfos.stream().filter(c -> c.getLastMessage() != null).collect(Collectors.toList());
         Collections.sort(chatRoomInfos);
         return new ChatRoomListDto(chatRoomInfos);
     }
