@@ -201,7 +201,9 @@ public class RecruitService {
         recruit.setDeadlineDate(updateRecruitDto.getDeadlineDate());
         recruit.setTitle(updateRecruitDto.getTitle());
         recruit.setDescription(updateRecruitDto.getDescription());
-        recruit.setShippingFee(updateRecruitDto.getShippingFee());
+        if(!updateRecruitDto.getFreeShipping()){
+            recruit.setShippingFee(updateRecruitDto.getShippingFee());
+        }
         recruit.setImage(categoryImage.getName());
         recruit.getTags().clear();
         for (TagDto t : updateRecruitDto.getTags()) {
