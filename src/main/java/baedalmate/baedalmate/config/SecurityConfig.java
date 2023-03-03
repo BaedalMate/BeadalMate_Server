@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/api/v1/**").authenticated()
                 .antMatchers("/api/v1/user/**", "/api/v1/fcm/**", "/api/v1/notice/**").hasAnyAuthority("ROLE_GUEST", "ROLE_USER")
                 .antMatchers("/api/v1/recruit/**", "/api/v1/order/**","/api/v1/review/**", "/api/v1/chat/**").hasAuthority("ROLE_USER")
+                .antMatchers("/ws/chat").hasAnyAuthority("ROLE_USER")
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

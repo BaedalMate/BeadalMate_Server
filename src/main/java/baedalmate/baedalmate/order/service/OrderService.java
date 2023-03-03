@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.order.service;
 
+import baedalmate.baedalmate.category.dto.MessageDto;
 import baedalmate.baedalmate.chat.dao.ChatRoomJpaRepository;
 import baedalmate.baedalmate.chat.dao.MessageJpaRepository;
 import baedalmate.baedalmate.chat.domain.ChatRoom;
@@ -28,6 +29,7 @@ import baedalmate.baedalmate.user.domain.Fcm;
 import baedalmate.baedalmate.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,7 @@ public class OrderService {
     private final ApplicationEventPublisher eventPublisher;
     private final FcmJpaRepository fcmJpaRepository;
     private final NotificationJpaRepository notificationJpaRepository;
+    private final SimpMessageSendingOperations sendingOperations;
 
     public List<Order> findByRecruitId(Long recruitId) {
         return orderJpaRepository.findAllByRecruitIdUsingJoin(recruitId);
@@ -238,8 +241,18 @@ public class OrderService {
         // 입장 메세지 생성
         ChatRoom chatRoom = chatRoomJpaRepository.findByRecruitId(orderDto.getRecruitId());
 
-        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom, null);
         messageJpaRepository.save(message);
+        MessageDto messageDto = new MessageDto(
+                chatRoom.getId(),
+                userId,
+                null,
+                null,
+                message.getId(),
+                "",
+                MessageType.ENTER,
+                null);
+        sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
         List<Long> userIdList = new ArrayList<>();
         userIdList.add(recruit.getUser().getId());
         List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowRecruitTrue(userIdList);

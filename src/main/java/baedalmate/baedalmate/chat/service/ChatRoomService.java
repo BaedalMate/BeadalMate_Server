@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class ChatRoomService {
     public Long save(User user, ChatRoom chatRoom) {
         chatRoomJpaRepository.save(chatRoom);
         // message 생성
-        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom);
+        Message message = Message.createMessage(MessageType.ENTER, "", user, chatRoom, null);
         messageJpaRepository.save(message);
         return chatRoom.getId();
     }
@@ -82,15 +83,30 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
         List<ChatRoomDto> chatRoomInfos = chatRooms.stream().map(
                 c -> {
-                    List<Message> messages = c.getMessages().stream()
-                            .filter(m -> m.getMessageType().equals(MessageType.TALK))
-                            .collect(Collectors.toList());
-                    if(messages.size()>0) {
-                        Message message = messages.get(messages.size()-1);
-                        MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
-                        return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo);
+                    Message message = null;
+                    int count = 0;
+                    boolean flagCountUnreadMessages = false;
+                    Collections.reverse(c.getMessages());
+                    for (Message m : c.getMessages()) {
+                        if (MessageType.TALK.equals(m.getMessageType())) {
+                            if(message == null) {
+                                message = m;
+                            }
+                            if (!flagCountUnreadMessages) {
+                                count++;
+                            } else {
+                                break;
+                            }
+                        }
+                        if (MessageType.READ.equals(m.getMessageType()) && m.getUser().getId() == userId) {
+                            flagCountUnreadMessages = true;
+                        }
                     }
-                    return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), null);
+                    if (message != null) {
+                        MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
+                        return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo, count);
+                    }
+                    return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), null, 0);
                 }
         ).collect(Collectors.toList());
         chatRoomInfos = chatRoomInfos.stream().filter(c -> c.getLastMessage() != null).collect(Collectors.toList());
