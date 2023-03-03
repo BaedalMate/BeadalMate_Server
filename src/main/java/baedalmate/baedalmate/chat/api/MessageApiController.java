@@ -15,6 +15,7 @@ import baedalmate.baedalmate.user.domain.User;
 import baedalmate.baedalmate.category.dto.MessageDto;
 import baedalmate.baedalmate.chat.service.ChatRoomService;
 import baedalmate.baedalmate.chat.service.MessageService;
+import baedalmate.baedalmate.user.service.RedisService;
 import baedalmate.baedalmate.user.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,34 +41,51 @@ public class MessageApiController {
     private final FcmJpaRepository fcmJpaRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final OrderJpaRepository orderJpaRepository;
+    private final RedisService redisService;
+
     @MessageMapping("/chat/message")
-    public void enter(@Valid MessageDto messageDto) {
+    public void message(@Valid MessageDto messageDto) {
 //        if (MessageType.ENTER.equals(message.getType())) {
 //            message.setMessage(message.getSender()+"님이 입장하였습니다.");
 //        }
 
         // 유저 조회
+
         User user = userService.findOne(messageDto.getSenderId());
-        messageDto.setSender(user.getNickname());
-        messageDto.setSenderImage(user.getProfileImage());
-        sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
-        // 채팅방 조회
-        ChatRoom chatRoom = chatRoomService.findOne(messageDto.getRoomId());
-        Recruit recruit = chatRoom.getRecruit();
-
-        List<Long> userIdList = orderJpaRepository.findAllByRecruitIdUsingJoin(chatRoom.getRecruit().getId())
-                .stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
-        userIdList.remove(user.getId());
-
-        List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowChatTrue(userIdList);
-        eventPublisher.publishEvent(new ChatEvent(
-                recruit.getChatRoom().getId(),
-                recruit.getTitle(),
-                user.getNickname() + ": " + messageDto.getMessage(),
-                recruit.getImage(),
-                fcmList));
-
+        if (messageDto.getType() == null) {
+            messageDto.setSender(user.getNickname());
+            messageDto.setSenderImage(user.getProfileImage());
+            messageDto.setType(MessageType.TALK);
+        }
         // 메세지 db 저장
-        messageService.createMessage(messageDto.getRoomId(), messageDto.getSenderId(), MessageType.TALK, messageDto.getMessage());
+        Long messageId = messageService.createMessage(messageDto.getRoomId(), messageDto.getSenderId(), messageDto.getType(), messageDto.getMessage(), messageDto.getReadMessageId());
+        messageDto.setMessageId(messageId);
+        sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
+        if (MessageType.TALK.equals(messageDto.getType())) {
+            // 채팅방 조회
+            ChatRoom chatRoom = chatRoomService.findOne(messageDto.getRoomId());
+            Recruit recruit = chatRoom.getRecruit();
+
+            List<Long> userIdList = orderJpaRepository.findAllByRecruitIdUsingJoin(chatRoom.getRecruit().getId())
+                    .stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
+            userIdList.remove(user.getId());
+            List<Long> userIdListForFcm = new ArrayList<>();
+            for (Long userId : userIdList) {
+                String userValue = redisService.getValues(userId.toString());
+                if ("list".equals(userValue) || messageDto.getRoomId().toString().equals(userValue)) {
+                    sendingOperations.convertAndSend("/topic/chat/user/" + userId, messageDto);
+                } else {
+                    userIdListForFcm.add(userId);
+                }
+            }
+
+            List<Fcm> fcmList = fcmJpaRepository.findAllByUserIdListAndAllowChatTrue(userIdListForFcm);
+            eventPublisher.publishEvent(new ChatEvent(
+                    recruit.getChatRoom().getId(),
+                    recruit.getTitle(),
+                    user.getNickname() + ": " + messageDto.getMessage(),
+                    recruit.getImage(),
+                    fcmList));
+        }
     }
 }

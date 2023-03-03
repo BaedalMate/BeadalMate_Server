@@ -19,6 +19,8 @@ public class Message {
 
     private String message;
 
+    private Long readMessageId;
+
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
@@ -34,14 +36,15 @@ public class Message {
     private Message() {
     }
 
-    private Message(MessageType messageType, String message) {
+    private Message(MessageType messageType, String message, Long readMessageId) {
         this.messageType = messageType;
         this.message = message;
+        this.readMessageId = readMessageId;
     }
 
     //== 생성 메서드 ==//
-    public static Message createMessage(MessageType messageType, String messageContent, User user, ChatRoom chatRoom) {
-        Message message = new Message(messageType, messageContent);
+    public static Message createMessage(MessageType messageType, String messageContent, User user, ChatRoom chatRoom, Long readMessageId) {
+        Message message = new Message(messageType, messageContent, readMessageId);
 
         message.setUser(user);
         chatRoom.addMessage(message);

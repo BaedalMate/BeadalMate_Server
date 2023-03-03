@@ -55,7 +55,8 @@
             room: {},
             sender: '',
             message: '',
-            messages: []
+            messages: [],
+            token: ''
         },
         created() {
             this.token = localStorage.getItem('wschat.token');
@@ -81,16 +82,25 @@
             },
             recvMessage: function(recv) {
                 this.messages.push({"type":recv.type,"sender":recv.type=='ENTER'?'[알림]':recv.sender,"message":recv.type=="ENTER"?"이 입장하였습니다":recv.message})
+            },
+            readMessage: function(readMessageId) {
+                ws.send("/app/chat/message", {}, JSON.stringify({roomId:this.chatRoomId, senderId:this.senderId, readMessageId: readMessageId, type: "READ"}));
             }
         }
     });
 
     function connect() {
         // pub/sub event
-        ws.connect({}, function(frame) {
+        var headers = {
+            "Authorization": localStorage.getItem('wschat.token')
+        }
+        ws.connect(headers, function(frame) {
             ws.subscribe("/topic/chat/room/"+vm.$data.chatRoomId, function(message) {
                 var recv = JSON.parse(message.body);
                 vm.recvMessage(recv);
+                if(recv.type=="TALK"){
+                    vm.readMessage(recv.messageId);
+                }
             });
         }, function(error) {
             if(reconnect++ <= 5) {
@@ -104,6 +114,7 @@
         });
     }
     connect();
+    vm.readMessage(message[message.size()-1]);
 
 </script>
 <script type="module">

@@ -35,27 +35,15 @@ public class MessageService {
     }
 
     @Transactional
-    public Long createMessage(Long chatRoomId, Long userId, MessageType messageType, String msg) {
+    public Long createMessage(Long chatRoomId, Long userId, MessageType messageType, String msg, Long readMessageId) {
         User user = userJpaRepository.findById(userId).get();
 
         ChatRoom chatRoom = chatRoomJpaRepository.findById(chatRoomId).get();
 
-        Message message = Message.createMessage(messageType, msg, user, chatRoom);
+        Message message = Message.createMessage(messageType, msg, user, chatRoom, readMessageId);
 
         messageJpaRepository.save(message);
-        List<User> userList = chatRoom.getRecruit().getOrders().stream().map(o -> o.getUser()).collect(Collectors.toList());
-        List<Fcm> fcmList = new ArrayList<>();
-        for(User u : userList) {
-            if(u.getId() == userId)
-                continue;
-            fcmList.addAll(u.getFcms());
-        }
-        eventPublisher.publishEvent(new ChatEvent(
-                chatRoomId,
-                chatRoom.getRecruit().getTitle(),
-                user.getNickname() + ": " + msg,
-                chatRoom.getRecruit().getImage(),
-                fcmList));
+
         return message.getId();
     }
 }

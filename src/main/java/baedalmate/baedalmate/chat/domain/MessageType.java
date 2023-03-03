@@ -1,5 +1,5 @@
 package baedalmate.baedalmate.chat.domain;
 
 public enum MessageType {
-    ENTER, TALK
+    ENTER, TALK, READ
 }

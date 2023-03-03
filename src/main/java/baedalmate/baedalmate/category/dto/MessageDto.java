@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.category.dto;
 
+import baedalmate.baedalmate.chat.domain.MessageType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,12 @@ public class MessageDto {
     @Schema(description = "보낸사람 프로필이미지 (보낼 때 포함X)")
     private String senderImage;
     //내용
+    @Schema(description = "메세지 id")
+    private Long messageId;
     @Schema(description = "메세지 내용")
-    @NotNull
     private String message;
+    @Schema(description = "메세지 타입")
+    private MessageType type;
+    @Schema(description = "읽은 메세지 id")
+    private Long readMessageId;
 }
