@@ -53,7 +53,6 @@ public class ChatRoomService {
     public ChatRoomDetailDto getChatRoomDetail(Long userId, Long id) {
         ChatRoom chatRoom = chatRoomJpaRepository.findById(id).get();
         Recruit recruit = chatRoom.getRecruit();
-        int numberOfUser = recruit.getCurrentPeople();
         List<Order> orders = orderJpaRepository.findAllByRecruitId(recruit.getId());
         List<Long> userIdList = orders.stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
         List<MessageDto> messagesDto = new ArrayList<>();
@@ -74,6 +73,7 @@ public class ChatRoomService {
                 messagesDto.add(messageDto);
             }
         }
+        Collections.reverse(messagesDto);
         List<Review> reviews = reviewJpaRepository.findAllByRecruitIdUsingJoin(recruit.getId());
         boolean reviewed = reviews.stream().anyMatch(r -> r.getUser().getId() == userId);
         ChatRoomRecruitDetailDto recruitDetail = new ChatRoomRecruitDetailDto(
@@ -127,5 +127,26 @@ public class ChatRoomService {
         ).collect(Collectors.toList());
         Collections.sort(chatRoomInfos);
         return new ChatRoomListDto(chatRoomInfos);
+    }
+
+    public UnreadUsersDto getUnreadUser(Long chatRoomId) {
+        ChatRoom chatRoom = chatRoomJpaRepository.findById(chatRoomId).get();
+        Recruit recruit = chatRoom.getRecruit();
+        List<Order> orders = orderJpaRepository.findAllByRecruitId(recruit.getId());
+        List<Long> userIdList = orders.stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
+        List<UnreadUserAndMessageIdDto> unreadUserAndMessageIdDtos = new ArrayList<>();
+        List<Message> messages = chatRoom.getMessages();
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            Message m = messages.get(i);
+            if(MessageType.TALK.equals(m.getMessageType())) {
+                UnreadUserAndMessageIdDto unreadUserAndMessageIdDto = new UnreadUserAndMessageIdDto(userIdList.size(), m.getId());
+                unreadUserAndMessageIdDtos.add(unreadUserAndMessageIdDto);
+            }
+            if(MessageType.READ.equals(m.getMessageType())) {
+                userIdList.remove(messages.get(i).getUser().getId());
+            }
+        }
+        Collections.reverse(unreadUserAndMessageIdDtos);
+        return new UnreadUsersDto(unreadUserAndMessageIdDtos);
     }
 }

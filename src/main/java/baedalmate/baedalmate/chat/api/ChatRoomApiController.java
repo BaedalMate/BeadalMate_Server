@@ -62,4 +62,17 @@ public class ChatRoomApiController {
         ChatRoomDetailDto chatRoomDetailDto = chatRoomService.getChatRoomDetail(principalDetails.getId(), roomId);
         return ResponseEntity.ok().body(chatRoomDetailDto);
     }
+
+    @Operation(summary = "메시지 별 읽지 않은 유저 수")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+    })
+    @GetMapping("/room/{roomId}/unreadUser")
+    public ResponseEntity<UnreadUsersDto> unreadUser(
+            @AuthUser PrincipalDetails principalDetails,
+            @PathVariable Long roomId
+    ) {
+        UnreadUsersDto unreadUsersDto = chatRoomService.getUnreadUser(roomId);
+        return ResponseEntity.ok().body(unreadUsersDto);
+    }
 }
