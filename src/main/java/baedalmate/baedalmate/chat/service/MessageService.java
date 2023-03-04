@@ -35,7 +35,7 @@ public class MessageService {
     }
 
     @Transactional
-    public Long createMessage(Long chatRoomId, Long userId, MessageType messageType, String msg, Long readMessageId) {
+    public Message createMessage(Long chatRoomId, Long userId, MessageType messageType, String msg, Long readMessageId) {
         User user = userJpaRepository.findById(userId).get();
 
         ChatRoom chatRoom = chatRoomJpaRepository.findById(chatRoomId).get();
@@ -44,6 +44,6 @@ public class MessageService {
 
         messageJpaRepository.save(message);
 
-        return message.getId();
+        return message;
     }
 }

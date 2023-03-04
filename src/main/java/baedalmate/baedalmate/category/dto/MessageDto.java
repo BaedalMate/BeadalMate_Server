@@ -1,12 +1,14 @@
 package baedalmate.baedalmate.category.dto;
 
 import baedalmate.baedalmate.chat.domain.MessageType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -34,4 +36,7 @@ public class MessageDto {
     private MessageType type;
     @Schema(description = "읽은 메세지 id")
     private Long readMessageId;
+    @Schema(description = "보낸 날짜")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime sendDate;
 }
