@@ -73,7 +73,7 @@ public class ChatRoomService {
                 recruit.isCancel(),
                 recruit.isFail()
         );
-        return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messageInfos, reviewed);
+        return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messageInfos, reviewed, recruit.getCurrentPeople());
     }
 
     public ChatRoomListDto getChatRoomList(Long userId) {
