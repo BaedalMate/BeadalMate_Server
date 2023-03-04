@@ -9,7 +9,6 @@ import baedalmate.baedalmate.chat.dto.*;
 import baedalmate.baedalmate.order.dao.OrderJpaRepository;
 import baedalmate.baedalmate.order.domain.Order;
 import baedalmate.baedalmate.recruit.domain.Recruit;
-import baedalmate.baedalmate.recruit.dao.RecruitJpaRepository;
 import baedalmate.baedalmate.review.dao.ReviewJpaRepository;
 import baedalmate.baedalmate.review.domain.Review;
 import baedalmate.baedalmate.user.dao.UserJpaRepository;
@@ -53,10 +52,28 @@ public class ChatRoomService {
 
     public ChatRoomDetailDto getChatRoomDetail(Long userId, Long id) {
         ChatRoom chatRoom = chatRoomJpaRepository.findById(id).get();
-        List<MessageDto> messageInfos = chatRoom.getMessages().stream()
-                .map(m -> new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate(), m.getMessageType()))
-                .collect(Collectors.toList());
         Recruit recruit = chatRoom.getRecruit();
+        int numberOfUser = recruit.getCurrentPeople();
+        List<Order> orders = orderJpaRepository.findAllByRecruitId(recruit.getId());
+        List<Long> userIdList = orders.stream().map(o -> o.getUser().getId()).collect(Collectors.toList());
+        List<MessageDto> messagesDto = new ArrayList<>();
+        List<Message> messages = chatRoom.getMessages();
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            Message m = messages.get(i);
+            if(MessageType.TALK.equals(m.getMessageType())) {
+                MessageDto messageDto = new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate(), m.getMessageType(), m.getReadMessageId(), userIdList.size());
+                messagesDto.add(messageDto);
+            }
+            if(MessageType.READ.equals(m.getMessageType())) {
+                userIdList.remove(messages.get(i).getUser().getId());
+                MessageDto messageDto = new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate(), m.getMessageType(),  m.getReadMessageId(), null);
+                messagesDto.add(messageDto);
+            }
+            if(MessageType.ENTER.equals(m.getMessageType())) {
+                MessageDto messageDto = new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate(), m.getMessageType(), m.getReadMessageId(), null);
+                messagesDto.add(messageDto);
+            }
+        }
         List<Review> reviews = reviewJpaRepository.findAllByRecruitIdUsingJoin(recruit.getId());
         boolean reviewed = reviews.stream().anyMatch(r -> r.getUser().getId() == userId);
         ChatRoomRecruitDetailDto recruitDetail = new ChatRoomRecruitDetailDto(
@@ -73,7 +90,7 @@ public class ChatRoomService {
                 recruit.isCancel(),
                 recruit.isFail()
         );
-        return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messageInfos, reviewed, recruit.getCurrentPeople());
+        return new ChatRoomDetailDto(chatRoom.getId(), recruitDetail, messagesDto, reviewed, recruit.getCurrentPeople());
     }
 
     public ChatRoomListDto getChatRoomList(Long userId) {
@@ -104,7 +121,7 @@ public class ChatRoomService {
                     if (message == null) {
                         message = c.getMessages().get(0);
                     }
-                    MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate(), message.getMessageType());
+                    MessageDtoForChatRoom messageInfo = new MessageDtoForChatRoom(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate(), message.getMessageType());
                     return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo, count);
                 }
         ).collect(Collectors.toList());

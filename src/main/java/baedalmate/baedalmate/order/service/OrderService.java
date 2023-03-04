@@ -251,6 +251,7 @@ public class OrderService {
                 message.getId(),
                 "",
                 MessageType.ENTER,
+                null,
                 null);
         sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
         List<Long> userIdList = new ArrayList<>();
