@@ -20,4 +20,6 @@ public class ChatRoomDetailDto {
     private List<MessageDto> messages;
     @Schema(description = "리뷰 여부")
     private boolean reviewed;
+    @Schema(description = "참여 중인 유저 수")
+    private int numberOfUser;
 }

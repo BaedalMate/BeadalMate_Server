@@ -18,7 +18,7 @@ public class ChatRoomDto implements Comparable<ChatRoomDto> {
     @Schema(description = "모집글 제목")
     private String title;
     @Schema(description = "채팅방 최근 메세지")
-    private MessageDto lastMessage;
+    private MessageDtoForChatRoom lastMessage;
     @Schema(description = "안읽은 메세지 수")
     private Integer numberUnreadMessages;
 

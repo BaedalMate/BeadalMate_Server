@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema
-public class MessageDto {
+public class MessageDtoForChatRoom {
     @Schema(description = "메세지 id", example = "1")
     private Long messageId;
     @Schema(description = "보낸 사람 id", example = "1")
@@ -29,8 +29,4 @@ public class MessageDto {
     private LocalDateTime sendDate;
     @Schema(description = "타입", example = "TALK")
     private MessageType type;
-    @Schema(description = "받은 메세지 id(해당 메세지를 읽었음을 의미)")
-    private Long readMessageId;
-    @Schema(description = "안 읽은 사람 수")
-    private Integer unreadUser;
 }

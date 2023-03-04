@@ -58,8 +58,9 @@ public class MessageApiController {
             messageDto.setType(MessageType.TALK);
         }
         // 메세지 db 저장
-        Long messageId = messageService.createMessage(messageDto.getRoomId(), messageDto.getSenderId(), messageDto.getType(), messageDto.getMessage(), messageDto.getReadMessageId());
-        messageDto.setMessageId(messageId);
+        Message message = messageService.createMessage(messageDto.getRoomId(), messageDto.getSenderId(), messageDto.getType(), messageDto.getMessage(), messageDto.getReadMessageId());
+        messageDto.setMessageId(message.getId());
+        messageDto.setSendDate(message.getCreateDate());
         sendingOperations.convertAndSend("/topic/chat/room/" + messageDto.getRoomId(), messageDto);
         if (MessageType.TALK.equals(messageDto.getType())) {
             // 채팅방 조회
