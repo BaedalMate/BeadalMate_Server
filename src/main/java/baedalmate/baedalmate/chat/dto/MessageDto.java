@@ -1,5 +1,6 @@
 package baedalmate.baedalmate.chat.dto;
 
+import baedalmate.baedalmate.chat.domain.MessageType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -26,4 +27,6 @@ public class MessageDto {
     @Schema(description = "보낸 시간", example = "2022-12-25 11:11:11")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime sendDate;
+    @Schema(description = "타입", example = "TALK")
+    private MessageType type;
 }

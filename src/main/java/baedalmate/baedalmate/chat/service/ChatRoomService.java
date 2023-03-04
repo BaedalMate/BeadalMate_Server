@@ -54,7 +54,7 @@ public class ChatRoomService {
     public ChatRoomDetailDto getChatRoomDetail(Long userId, Long id) {
         ChatRoom chatRoom = chatRoomJpaRepository.findById(id).get();
         List<MessageDto> messageInfos = chatRoom.getMessages().stream()
-                .map(m -> new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate()))
+                .map(m -> new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate(), m.getMessageType()))
                 .collect(Collectors.toList());
         Recruit recruit = chatRoom.getRecruit();
         List<Review> reviews = reviewJpaRepository.findAllByRecruitIdUsingJoin(recruit.getId());
@@ -77,7 +77,6 @@ public class ChatRoomService {
     }
 
     public ChatRoomListDto getChatRoomList(Long userId) {
-        User user = userJpaRepository.findById(userId).get();
         List<Order> orders = orderJpaRepository.findAllByUserId(userId);
         List<ChatRoom> chatRooms = orders.stream().map(o -> o.getRecruit().getChatRoom())
                 .collect(Collectors.toList());
@@ -89,7 +88,7 @@ public class ChatRoomService {
                     Collections.reverse(c.getMessages());
                     for (Message m : c.getMessages()) {
                         if (MessageType.TALK.equals(m.getMessageType())) {
-                            if(message == null) {
+                            if (message == null) {
                                 message = m;
                             }
                             if (!flagCountUnreadMessages) {
@@ -102,14 +101,13 @@ public class ChatRoomService {
                             flagCountUnreadMessages = true;
                         }
                     }
-                    if (message != null) {
-                        MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate());
-                        return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo, count);
+                    if (message == null) {
+                        message = c.getMessages().get(0);
                     }
-                    return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), null, 0);
+                    MessageDto messageInfo = new MessageDto(message.getId(), message.getUser().getId(), message.getUser().getNickname(), message.getUser().getProfileImage(), message.getMessage(), message.getCreateDate(), message.getMessageType());
+                    return new ChatRoomDto(c.getId(), c.getRecruit().getImage(), c.getRecruit().getTitle(), messageInfo, count);
                 }
         ).collect(Collectors.toList());
-        chatRoomInfos = chatRoomInfos.stream().filter(c -> c.getLastMessage() != null).collect(Collectors.toList());
         Collections.sort(chatRoomInfos);
         return new ChatRoomListDto(chatRoomInfos);
     }
