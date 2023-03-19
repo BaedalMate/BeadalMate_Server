@@ -66,11 +66,11 @@ public class ChatRoomService {
             if(MessageType.READ.equals(m.getMessageType())) {
                 userIdList.remove(messages.get(i).getUser().getId());
                 MessageDto messageDto = new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate(), m.getMessageType(),  m.getReadMessageId(), null);
-                messagesDto.add(messageDto);
+//                messagesDto.add(messageDto);
             }
             if(MessageType.ENTER.equals(m.getMessageType())) {
                 MessageDto messageDto = new MessageDto(m.getId(), m.getUser().getId(), m.getUser().getNickname(), m.getUser().getProfileImage(), m.getMessage(), m.getCreateDate(), m.getMessageType(), m.getReadMessageId(), null);
-                messagesDto.add(messageDto);
+//                messagesDto.add(messageDto);
             }
         }
         Collections.reverse(messagesDto);
